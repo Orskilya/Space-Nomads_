@@ -1,1 +1,1 @@
-# Тут пока ничего нет :)
+print('Start of the game')
