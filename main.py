@@ -2,45 +2,62 @@ import pygame
 
 
 class Ship:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+    def __init__(self, coords, speed, xp=100, armor=0):
+        self.coords = coords
+        self.speed = speed
+        self.xp = xp
+        self.armor = armor
 
     def get_coord(self):
-        return self.x, self.y
+        return self.coords
 
-    def move(self, x, y):
-        self.x += x
-        self.y += y
+    def move(self, vert, hor):
+        self.coords[0] += self.speed * hor
+        self.coords[1] += self.speed * vert
+        self.draw()
 
     def draw(self):
         screen.fill((0, 0, 0))
-        pygame.draw.circle(screen, pygame.Color('yellow'), (500, 500), 100)
-        pygame.draw.circle(screen, pygame.Color('white'), (self.x, self.y), 25)
+        pygame.draw.circle(screen, pygame.Color('yellow'), (500, 500), 50)
+        pygame.draw.circle(screen, pygame.Color('white'), tuple(self.coords), 25)
 
 
 if __name__ == '__main__':
-    pygame.init()
     fps = 60
+    # Pygame
+    pygame.init()
     size = width, height = 1024, 1024
     screen = pygame.display.set_mode(size)
-    pygame.draw.circle(screen, pygame.Color('yellow'), (500, 500), 100)
-    ship = Ship(100, 100)
-    ship.draw()
     clock = pygame.time.Clock()
-    move = False
+    ship = Ship([100, 100], 200 / fps)
+    # Classes
+    ship.draw()
+    # Variables
+    move = [0, 0]
     running = True
     while running:
-        if move:
-            ship.move(100 / fps, 100 / fps)
-        ship.draw()
+        ship.move(move[0], move[1])
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN:
-                move = True
+                if int(event.key) == ord('w'):
+                    move[0] = -1
+                elif int(event.key) == ord('s'):
+                    move[0] = 1
+                if int(event.key) == ord('a'):
+                    move[1] = -1
+                elif int(event.key) == ord('d'):
+                    move[1] = 1
             elif event.type == pygame.KEYUP:
-                move = False
+                if int(event.key) == ord('w'):
+                    move[0] = 0
+                elif int(event.key) == ord('s'):
+                    move[0] = 0
+                if int(event.key) == ord('a'):
+                    move[1] = 0
+                elif int(event.key) == ord('d'):
+                    move[1] = 0
         clock.tick(fps)
         pygame.display.flip()
     pygame.quit()
