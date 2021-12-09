@@ -14,9 +14,9 @@ class Ship:
     def move(self, vert, hor):
         self.coords[0] += self.speed * hor
         self.coords[1] += self.speed * vert
-        self.draw()
+        self.render()
 
-    def draw(self):
+    def render(self):
         screen.fill((0, 0, 0))
         pygame.draw.circle(screen, pygame.Color('yellow'), (500, 500), 50)
         pygame.draw.circle(screen, pygame.Color('white'), tuple(self.coords), 25)
@@ -31,7 +31,7 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
     ship = Ship([100, 100], 200 / fps)
     # Classes
-    ship.draw()
+    ship.render()
     # Variables
     move = [0, 0]
     running = True
