@@ -1,16 +1,19 @@
 from random import randint
 import pygame
 
+difficult = 50
+
 
 class Ship:
-    def __init__(self, image, coords, hull, armor, mass):
+    def __init__(self, image, coords, hull, armor, mass, equipment):
         self.image = image
         self.coords = coords  # list
         self.hull = hull
         self.armor = armor
         self.mass = mass
+        self.equipment = equipment
 
-    def draw(self, screen):
+    def render(self, screen):
         pass
 
     def fly(self, coords, speed):
@@ -66,3 +69,15 @@ class NomadShip(Ship):
                                (1, randint(0, 1)),  # locator and scanner
                                randint(0, 1)]  # afterburner
         self.hull *= 0.9
+
+
+class Kristalid(Ship):
+    def __init__(self, image, coords, hull, armor, mass):
+        super().__init__(image, coords, hull, armor, mass)
+        self.slot_equipment = [(1, 1),  # engine and fuel tank
+                               (1, 1, 1, 1, 1),  # guns
+                               (1, 1),  # grab and shield
+                               (1, 1),  # locator and scanner
+                               1]  # afterburner
+        self.hull *= difficult
+        self.armor += round(difficult / 100)
