@@ -5,7 +5,7 @@ difficult = 50
 
 
 class Ship:
-    def __init__(self, image, coords, hull, armor, mass, equipment):
+    def __init__(self, image, coords, hull, armor, mass, *equipment):
         self.image = image
         self.coords = coords  # list
         self.hull = hull
@@ -27,8 +27,8 @@ class Ship:
 
 
 class WarriorShip(Ship):
-    def __init__(self, image, coords, hull, armor, mass):
-        super().__init__(image, coords, hull, armor, mass)
+    def __init__(self, image, coords, hull, armor, mass, *equipment):
+        super().__init__(image, coords, hull, armor, mass, equipment)
         self.slot_equipment = [(1, 1),  # engine and fuel tank
                                (1, 1, 1, 1, randint(0, 1)),  # guns
                                (randint(0, 1), 1),  # grab and shield
@@ -38,8 +38,8 @@ class WarriorShip(Ship):
 
 
 class PirateShip(Ship):
-    def __init__(self, image, coords, hull, armor, mass):
-        super().__init__(image, coords, hull, armor, mass)
+    def __init__(self, image, coords, hull, armor, mass, *equipment):
+        super().__init__(image, coords, hull, armor, mass, equipment)
         self.slot_equipment = [(1, 1),  # engine and fuel tank
                                (1, 1, 1, randint(0, 1), 0),  # guns
                                (1, randint(0, 1)),  # grab and shield
@@ -50,8 +50,8 @@ class PirateShip(Ship):
 
 
 class CargoShip(Ship):
-    def __init__(self, image, coords, hull, armor, mass):
-        super().__init__(image, coords, hull, armor, mass)
+    def __init__(self, image, coords, hull, armor, mass, *equipment):
+        super().__init__(image, coords, hull, armor, mass, equipment)
         self.slot_equipment = [(1, 1),  # engine and fuel tank
                                (1, randint(0, 1), 0, 0, 0),  # guns
                                (randint(0, 1), 0),  # grab and shield
@@ -61,8 +61,8 @@ class CargoShip(Ship):
 
 
 class NomadShip(Ship):
-    def __init__(self, image, coords, hull, armor, mass):
-        super().__init__(image, coords, hull, armor, mass)
+    def __init__(self, image, coords, hull, armor, mass, *equipment):
+        super().__init__(image, coords, hull, armor, mass, equipment)
         self.slot_equipment = [(1, 1),  # engine and fuel tank
                                (1, 1, randint(0, 1), 0, 0),  # guns
                                (1, randint(0, 1)),  # grab and shield
@@ -72,8 +72,8 @@ class NomadShip(Ship):
 
 
 class Kristalid(Ship):
-    def __init__(self, image, coords, hull, armor, mass):
-        super().__init__(image, coords, hull, armor, mass)
+    def __init__(self, image, coords, hull, armor, mass, *equipment):
+        super().__init__(image, coords, hull, armor, mass, equipment)
         self.slot_equipment = [(1, 1),  # engine and fuel tank
                                (1, 1, 1, 1, 1),  # guns
                                (1, 1),  # grab and shield
