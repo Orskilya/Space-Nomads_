@@ -16,7 +16,7 @@ class Object:
 
 
 class Planet(Object):
-    def __init__(self, coords, image, radius, distance, w, type):
+    def __init__(self, coords, image, radius, distance, w):
         global products, equipments
         super().__init__(coords, image)
         self.shop = []  # list
