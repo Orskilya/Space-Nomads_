@@ -2,7 +2,8 @@ from math import cos, sin
 from random import randrange
 import pygame
 
-products = ('Питание', 'Медикаменты', 'Алкоголь', 'Минералы', 'Роскошь', 'Техника', 'Оружие', 'Наркотики')
+products = (
+'Питание', 'Медикаменты', 'Алкоголь', 'Минералы', 'Роскошь', 'Техника', 'Оружие', 'Наркотики')
 equipments = (1,)  # tuple. Add to main code
 
 
