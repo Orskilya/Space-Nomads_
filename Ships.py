@@ -5,12 +5,11 @@ difficult = 50
 
 
 class Ship(pygame.sprite.Sprite):
-    image = None
 
-    def __init__(self, coords, hull, armor, equipment, *group):
+    def __init__(self, sprite, coords, hull, armor, equipment, *group):
         # Work with sprite
         super().__init__(*group)
-        self.sprite = self.image
+        self.image = sprite
         self.coords = coords  # list
         self.rect = self.image.get_rect()
         self.rect.x = self.coords[0]
@@ -24,10 +23,22 @@ class Ship(pygame.sprite.Sprite):
         self.space = hull
 
     def fly(self, key):
-        pass
+        if key == pygame.K_s:
+            self.coords[1] += 100 / 100
+            self.rect.y = self.coords[1]
+        elif key == pygame.K_w:
+            self.coords[1] -= 100 / 100
+            self.rect.y = self.coords[1]
+        if key == pygame.K_a:
+            self.coords[0] -= 100 / 100
+            self.rect.x = self.coords[0]
+        elif key == pygame.K_d:
+            self.coords[0] += 100 / 100
+            self.rect.x = self.coords[0]
 
     def update(self, event):
-        pass
+        if event:
+            self.fly(event.key)
 
     def shoot(self):
         pass
