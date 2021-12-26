@@ -1,0 +1,5 @@
+New Game
+Continue
+Options
+Records
+Quit
