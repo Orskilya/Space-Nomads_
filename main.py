@@ -18,6 +18,7 @@ def load_image(name, size_of_sprite=None, color_key=None):
         image = image.convert_alpha()
     return image
 
+
 # PG
 pygame.init()
 size = width, height = 1024, 1024
@@ -35,12 +36,12 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w or event.key == pygame.K_a or event.key == pygame.K_s or\
+        elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+            if event.key == pygame.K_w or event.key == pygame.K_a or event.key == pygame.K_s or \
                     event.key == pygame.K_d:
-                hero_ship.update(event)
+                hero_ship.update(event, 'fly')
     screen.fill((0, 0, 0))
-    all_sprites.update(None)
+    all_sprites.update()
     all_sprites.draw(screen)
     pygame.display.flip()
     clock.tick(fps)

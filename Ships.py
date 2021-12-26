@@ -2,10 +2,10 @@ from random import randint
 import pygame
 
 difficult = 50
+fps = 60
 
 
 class Ship(pygame.sprite.Sprite):
-
     def __init__(self, sprite, coords, hull, armor, equipment, *group):
         # Work with sprite
         super().__init__(*group)
@@ -21,24 +21,34 @@ class Ship(pygame.sprite.Sprite):
         self.equipment = equipment  # list of classes
         self.hold = list()
         self.space = hull
+        self.keys = []
 
-    def fly(self, key):
-        if key == pygame.K_s:
-            self.coords[1] += 100 / 100
+    def fly(self, key=None, par=None):
+        if par == 'go':
+            self.keys.append(key)
+        elif par == 'stop':
+            del self.keys[self.keys.index(key)]
+        if pygame.K_s in self.keys:
+            self.coords[1] += 100 / fps
             self.rect.y = self.coords[1]
-        elif key == pygame.K_w:
-            self.coords[1] -= 100 / 100
+        elif pygame.K_w in self.keys:
+            self.coords[1] -= 100 / fps
             self.rect.y = self.coords[1]
-        if key == pygame.K_a:
-            self.coords[0] -= 100 / 100
+        if pygame.K_a in self.keys:
+            self.coords[0] -= 100 / fps
             self.rect.x = self.coords[0]
-        elif key == pygame.K_d:
-            self.coords[0] += 100 / 100
+        elif pygame.K_d in self.keys:
+            self.coords[0] += 100 / fps
             self.rect.x = self.coords[0]
 
-    def update(self, event):
-        if event:
-            self.fly(event.key)
+    def update(self, event=None, par=None):
+        if par == 'fly' or self.keys:
+            if not event:
+                self.fly()
+            elif event.type == pygame.KEYDOWN:
+                self.fly(event.key, 'go')
+            else:
+                self.fly(event.key, 'stop')
 
     def shoot(self):
         pass
@@ -57,10 +67,8 @@ class Ship(pygame.sprite.Sprite):
 
 
 class WarriorShip(Ship):
-    image = None
-
-    def __init__(self, coords, hull, armor, equipment, *group):
-        super().__init__(coords, hull, armor, equipment, *group)
+    def __init__(self, sprite, coords, hull, armor, equipment, *group):
+        super().__init__(sprite, coords, hull, armor, equipment, *group)
         self.slot_equipment = [(1, 1),  # engine and fuel tank
                                (1, 1, 1, 1, randint(0, 1)),  # guns
                                (randint(0, 1), 1),  # grab and shield
@@ -78,10 +86,8 @@ class WarriorShip(Ship):
 
 
 class PirateShip(Ship):
-    image = None
-
-    def __init__(self, coords, hull, armor, equipment, *group):
-        super().__init__(coords, hull, armor, equipment, *group)
+    def __init__(self, sprite, coords, hull, armor, equipment, *group):
+        super().__init__(sprite, coords, hull, armor, equipment, *group)
         self.slot_equipment = [(1, 1),  # engine and fuel tank
                                (1, 1, 1, randint(0, 1), 0),  # guns
                                (1, randint(0, 1)),  # grab and shield
@@ -100,10 +106,8 @@ class PirateShip(Ship):
 
 
 class CargoShip(Ship):
-    image = None
-
-    def __init__(self, coords, hull, armor, equipment, *group):
-        super().__init__(coords, hull, armor, equipment, *group)
+    def __init__(self, sprite, coords, hull, armor, equipment, *group):
+        super().__init__(sprite, coords, hull, armor, equipment, *group)
         self.slot_equipment = [(1, 1),  # engine and fuel tank
                                (1, randint(0, 1), 0, 0, 0),  # guns
                                (randint(0, 1), 0),  # grab and shield
@@ -121,10 +125,8 @@ class CargoShip(Ship):
 
 
 class NomadShip(Ship):
-    image = None
-
-    def __init__(self, coords, hull, armor, equipment, *group):
-        super().__init__(coords, hull, armor, equipment, *group)
+    def __init__(self, sprite, coords, hull, armor, equipment, *group):
+        super().__init__(sprite, coords, hull, armor, equipment, *group)
         self.slot_equipment = [(1, 1),  # engine and fuel tank
                                (1, 1, randint(0, 1), 0, 0),  # guns
                                (1, randint(0, 1)),  # grab and shield
@@ -142,10 +144,8 @@ class NomadShip(Ship):
 
 
 class Kristalid(Ship):
-    image = None
-
-    def __init__(self, coords, hull, armor, equipment, *group):
-        super().__init__(coords, hull, armor, equipment, *group)
+    def __init__(self, sprite, coords, hull, armor, equipment, *group):
+        super().__init__(sprite, coords, hull, armor, equipment, *group)
         self.slot_equipment = [(1, 1),  # engine and fuel tank
                                (1, 1, 1, 1, 1),  # guns
                                (1, 1),  # grab and shield
