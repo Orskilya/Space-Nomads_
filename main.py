@@ -1,5 +1,5 @@
-import pygame
 import Ships
+import Objects
 import os
 import pygame
 
@@ -30,8 +30,10 @@ planets = pygame.sprite.Group()
 ships = pygame.sprite.Group()
 fps = 60
 # Объекты
-hero_ship = Ships.Ship(load_image('hero_ship.png', (150, 150)), [0, 0], 100, 100, None,
-                       all_sprites)
+# hero_ship = Ships.Ship(load_image('hero_ship.png', (150, 150)), [0, 0], 100, 100, None,
+#                       all_sprites)
+hero_ship = Objects.Planet(load_image('hero_ship.png', (100, 100)), [500, 500], 100, 200,
+                           all_sprites)
 running = True
 while running:
     for event in pygame.event.get():
