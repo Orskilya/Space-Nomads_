@@ -1,1 +1,1 @@
-print('Start of the game')
+print('')
