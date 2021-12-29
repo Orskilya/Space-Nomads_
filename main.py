@@ -22,7 +22,7 @@ def load_image(name, size_of_sprite=None, color_key=None):
 # PG
 pygame.init()
 size = width, height = 1024, 1024
-screen = pygame.display.set_mode(size)
+screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 clock = pygame.time.Clock()
 # Группы спрайтов
 all_sprites = pygame.sprite.Group()
@@ -30,10 +30,10 @@ planets = pygame.sprite.Group()
 ships = pygame.sprite.Group()
 fps = 60
 # Объекты
-# hero_ship = Ships.Ship(load_image('hero_ship.png', (150, 150)), [0, 0], 100, 100, None,
-#                       all_sprites)
-hero_ship = Objects.Planet(load_image('hero_ship.png', (100, 100)), [500, 500], 100, 200,
-                           all_sprites)
+hero_ship = Ships.Ship(load_image('hero_ship.png', (150, 150)), [0, 0], 100, 100, None,
+                       all_sprites)
+planet = Objects.Planet(load_image('Earth.png'), 50, 1, [400, 400], [500, 500], 400, 100,
+                        all_sprites)
 running = True
 while running:
     for event in pygame.event.get():
