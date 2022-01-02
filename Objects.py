@@ -36,25 +36,25 @@ class Planet(Object):
         self.grad = 0
         self.radius = radius
         self.center = coord.copy()
-        self.speed = (speed / self.radius) * (pi / 180)
+        self.angular_speed = (speed / self.radius) * (pi / 180)
         self.shop = []  # list
         self.market = {i: [randrange(70, 300), randrange(80, 200), randrange(70, 190)] for i in
                        products}  # name: number, purchase, selling
         self.count = 0
-        self.speed_1 = 5
+        self.images_speed = 6
 
     def update(self):
         self.coord[0] = self.center[0] + cos(self.grad) * self.radius
         self.coord[1] = self.center[1] + sin(self.grad) * self.radius
         self.rect.x = self.coord[0]
         self.rect.y = self.coord[1]
-        self.grad += self.speed
+        self.grad += self.angular_speed
 
         if self.count == 0:
             self.cur_frame = (self.cur_frame + 1) % len(self.frames)
             self.image = self.frames[self.cur_frame]
             self.image = pygame.transform.scale(self.image, (self.size[0], self.size[1]))
-        self.count = (self.count + 1) % self.speed_1
+        self.count = (self.count + 1) % self.images_speed
 
     def market_items(self):  # increasing number of the products
         for i in self.market.keys():
@@ -62,12 +62,21 @@ class Planet(Object):
 
 
 class Star(Object):
-    def __init__(self, coord, image):
-        super().__init__(coord, image)
+    def __init__(self, sheet, columns, rows, size, coord, *group):
+        super().__init__(sheet, columns, rows, size, coord, *group)
         self.damage = 30
+        self.count = 0
+        self.speed_1 = 5
 
     def get_damage(self):
         return self.damage
+
+    def update(self):
+        if self.count == 0:
+            self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+            self.image = self.frames[self.cur_frame]
+            self.image = pygame.transform.scale(self.image, (self.size[0], self.size[1]))
+        self.count = (self.count + 1) % self.speed_1
 
 
 class Station(Object):
