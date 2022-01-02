@@ -17,7 +17,7 @@ class Object(pygame.sprite.Sprite):
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
         self.image = pygame.transform.scale(self.image, (self.size[0], self.size[1]))
-        self.rect = self.rect.move(coord[0], coord[1])
+        self.rect = self.rect.move(coord[0] - self.size[0] // 2, coord[1] - self.size[1] // 2)
 
     def cut_sheet(self, sheet, columns, rows):
         self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
@@ -44,8 +44,8 @@ class Planet(Object):
         self.images_speed = 6
 
     def update(self):
-        self.coord[0] = self.center[0] + cos(self.grad) * self.radius
-        self.coord[1] = self.center[1] + sin(self.grad) * self.radius
+        self.coord[0] = self.center[0] + cos(self.grad) * self.radius - self.size[0] // 2
+        self.coord[1] = self.center[1] + sin(self.grad) * self.radius - self.size[1] // 2
         self.rect.x = self.coord[0]
         self.rect.y = self.coord[1]
         self.grad += self.angular_speed

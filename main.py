@@ -1,7 +1,9 @@
+import ctypes
 import Ships
 import Objects
 import os
 import pygame
+
 
 
 def load_image(name, size_of_sprite=None, color_key=None):
@@ -21,7 +23,8 @@ def load_image(name, size_of_sprite=None, color_key=None):
 
 # PG
 pygame.init()
-size = width, height = 1500, 1200
+user32 = ctypes.windll.user32
+size = width, height = user32.GetSystemMetrics(0) - 100, user32.GetSystemMetrics(1) - 100
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 # Группы спрайтов
@@ -30,8 +33,13 @@ planets = pygame.sprite.Group()
 ships = pygame.sprite.Group()
 fps = 60
 # Объекты
-earth = Objects.Planet(load_image('Earth.png'), 50, 5, [400, 400], [300, 300], 400, 100,
-                        all_sprites)
+sun = Objects.Star(load_image('Sun.png'), 25, 10, [400, 400], [width // 2, height // 2],
+                   all_sprites)
+earth = Objects.Planet(load_image('Earth.png'), 50, 5, [200, 200], [width // 2, height // 2], 400,
+                       100, all_sprites)
+mercury = Objects.Planet(load_image('Mercury.png'), 50, 5, [100, 100], [width // 2, height // 2],
+                         200, 100, all_sprites)
+
 hero_ship = Ships.Ship(load_image('hero_ship.png', (150, 150)), [0, 0], 100, 100, None,
                        all_sprites)
 running = True
