@@ -49,7 +49,6 @@ class Planet(Object):
         self.rect.x = self.coord[0]
         self.rect.y = self.coord[1]
         self.grad += self.angular_speed
-
         if self.count == 0:
             self.cur_frame = (self.cur_frame + 1) % len(self.frames)
             self.image = self.frames[self.cur_frame]
@@ -66,7 +65,7 @@ class Star(Object):
         super().__init__(sheet, columns, rows, size, coord, *group)
         self.damage = 30
         self.count = 0
-        self.speed_1 = 5
+        self.images_speed = 5
 
     def get_damage(self):
         return self.damage
@@ -76,7 +75,7 @@ class Star(Object):
             self.cur_frame = (self.cur_frame + 1) % len(self.frames)
             self.image = self.frames[self.cur_frame]
             self.image = pygame.transform.scale(self.image, (self.size[0], self.size[1]))
-        self.count = (self.count + 1) % self.speed_1
+        self.count = (self.count + 1) % self.images_speed
 
 
 class Station(Object):

@@ -5,6 +5,19 @@ import os
 import pygame
 
 
+class Camera:
+    def __init__(self):
+        self.dx = 0
+        self.dy = 0
+
+    def apply(self, obj):
+        obj.rect.x += self.dx
+        obj.rect.y += self.dy
+
+    def update(self, target):
+        self.dx = -(target.rect.x + target.rect.w // 2 - width // 2)
+        self.dy = -(target.rect.y + target.rect.h // 2 - height // 2)
+
 
 def load_image(name, size_of_sprite=None, color_key=None):
     fullname = os.path.join('data', name)
@@ -32,6 +45,7 @@ all_sprites = pygame.sprite.Group()
 planets = pygame.sprite.Group()
 ships = pygame.sprite.Group()
 fps = 60
+camera = Camera()
 # Объекты
 sun = Objects.Star(load_image('Sun.png'), 25, 10, [400, 400], [width // 2, height // 2],
                    all_sprites)
@@ -39,9 +53,8 @@ earth = Objects.Planet(load_image('Earth.png'), 50, 5, [200, 200], [width // 2, 
                        100, all_sprites)
 mercury = Objects.Planet(load_image('Mercury.png'), 50, 5, [100, 100], [width // 2, height // 2],
                          200, 100, all_sprites)
-
-hero_ship = Ships.Ship(load_image('hero_ship.png', (150, 150)), [0, 0], 100, 100, None,
-                       all_sprites)
+hero_ship = Ships.Ship(load_image('hero_ship.png', (150, 150)), [width // 2, height // 2], 100, 100,
+                       None, all_sprites)
 running = True
 while running:
     for event in pygame.event.get():
@@ -53,6 +66,9 @@ while running:
                 hero_ship.update(event, 'fly')
     screen.fill((0, 0, 0))
     all_sprites.update()
+#     camera.update(hero_ship)
+#     for sprite in all_sprites:
+#         camera.apply(sprite)
     all_sprites.draw(screen)
     pygame.display.flip()
     clock.tick(fps)

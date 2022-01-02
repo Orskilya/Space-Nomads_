@@ -12,8 +12,9 @@ class Ship(pygame.sprite.Sprite):
         self.image = sprite
         self.coord = coord  # list
         self.rect = self.image.get_rect()
-        self.rect.x = self.coord[0]
-        self.rect.y = self.coord[1]
+        self.size = self.rect.size
+        self.rect.x = self.coord[0] - self.size[0] // 2
+        self.rect.y = self.coord[1] - self.size[1] // 2
         # Values
         self.hull = hull
         self.armor = armor
@@ -30,16 +31,16 @@ class Ship(pygame.sprite.Sprite):
             del self.keys[self.keys.index(key)]
         if pygame.K_s in self.keys:
             self.coord[1] += 100 / fps
-            self.rect.y = self.coord[1]
+            self.rect.y = self.coord[1] - self.size[1] // 2
         elif pygame.K_w in self.keys:
             self.coord[1] -= 100 / fps
-            self.rect.y = self.coord[1]
+            self.rect.y = self.coord[1] - self.size[1] // 2
         if pygame.K_a in self.keys:
             self.coord[0] -= 100 / fps
-            self.rect.x = self.coord[0]
+            self.rect.x = self.coord[0] - self.size[0] // 2
         elif pygame.K_d in self.keys:
             self.coord[0] += 100 / fps
-            self.rect.x = self.coord[0]
+            self.rect.x = self.coord[0] - self.size[0] // 2
 
     def update(self, event=None, par=None):
         if par == 'fly' or self.keys:
