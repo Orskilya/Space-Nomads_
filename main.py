@@ -1,4 +1,5 @@
 import ctypes
+import sys
 import Ships
 import Objects
 import os
@@ -15,8 +16,8 @@ class Camera:
         obj.rect.y += self.dy
 
     def update(self, target):
-        self.dx = -(target.rect.x + target.rect.w // 2 - width // 2)
-        self.dy = -(target.rect.y + target.rect.h // 2 - height // 2)
+        self.dx = -(target.rect.x + target.rect.w // 2 - WIDTH // 2)
+        self.dy = -(target.rect.y + target.rect.h // 2 - HEIGHT // 2)
 
 
 def load_image(name, size_of_sprite=None, color_key=None):
@@ -34,41 +35,104 @@ def load_image(name, size_of_sprite=None, color_key=None):
     return image
 
 
+class Lobby:
+    def __init__(self):
+        self.buttons_type = 'Main Menu'
+        self.bg = pygame.transform.scale(load_image('lobby_bg.png'), SIZE)
+        screen.blit(self.bg, (0, 0))
+
+
+        self.font = pygame.font.SysFont('arialms', 50)
+        self.update_buttons()
+        self.cycle()
+
+    def cycle(self):
+        global FPS
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.quit()
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    pos = event.pos
+                    if self.buttons_type == 'Main Menu':
+                        if 200 >= pos[0] >= 30:
+                            if HEIGHT * 0.3 <= pos[1] <= HEIGHT * 0.3 + 36:
+                                return  # start new game
+                            elif HEIGHT * 0.3 + 36 + 10 <= pos[1] <= HEIGHT * 0.3 + 2 * 36:
+                                return # continue last save
+                            elif HEIGHT * 0.3 + 2 * 36 + 20 <= pos[1] <= HEIGHT * 0.3 + 3 * 36:
+                                self.buttons_type = 'Options'
+                                self.update_buttons()
+                            elif HEIGHT * 0.3 + 3 * 36 + 30 <= pos[1] <= HEIGHT * 0.3 + 4 * 36:
+                                pass
+                            elif HEIGHT * 0.3 + 4 * 36 + 40 <= pos[1] <= HEIGHT * 0.3 + 5 * 36:
+                                self.quit()
+
+            pygame.display.flip()
+            clock.tick(FPS)
+
+    def update_buttons(self):
+        global LANGUAGE
+        screen.fill((0, 0, 0))
+        screen.blit(self.bg, (0, 0))
+
+        with open(f'data/{self.buttons_type} {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
+            self.buttons = map(lambda x: x.rstrip(), f.readlines())
+
+        self.text_coord = HEIGHT * 0.3
+        for line in self.buttons:
+            string_rendered = self.font.render(line, 1, pygame.Color('white'))
+            self.buttons = string_rendered.get_rect()
+            self.text_coord += 10
+            self.buttons.top = self.text_coord
+            self.buttons.x = 30
+            self.text_coord += self.buttons.height
+            screen.blit(string_rendered, self.buttons)
+
+    def quit(self):
+        pygame.quit()
+        sys.exit()
+
+
 # PG
+FPS = 60
+LANGUAGE = 'EN'
 pygame.init()
 user32 = ctypes.windll.user32
-size = width, height = user32.GetSystemMetrics(0) - 100, user32.GetSystemMetrics(1) - 100
-screen = pygame.display.set_mode(size)
+SIZE = WIDTH, HEIGHT = user32.GetSystemMetrics(0) - 100, user32.GetSystemMetrics(1) - 100
+screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
+
+# lobby
+lobby = Lobby()
 
 # Группы спрайтов
 all_sprites = pygame.sprite.Group()
 planets = pygame.sprite.Group()
 ships = pygame.sprite.Group()
-fps = 60
 camera = Camera()
 
 # Объекты
-sun = Objects.Star(load_image('Sun.png'), 25, 10, [400, 400], [width // 2, height // 2],
+sun = Objects.Star(load_image('Sun.png'), 25, 10, [400, 400], [WIDTH // 2, HEIGHT // 2],
                    all_sprites)
-mercury = Objects.Planet(load_image('Mercury.png'), 50, 5, [100, 100], [width // 2, height // 2],
+mercury = Objects.Planet(load_image('Mercury.png'), 50, 5, [100, 100], [WIDTH // 2, HEIGHT // 2],
                          250, 100, all_sprites)
-venus = Objects.Planet(load_image('Venus.png'), 50, 5, [150, 150], [width // 2, height // 2],
+venus = Objects.Planet(load_image('Venus.png'), 50, 5, [150, 150], [WIDTH // 2, HEIGHT // 2],
                        400, 100, all_sprites)
-earth = Objects.Planet(load_image('Earth.png'), 50, 5, [200, 200], [width // 2, height // 2], 600,
+earth = Objects.Planet(load_image('Earth.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2], 600,
                        100, all_sprites)
-mars = Objects.Planet(load_image('Mars.png'), 50, 5, [150, 150], [width // 2, height // 2], 800,
+mars = Objects.Planet(load_image('Mars.png'), 50, 5, [150, 150], [WIDTH // 2, HEIGHT // 2], 800,
                       100, all_sprites)
-jupiter = Objects.Planet(load_image('Jupiter.png'), 50, 5, [200, 200], [width // 2, height // 2],
+jupiter = Objects.Planet(load_image('Jupiter.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
                          1200, 100, all_sprites)
-saturn = Objects.Planet(load_image('Saturn.png'), 21, 12, [200, 200], [width // 2, height // 2],
+saturn = Objects.Planet(load_image('Saturn.png'), 21, 12, [200, 200], [WIDTH // 2, HEIGHT // 2],
                         1600, 100, all_sprites)
-uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [200, 200], [width // 2, height // 2], 2000,
+uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2], 2000,
                         100, all_sprites)
-neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [width // 2, height // 2],
+neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
                          2400, 100, all_sprites)
 
-hero_ship = Ships.Ship(load_image('hero_ship.png', (50, 50)), [width // 2, height // 2], 100, 100,
+hero_ship = Ships.Ship(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2], 100, 100,
                        None, all_sprites)
 
 # main cycle
@@ -88,5 +152,5 @@ while running:
     #         camera.apply(sprite)
     all_sprites.draw(screen)
     pygame.display.flip()
-    clock.tick(fps)
+    clock.tick(FPS)
 pygame.quit()
