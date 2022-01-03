@@ -41,32 +41,52 @@ class Lobby:
         self.bg = pygame.transform.scale(load_image('lobby_bg.png'), SIZE)
         screen.blit(self.bg, (0, 0))
 
-
-        self.font = pygame.font.SysFont('arialms', 50)
+        self.font = pygame.font.SysFont('Arialms', 50)
         self.update_buttons()
         self.cycle()
 
     def cycle(self):
-        global FPS
+        global FPS, LANGUAGE
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quit()
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     pos = event.pos
-                    if self.buttons_type == 'Main Menu':
-                        if 200 >= pos[0] >= 30:
-                            if HEIGHT * 0.3 <= pos[1] <= HEIGHT * 0.3 + 36:
+                    if 200 >= pos[0] >= 30:
+                        if self.buttons_type == 'Main Menu':
+                            if HEIGHT * 0.3 <= pos[1] <= HEIGHT * 0.3 + self.buttons.height:
                                 return  # start new game
-                            elif HEIGHT * 0.3 + 36 + 10 <= pos[1] <= HEIGHT * 0.3 + 2 * 36:
-                                return # continue last save
-                            elif HEIGHT * 0.3 + 2 * 36 + 20 <= pos[1] <= HEIGHT * 0.3 + 3 * 36:
+                            elif HEIGHT * 0.3 + self.buttons.height + 15 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 2 * self.buttons.height + 15:
+                                return  # continue last save
+                            elif HEIGHT * 0.3 + 2 * self.buttons.height + 30 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 3 * self.buttons.height + 30:
                                 self.buttons_type = 'Options'
                                 self.update_buttons()
-                            elif HEIGHT * 0.3 + 3 * 36 + 30 <= pos[1] <= HEIGHT * 0.3 + 4 * 36:
+                            elif HEIGHT * 0.3 + 3 * self.buttons.height + 45 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 4 * self.buttons.height + 45:
                                 pass
-                            elif HEIGHT * 0.3 + 4 * 36 + 40 <= pos[1] <= HEIGHT * 0.3 + 5 * 36:
+                            elif HEIGHT * 0.3 + 4 * self.buttons.height + 60 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 5 * self.buttons.height + 60:
                                 self.quit()
+                        elif self.buttons_type == 'Options':
+                            if HEIGHT * 0.3 + self.buttons.height + 15 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 2 * self.buttons.height + 15:
+                                LANGUAGE = 'KR'
+                                self.update_buttons()
+                            elif HEIGHT * 0.3 + 2 * self.buttons.height + 30 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 3 * self.buttons.height + 30:
+                                LANGUAGE = 'EN'
+                                self.update_buttons()
+                            elif HEIGHT * 0.3 + 3 * self.buttons.height + 45 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 4 * self.buttons.height + 45:
+                                LANGUAGE = 'RU'
+                                self.update_buttons()
+                            elif HEIGHT * 0.3 + 4 * self.buttons.height + 60 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 5 * self.buttons.height + 60:
+                                self.buttons_type = 'Main Menu'
+                                self.update_buttons()
 
             pygame.display.flip()
             clock.tick(FPS)
