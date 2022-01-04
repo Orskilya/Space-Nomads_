@@ -42,7 +42,7 @@ class Lobby:
         screen.blit(self.bg, (0, 0))
 
         self.font = pygame.font.SysFont('Arialms', 50)
-        self.update_buttons()
+        self.update_window()
         self.cycle()
 
     def cycle(self):
@@ -51,9 +51,9 @@ class Lobby:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quit()
-                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # button push
                     pos = event.pos
-                    if 200 >= pos[0] >= 30:
+                    if 250 >= pos[0] >= 30:
                         if self.buttons_type == 'Main Menu':
                             if HEIGHT * 0.3 <= pos[1] <= HEIGHT * 0.3 + self.buttons.height:
                                 return  # start new game
@@ -63,7 +63,7 @@ class Lobby:
                             elif HEIGHT * 0.3 + 2 * self.buttons.height + 30 <= pos[1] \
                                     <= HEIGHT * 0.3 + 3 * self.buttons.height + 30:
                                 self.buttons_type = 'Options'
-                                self.update_buttons()
+                                self.update_window()
                             elif HEIGHT * 0.3 + 3 * self.buttons.height + 45 <= pos[1] \
                                     <= HEIGHT * 0.3 + 4 * self.buttons.height + 45:
                                 pass
@@ -74,24 +74,61 @@ class Lobby:
                             if HEIGHT * 0.3 + self.buttons.height + 15 <= pos[1] \
                                     <= HEIGHT * 0.3 + 2 * self.buttons.height + 15:
                                 LANGUAGE = 'KR'
-                                self.update_buttons()
+                                self.update_window()
                             elif HEIGHT * 0.3 + 2 * self.buttons.height + 30 <= pos[1] \
                                     <= HEIGHT * 0.3 + 3 * self.buttons.height + 30:
                                 LANGUAGE = 'EN'
-                                self.update_buttons()
+                                self.update_window()
                             elif HEIGHT * 0.3 + 3 * self.buttons.height + 45 <= pos[1] \
                                     <= HEIGHT * 0.3 + 4 * self.buttons.height + 45:
                                 LANGUAGE = 'RU'
-                                self.update_buttons()
+                                self.update_window()
                             elif HEIGHT * 0.3 + 4 * self.buttons.height + 60 <= pos[1] \
                                     <= HEIGHT * 0.3 + 5 * self.buttons.height + 60:
                                 self.buttons_type = 'Main Menu'
-                                self.update_buttons()
+                                self.update_window()
+                elif event.type == pygame.MOUSEMOTION:  # changing color of the button
+                    pos = event.pos
+                    if 250 >= pos[0] >= 30:
+                        if self.buttons_type == 'Main Menu':
+                            if HEIGHT * 0.3 <= pos[1] <= HEIGHT * 0.3 + self.buttons.height:
+                                self.update_window(1)
+                            elif HEIGHT * 0.3 + self.buttons.height + 15 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 2 * self.buttons.height + 15:
+                                self.update_window(2)
+                            elif HEIGHT * 0.3 + 2 * self.buttons.height + 30 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 3 * self.buttons.height + 30:
+                                self.update_window(3)
+                            elif HEIGHT * 0.3 + 3 * self.buttons.height + 45 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 4 * self.buttons.height + 45:
+                                self.update_window(4)
+                            elif HEIGHT * 0.3 + 4 * self.buttons.height + 60 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 5 * self.buttons.height + 60:
+                                self.update_window(5)
+                            else:
+                                self.update_window()
+                        elif self.buttons_type == 'Options':
+                            if HEIGHT * 0.3 + self.buttons.height + 15 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 2 * self.buttons.height + 15:
+                                self.update_window(2)
+                            elif HEIGHT * 0.3 + 2 * self.buttons.height + 30 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 3 * self.buttons.height + 30:
+                                self.update_window(3)
+                            elif HEIGHT * 0.3 + 3 * self.buttons.height + 45 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 4 * self.buttons.height + 45:
+                                self.update_window(4)
+                            elif HEIGHT * 0.3 + 4 * self.buttons.height + 60 <= pos[1] \
+                                    <= HEIGHT * 0.3 + 5 * self.buttons.height + 60:
+                                self.update_window(5)
+                            else:
+                                self.update_window()
+                    else:
+                        self.update_window()
 
             pygame.display.flip()
             clock.tick(FPS)
 
-    def update_buttons(self):
+    def update_window(self, current_button=None):  # rendering
         global LANGUAGE
         screen.fill((0, 0, 0))
         screen.blit(self.bg, (0, 0))
@@ -100,14 +137,20 @@ class Lobby:
             self.buttons = map(lambda x: x.rstrip(), f.readlines())
 
         self.text_coord = HEIGHT * 0.3
+        button = 1
         for line in self.buttons:
-            string_rendered = self.font.render(line, 1, pygame.Color('white'))
+            if current_button == button:
+                string_rendered = self.font.render(line, 1, pygame.Color('yellow'))
+                current_button = None
+            else:
+                string_rendered = self.font.render(line, 1, pygame.Color('white'))
             self.buttons = string_rendered.get_rect()
             self.text_coord += 10
             self.buttons.top = self.text_coord
             self.buttons.x = 30
             self.text_coord += self.buttons.height
             screen.blit(string_rendered, self.buttons)
+            button += 1
 
     def quit(self):
         pygame.quit()
