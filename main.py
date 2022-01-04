@@ -166,7 +166,7 @@ class Lobby:
 
 
 # PG
-FPS = 100
+FPS = 60
 LANGUAGE = 'EN'
 pygame.init()
 user32 = ctypes.windll.user32
