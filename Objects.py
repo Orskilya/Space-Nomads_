@@ -59,6 +59,9 @@ class Planet(Object):
         for i in self.market.keys():
             self.market[i][0] += 10
 
+    def __str__(self):
+        return 'Планета'
+
 
 class Star(Object):
     def __init__(self, sheet, columns, rows, size, coord, *group):

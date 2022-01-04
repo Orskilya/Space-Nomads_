@@ -12,8 +12,12 @@ class Camera:
         self.dy = 0
 
     def apply(self, obj):
-        obj.rect.x += self.dx
-        obj.rect.y += self.dy
+        if str(obj) == 'Планета':
+            obj.center[0] = sun.rect.x + sun.size[0] // 2
+            obj.center[1] = sun.rect.y + sun.size[1] // 2
+        else:
+            obj.rect.x += self.dx
+            obj.rect.y += self.dy
 
     def update(self, target):
         self.dx = target.dx
@@ -162,7 +166,7 @@ class Lobby:
 
 
 # PG
-FPS = 60
+FPS = 100
 LANGUAGE = 'EN'
 pygame.init()
 user32 = ctypes.windll.user32
@@ -192,7 +196,7 @@ mars = Objects.Planet(load_image('Mars.png'), 50, 5, [150, 150], [WIDTH // 2, HE
                       100, all_sprites)
 jupiter = Objects.Planet(load_image('Jupiter.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
                          1200, 100, all_sprites)
-saturn = Objects.Planet(load_image('Saturn.png'), 21, 12, [200, 200], [WIDTH // 2, HEIGHT // 2],
+saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [200, 200], [WIDTH // 2, HEIGHT // 2],
                         1600, 100, all_sprites)
 uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2], 2000,
                         100, all_sprites)
@@ -200,7 +204,7 @@ neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH //
                          2400, 100, all_sprites)
 
 hero_ship = Ships.Ship(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2], 100, 100,
-                       None, all_sprites)
+                       None, camera, all_sprites)
 
 # main cycle
 running = True
@@ -212,7 +216,6 @@ while running:
             if event.key == pygame.K_w or event.key == pygame.K_a or event.key == pygame.K_s or \
                     event.key == pygame.K_d:
                 hero_ship.update(event, 'fly')
-                camera.update(hero_ship)
     screen.fill((0, 0, 0))
     all_sprites.update()
     for sprite in all_sprites:
