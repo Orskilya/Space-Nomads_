@@ -25,22 +25,24 @@ class Ship(pygame.sprite.Sprite):
         self.keys = []
 
     def fly(self, key=None, par=None):
+        self.dx = 0
+        self.dy = 0
         if par == 'go':
             self.keys.append(key)
         elif par == 'stop':
             del self.keys[self.keys.index(key)]
         if pygame.K_s in self.keys:
             self.coord[1] += 100 / fps
-            self.rect.y = self.coord[1] - self.size[1] // 2
+            self.dy = 100
         elif pygame.K_w in self.keys:
             self.coord[1] -= 100 / fps
-            self.rect.y = self.coord[1] - self.size[1] // 2
+            self.dy = -100
         if pygame.K_a in self.keys:
             self.coord[0] -= 100 / fps
-            self.rect.x = self.coord[0] - self.size[0] // 2
+            self.dx = -100
         elif pygame.K_d in self.keys:
             self.coord[0] += 100 / fps
-            self.rect.x = self.coord[0] - self.size[0] // 2
+            self.dx = 100
 
     def update(self, event=None, par=None):
         if par == 'fly' or self.keys:

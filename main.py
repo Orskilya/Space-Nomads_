@@ -16,8 +16,12 @@ class Camera:
         obj.rect.y += self.dy
 
     def update(self, target):
-        self.dx = -(target.rect.x + target.rect.w // 2 - WIDTH // 2)
-        self.dy = -(target.rect.y + target.rect.h // 2 - HEIGHT // 2)
+        self.dx = target.dx
+        self.dy = target.dy
+
+    def stop_move(self):
+        self.dx = 0
+        self.dy = 0
 
 
 def load_image(name, size_of_sprite=None, color_key=None):
@@ -208,11 +212,13 @@ while running:
             if event.key == pygame.K_w or event.key == pygame.K_a or event.key == pygame.K_s or \
                     event.key == pygame.K_d:
                 hero_ship.update(event, 'fly')
+                camera.update(hero_ship)
     screen.fill((0, 0, 0))
     all_sprites.update()
-    #     camera.update(hero_ship)
-    #     for sprite in all_sprites:
-    #         camera.apply(sprite)
+    for sprite in all_sprites:
+        if sprite != hero_ship:
+            camera.apply(sprite)
+    camera.stop_move()
     all_sprites.draw(screen)
     pygame.display.flip()
     clock.tick(FPS)
