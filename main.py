@@ -69,7 +69,6 @@ class Lobby:
         self.bg = pygame.transform.scale(load_image('lobby_bg.png'), SIZE)
         screen.blit(self.bg, (0, 0))
 
-        self.font = pygame.font.SysFont('Arialms', 50)
         self.update_window()
         self.cycle()
 
@@ -84,7 +83,8 @@ class Lobby:
                     if 250 >= pos[0] >= 30:
                         if self.buttons_type == 'Main Menu':
                             if HEIGHT * 0.3 <= pos[1] <= HEIGHT * 0.3 + self.buttons.height:
-                                return  # start new game
+                                self.ent()  # start new game
+                                return
                             elif HEIGHT * 0.3 + self.buttons.height + 15 <= pos[1] \
                                     <= HEIGHT * 0.3 + 2 * self.buttons.height + 15:
                                 return  # continue last save
@@ -157,9 +157,10 @@ class Lobby:
             clock.tick(FPS)
 
     def update_window(self, current_button=None):  # rendering
-        global LANGUAGE
+        global LANGUAGE, HEIGHT
         screen.fill((0, 0, 0))
         screen.blit(self.bg, (0, 0))
+        font = pygame.font.SysFont('Arialms', 50)
 
         with open(f'data/{self.buttons_type} {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
             self.buttons = map(lambda x: x.rstrip(), f.readlines())
@@ -168,10 +169,10 @@ class Lobby:
         button = 1
         for line in self.buttons:
             if current_button == button:
-                string_rendered = self.font.render(line, 1, pygame.Color('yellow'))
+                string_rendered = font.render(line, True, pygame.Color('yellow'))
                 current_button = None
             else:
-                string_rendered = self.font.render(line, 1, pygame.Color('white'))
+                string_rendered = font.render(line, True, pygame.Color('white'))
             self.buttons = string_rendered.get_rect()
             self.text_coord += 10
             self.buttons.top = self.text_coord
@@ -183,6 +184,41 @@ class Lobby:
     def quit(self):
         pygame.quit()
         sys.exit()
+
+    def ent(self):
+        global LANGUAGE, FPS, WIDTH, HEIGHT
+        self.bg = pygame.transform.scale(load_image('ent_bg.png'), SIZE)
+        screen.fill((0, 0, 0))
+        screen.blit(self.bg, (0, 0))
+        font = pygame.font.SysFont('Arialms', 40)
+
+        with open(f'data/ENT {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
+            start_game = f.readline().rstrip()
+            self.buttons = map(lambda x: x.rstrip(), f.readlines())
+
+        self.text_coord = HEIGHT * 0.15
+        button = 1
+        for line in self.buttons:
+            string_rendered = font.render(line, True, pygame.Color('white'))
+            self.buttons = string_rendered.get_rect()
+            self.text_coord += 10
+            self.buttons.top = self.text_coord
+            self.buttons.x = 30
+            self.text_coord += self.buttons.height
+            screen.blit(string_rendered, self.buttons)
+            button += 1
+
+        screen.blit(font.render(start_game, True, pygame.Color('white')),
+                    (WIDTH * 0.3, HEIGHT * 0.9))
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.quit()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    return
+            pygame.display.flip()
+            clock.tick(FPS)
 
 
 # PG
