@@ -15,6 +15,15 @@ class Camera:
         if str(obj) == 'Планета':
             obj.center[0] = sun.rect.x + sun.size[0] // 2
             obj.center[1] = sun.rect.y + sun.size[1] // 2
+        elif sprite == bg:
+            if self.dx < 0:
+                obj.rect.x += -((-self.dx) // 2)
+            else:
+                obj.rect.x += self.dx // 2
+            if self.dy < 0:
+                obj.rect.y += -((-self.dy) // 2)
+            else:
+                obj.rect.y += self.dy // 2
         else:
             obj.rect.x += self.dx
             obj.rect.y += self.dy
@@ -176,15 +185,24 @@ clock = pygame.time.Clock()
 
 # lobby
 lobby = Lobby()
+lobby = None
 
 # Группы спрайтов
 all_sprites = pygame.sprite.Group()
 planets = pygame.sprite.Group()
 ships = pygame.sprite.Group()
+background = pygame.sprite.Group()
 camera = Camera()
 
 # Объекты
-sun = Objects.Star(load_image('Sun.png'), 25, 10, [400, 400], [WIDTH // 2, HEIGHT // 2],
+bg = pygame.sprite.Sprite()
+bg.image = pygame.transform.scale(load_image('Space Background.png'), (9000, 9000))
+bg.rect = bg.image.get_rect()
+all_sprites.add(bg)
+bg.rect.x = -4500
+bg.rect.y = -4500
+
+sun = Objects.Star(load_image('Sun.png'), 25, 10, [1500, 1500], [WIDTH // 2, HEIGHT // 2],
                    all_sprites)
 mercury = Objects.Planet(load_image('Mercury.png'), 50, 5, [100, 100], [WIDTH // 2, HEIGHT // 2],
                          250, 100, all_sprites)
@@ -196,8 +214,8 @@ mars = Objects.Planet(load_image('Mars.png'), 50, 5, [150, 150], [WIDTH // 2, HE
                       100, all_sprites)
 jupiter = Objects.Planet(load_image('Jupiter.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
                          1200, 100, all_sprites)
-saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [200, 200], [WIDTH // 2, HEIGHT // 2],
-                        1600, 100, all_sprites)
+#saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [600, 600], [WIDTH // 2, HEIGHT // 2],
+#                        1600, 100, all_sprites)
 uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2], 2000,
                         100, all_sprites)
 neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
