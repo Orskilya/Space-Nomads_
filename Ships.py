@@ -34,20 +34,20 @@ class Ship(pygame.sprite.Sprite):
         elif par == 'stop':
             del self.keys[self.keys.index(key)]
         if pygame.K_s in self.keys:
-            self.coord[1] += 100 // fps
-            self.dy = -(100 // fps)
+            self.coord[1] += 200 // fps
+            self.dy = -(200 // fps)
             self.camera.update(self)
         elif pygame.K_w in self.keys:
-            self.coord[1] -= 100 // fps
-            self.dy = 100 // fps
+            self.coord[1] -= 200 // fps
+            self.dy = 200 // fps
             self.camera.update(self)
         if pygame.K_a in self.keys:
-            self.coord[0] -= 100 // fps
-            self.dx = 100 // fps
+            self.coord[0] -= 200 // fps
+            self.dx = 200 // fps
             self.camera.update(self)
         elif pygame.K_d in self.keys:
-            self.coord[0] += 100 // fps
-            self.dx = -(100 // fps)
+            self.coord[0] += 200 // fps
+            self.dx = -(200 // fps)
             self.camera.update(self)
 
     def update(self, event=None, par=None):
