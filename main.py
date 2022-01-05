@@ -15,7 +15,7 @@ class Camera:
         if str(obj) == 'Планета':
             obj.center[0] = sun.rect.x + sun.size[0] // 2
             obj.center[1] = sun.rect.y + sun.size[1] // 2
-        elif sprite == bg:
+        if sprite == bg:
             if self.dx < 0:
                 obj.rect.x += -((-self.dx) // 2)
             else:

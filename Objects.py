@@ -10,12 +10,16 @@ equipments = (1,)  # tuple. Add to main code
 class Object(pygame.sprite.Sprite):
     def __init__(self, sheet, columns, rows, size, coord, *group):
         super().__init__(*group)
+        self.sheet = sheet
+        self.columns = columns
+        self.rows = rows
         self.coord = coord  # list
         self.size = size
         self.frames = []
-        self.cut_sheet(sheet, columns, rows)
-        self.cur_frame = 0
-        self.image = self.frames[self.cur_frame]
+        self.rect = pygame.Rect(0, 0, self.sheet.get_width() // columns,
+                                self.sheet.get_height() // rows)
+        self.frame_location = [0, 0]
+        self.image = self.sheet.subsurface(pygame.Rect(self.frame_location, self.rect.size))
         self.image = pygame.transform.scale(self.image, (self.size[0], self.size[1]))
         self.rect = self.rect.move(coord[0] - self.size[0] // 2, coord[1] - self.size[1] // 2)
         self.mask = pygame.mask.from_surface(self.image)
@@ -51,8 +55,12 @@ class Planet(Object):
         self.rect.y = self.coord[1]
         self.grad += self.angular_speed
         if self.count == 0:
-            self.cur_frame = (self.cur_frame + 1) % len(self.frames)
-            self.image = self.frames[self.cur_frame]
+            self.frame_location[0] = ((self.frame_location[0] + 1) % self.columns)
+            if self.frame_location[0] == 0:
+                self.frame_location[1] = ((self.frame_location[1] + 1) % self.rows)
+            self.image = self.sheet.subsurface(pygame.Rect((self.frame_location[0] * self.rect.h,
+                                                            self.frame_location[1] * self.rect.w),
+                                                           self.rect.size))
             self.image = pygame.transform.scale(self.image, (self.size[0], self.size[1]))
             self.mask = pygame.mask.from_surface(self.image)
         self.count = (self.count + 1) % self.images_speed
@@ -77,8 +85,12 @@ class Star(Object):
 
     def update(self):
         if self.count == 0:
-            self.cur_frame = (self.cur_frame + 1) % len(self.frames)
-            self.image = self.frames[self.cur_frame]
+            self.frame_location[0] = ((self.frame_location[0] + 1) % self.columns)
+            if self.frame_location[0] == 0:
+                self.frame_location[1] = ((self.frame_location[1] + 1) % self.rows)
+            self.image = self.sheet.subsurface(pygame.Rect((self.frame_location[0] * self.rect.h,
+                                                            self.frame_location[1] * self.rect.w),
+                                                           self.rect.size))
             self.image = pygame.transform.scale(self.image, (self.size[0], self.size[1]))
             self.mask = pygame.mask.from_surface(self.image)
         self.count = (self.count + 1) % self.images_speed
