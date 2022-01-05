@@ -18,6 +18,7 @@ class Object(pygame.sprite.Sprite):
         self.image = self.frames[self.cur_frame]
         self.image = pygame.transform.scale(self.image, (self.size[0], self.size[1]))
         self.rect = self.rect.move(coord[0] - self.size[0] // 2, coord[1] - self.size[1] // 2)
+        self.mask = pygame.mask.from_surface(self.image)
 
     def cut_sheet(self, sheet, columns, rows):
         self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
@@ -53,6 +54,7 @@ class Planet(Object):
             self.cur_frame = (self.cur_frame + 1) % len(self.frames)
             self.image = self.frames[self.cur_frame]
             self.image = pygame.transform.scale(self.image, (self.size[0], self.size[1]))
+            self.mask = pygame.mask.from_surface(self.image)
         self.count = (self.count + 1) % self.images_speed
 
     def market_items(self):  # increasing number of the products
@@ -78,6 +80,7 @@ class Star(Object):
             self.cur_frame = (self.cur_frame + 1) % len(self.frames)
             self.image = self.frames[self.cur_frame]
             self.image = pygame.transform.scale(self.image, (self.size[0], self.size[1]))
+            self.mask = pygame.mask.from_surface(self.image)
         self.count = (self.count + 1) % self.images_speed
 
 

@@ -52,6 +52,17 @@ def load_image(name, size_of_sprite=None, color_key=None):
     return image
 
 
+class Landing:
+    def __init__(self):
+        self.font = pygame.font.SysFont('Arialms', 60)
+        self.text = self.font.render('Press "Space" to land', 1, pygame.Color('Green'))
+
+    def planet_collide(self):
+        for sprites in planets:
+            if pygame.sprite.collide_mask(hero_ship, sprites):
+                screen.blit(self.text, (30, 40))
+
+
 class Lobby:
     def __init__(self):
         self.buttons_type = 'Main Menu'
@@ -186,6 +197,7 @@ clock = pygame.time.Clock()
 # lobby
 lobby = Lobby()
 lobby = None
+landing = Landing()
 
 # Группы спрайтов
 all_sprites = pygame.sprite.Group()
@@ -205,24 +217,24 @@ bg.rect.y = -4500
 sun = Objects.Star(load_image('Sun.png'), 25, 10, [1500, 1500], [WIDTH // 2, HEIGHT // 2],
                    all_sprites)
 mercury = Objects.Planet(load_image('Mercury.png'), 50, 5, [100, 100], [WIDTH // 2, HEIGHT // 2],
-                         250, 100, all_sprites)
+                         250, 100, all_sprites, planets)
 venus = Objects.Planet(load_image('Venus.png'), 50, 5, [150, 150], [WIDTH // 2, HEIGHT // 2],
-                       400, 100, all_sprites)
+                       400, 100, all_sprites, planets)
 earth = Objects.Planet(load_image('Earth.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2], 600,
-                       100, all_sprites)
+                       100, all_sprites, planets)
 mars = Objects.Planet(load_image('Mars.png'), 50, 5, [150, 150], [WIDTH // 2, HEIGHT // 2], 800,
-                      100, all_sprites)
+                      100, all_sprites, planets)
 jupiter = Objects.Planet(load_image('Jupiter.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
-                         1200, 100, all_sprites)
-#saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [600, 600], [WIDTH // 2, HEIGHT // 2],
-#                        1600, 100, all_sprites)
+                         1200, 100, all_sprites, planets)
+# saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [600, 600], [WIDTH // 2, HEIGHT // 2],
+#                        1600, 100, all_sprites, planets)
 uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2], 2000,
-                        100, all_sprites)
+                        100, all_sprites, planets)
 neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
-                         2400, 100, all_sprites)
+                         2400, 100, all_sprites, planets)
 
 hero_ship = Ships.Ship(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2], 100, 100,
-                       None, camera, all_sprites)
+                       None, camera, all_sprites, ships)
 
 # main cycle
 running = True
@@ -241,6 +253,7 @@ while running:
             camera.apply(sprite)
     camera.stop_move()
     all_sprites.draw(screen)
+    landing.planet_collide()
     pygame.display.flip()
     clock.tick(FPS)
 pygame.quit()
