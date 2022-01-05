@@ -6,9 +6,10 @@ fps = 60
 
 
 class Ship(pygame.sprite.Sprite):
-    def __init__(self, sprite, coord, hull, armor, equipment, *group):
+    def __init__(self, sprite, coord, hull, armor, equipment, camera, *group):
         # Work with sprite
         super().__init__(*group)
+        self.camera = camera
         self.image = sprite
         self.coord = coord  # list
         self.rect = self.image.get_rect()
@@ -25,22 +26,29 @@ class Ship(pygame.sprite.Sprite):
         self.keys = []
 
     def fly(self, key=None, par=None):
+        self.dx = 0
+        self.dy = 0
         if par == 'go':
-            self.keys.append(key)
+            if key in [pygame.K_s, pygame.K_w, pygame.K_a, pygame.K_d]:
+                self.keys.append(key)
         elif par == 'stop':
             del self.keys[self.keys.index(key)]
         if pygame.K_s in self.keys:
-            self.coord[1] += 100 / fps
-            self.rect.y = self.coord[1] - self.size[1] // 2
+            self.coord[1] += 200 // fps
+            self.dy = -(200 // fps)
+            self.camera.update(self)
         elif pygame.K_w in self.keys:
-            self.coord[1] -= 100 / fps
-            self.rect.y = self.coord[1] - self.size[1] // 2
+            self.coord[1] -= 200 // fps
+            self.dy = 200 // fps
+            self.camera.update(self)
         if pygame.K_a in self.keys:
-            self.coord[0] -= 100 / fps
-            self.rect.x = self.coord[0] - self.size[0] // 2
+            self.coord[0] -= 200 // fps
+            self.dx = 200 // fps
+            self.camera.update(self)
         elif pygame.K_d in self.keys:
-            self.coord[0] += 100 / fps
-            self.rect.x = self.coord[0] - self.size[0] // 2
+            self.coord[0] += 200 // fps
+            self.dx = -(200 // fps)
+            self.camera.update(self)
 
     def update(self, event=None, par=None):
         if par == 'fly' or self.keys:
