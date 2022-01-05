@@ -69,7 +69,6 @@ class Lobby:
         self.bg = pygame.transform.scale(load_image('lobby_bg.png'), SIZE)
         screen.blit(self.bg, (0, 0))
 
-        self.font = pygame.font.SysFont('Arialms', 50)
         self.update_window()
         self.cycle()
 
@@ -84,7 +83,8 @@ class Lobby:
                     if 250 >= pos[0] >= 30:
                         if self.buttons_type == 'Main Menu':
                             if HEIGHT * 0.3 <= pos[1] <= HEIGHT * 0.3 + self.buttons.height:
-                                return  # start new game
+                                self.ent()  # start new game
+                                return
                             elif HEIGHT * 0.3 + self.buttons.height + 15 <= pos[1] \
                                     <= HEIGHT * 0.3 + 2 * self.buttons.height + 15:
                                 return  # continue last save
@@ -157,9 +157,10 @@ class Lobby:
             clock.tick(FPS)
 
     def update_window(self, current_button=None):  # rendering
-        global LANGUAGE
+        global LANGUAGE, HEIGHT
         screen.fill((0, 0, 0))
         screen.blit(self.bg, (0, 0))
+        font = pygame.font.SysFont('Arialms', 50)
 
         with open(f'data/{self.buttons_type} {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
             self.buttons = map(lambda x: x.rstrip(), f.readlines())
@@ -168,10 +169,10 @@ class Lobby:
         button = 1
         for line in self.buttons:
             if current_button == button:
-                string_rendered = self.font.render(line, 1, pygame.Color('yellow'))
+                string_rendered = font.render(line, True, pygame.Color('yellow'))
                 current_button = None
             else:
-                string_rendered = self.font.render(line, 1, pygame.Color('white'))
+                string_rendered = font.render(line, True, pygame.Color('white'))
             self.buttons = string_rendered.get_rect()
             self.text_coord += 10
             self.buttons.top = self.text_coord
@@ -184,10 +185,46 @@ class Lobby:
         pygame.quit()
         sys.exit()
 
+    def ent(self):
+        global LANGUAGE, FPS, WIDTH, HEIGHT
+        self.bg = pygame.transform.scale(load_image('ent_bg.png'), SIZE)
+        screen.fill((0, 0, 0))
+        screen.blit(self.bg, (0, 0))
+        font = pygame.font.SysFont('Arialms', 40)
+
+        with open(f'data/ENT {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
+            start_game = f.readline().rstrip()
+            self.buttons = map(lambda x: x.rstrip(), f.readlines())
+
+        self.text_coord = HEIGHT * 0.15
+        button = 1
+        for line in self.buttons:
+            string_rendered = font.render(line, True, pygame.Color('white'))
+            self.buttons = string_rendered.get_rect()
+            self.text_coord += 10
+            self.buttons.top = self.text_coord
+            self.buttons.x = 30
+            self.text_coord += self.buttons.height
+            screen.blit(string_rendered, self.buttons)
+            button += 1
+
+        screen.blit(font.render(start_game, True, pygame.Color('white')),
+                    (WIDTH * 0.3, HEIGHT * 0.9))
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.quit()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    return
+            pygame.display.flip()
+            clock.tick(FPS)
+
 
 # PG
 FPS = 60
 LANGUAGE = 'EN'
+AU = 815
 pygame.init()
 user32 = ctypes.windll.user32
 SIZE = WIDTH, HEIGHT = user32.GetSystemMetrics(0) - 100, user32.GetSystemMetrics(1) - 100
@@ -216,25 +253,25 @@ bg.rect.y = -4500
 
 sun = Objects.Star(load_image('Sun.png'), 25, 10, [1500, 1500], [WIDTH // 2, HEIGHT // 2],
                    all_sprites)
-mercury = Objects.Planet(load_image('Mercury.png'), 50, 5, [100, 100], [WIDTH // 2, HEIGHT // 2],
-                         250, 100, all_sprites, planets)
-venus = Objects.Planet(load_image('Venus.png'), 50, 5, [150, 150], [WIDTH // 2, HEIGHT // 2],
-                       400, 100, all_sprites, planets)
-earth = Objects.Planet(load_image('Earth.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2], 600,
-                       100, all_sprites, planets)
-mars = Objects.Planet(load_image('Mars.png'), 50, 5, [150, 150], [WIDTH // 2, HEIGHT // 2], 800,
-                      100, all_sprites, planets)
-jupiter = Objects.Planet(load_image('Jupiter.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
-                         1200, 100, all_sprites, planets)
-# saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [600, 600], [WIDTH // 2, HEIGHT // 2],
-#                        1600, 100, all_sprites, planets)
-uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2], 2000,
-                        100, all_sprites, planets)
+mercury = Objects.Planet(load_image('Mercury.png'), 50, 5, [80, 80], [WIDTH // 2, HEIGHT // 2],
+                         AU * 0.387 + 750, 100, all_sprites)
+venus = Objects.Planet(load_image('Venus.png'), 50, 5, [260, 260], [WIDTH // 2, HEIGHT // 2],
+                       AU * 0.9 + 750, 100, all_sprites)
+earth = Objects.Planet(load_image('Earth.png'), 50, 5, [280, 280], [WIDTH // 2, HEIGHT // 2],
+                       AU * 1.7 + 750, 100, all_sprites)
+mars = Objects.Planet(load_image('Mars.png'), 50, 5, [170, 170], [WIDTH // 2, HEIGHT // 2],
+                      AU * 2.5 + 750, 100, all_sprites)
+jupiter = Objects.Planet(load_image('Jupiter.png'), 50, 5, [400, 400], [WIDTH // 2, HEIGHT // 2],
+                         AU * 5.2 + 750, 100, all_sprites)
+# saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [390, 390], [WIDTH // 2, HEIGHT // 2],
+#                        AU * 6.2, 100, all_sprites)
+uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [220, 220], [WIDTH // 2, HEIGHT // 2],
+                        AU * 8 + 750, 100, all_sprites)
 neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
-                         2400, 100, all_sprites, planets)
+                         AU * 10 + 750, 100, all_sprites)
 
 hero_ship = Ships.Ship(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2], 100, 100,
-                       None, camera, all_sprites, ships)
+                       None, camera, all_sprites)
 
 # main cycle
 running = True
