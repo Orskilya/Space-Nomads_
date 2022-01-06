@@ -254,21 +254,21 @@ bg.rect.y = -4500
 sun = Objects.Star(load_image('Sun.png'), 25, 10, [1500, 1500], [WIDTH // 2, HEIGHT // 2],
                    all_sprites)
 mercury = Objects.Planet(load_image('Mercury.png'), 50, 5, [80, 80], [WIDTH // 2, HEIGHT // 2],
-                         AU * 0.387 + 750, 100, all_sprites)
+                         AU * 0.387 + 750, 100, all_sprites, planets)
 venus = Objects.Planet(load_image('Venus.png'), 50, 5, [260, 260], [WIDTH // 2, HEIGHT // 2],
-                       AU * 0.9 + 750, 100, all_sprites)
+                       AU * 0.9 + 750, 100, all_sprites, planets)
 earth = Objects.Planet(load_image('Earth.png'), 50, 5, [280, 280], [WIDTH // 2, HEIGHT // 2],
-                       AU * 1.7 + 750, 100, all_sprites)
+                       AU * 1.7 + 750, 100, all_sprites, planets)
 mars = Objects.Planet(load_image('Mars.png'), 50, 5, [170, 170], [WIDTH // 2, HEIGHT // 2],
-                      AU * 2.5 + 750, 100, all_sprites)
+                      AU * 2.5 + 750, 100, all_sprites, planets)
 jupiter = Objects.Planet(load_image('Jupiter.png'), 50, 5, [400, 400], [WIDTH // 2, HEIGHT // 2],
-                         AU * 5.2 + 750, 100, all_sprites)
-# saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [390, 390], [WIDTH // 2, HEIGHT // 2],
-#                        AU * 6.2, 100, all_sprites)
+                         AU * 5.2 + 750, 100, all_sprites, planets)
+saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [390, 390], [WIDTH // 2, HEIGHT // 2],
+                       AU * 6.2, 100, all_sprites, planets)
 uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [220, 220], [WIDTH // 2, HEIGHT // 2],
-                        AU * 8 + 750, 100, all_sprites)
+                        AU * 8 + 750, 100, all_sprites, planets)
 neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
-                         AU * 10 + 750, 100, all_sprites)
+                         AU * 10 + 750, 100, all_sprites, planets)
 
 hero_ship = Ships.Ship(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2], 100, 100,
                        None, camera, all_sprites)
