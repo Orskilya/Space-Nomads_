@@ -44,7 +44,7 @@ class Planet(Object):
         self.count = 0
         self.images_speed = 6
 
-    def update(self):
+    def update(self, **kwargs):
         self.coord[0] = self.center[0] + cos(self.grad) * self.radius - self.size[0] // 2
         self.coord[1] = self.center[1] + sin(self.grad) * self.radius - self.size[1] // 2
         self.rect.x = self.coord[0]
@@ -75,7 +75,7 @@ class Star(Object):
     def get_damage(self):
         return self.damage
 
-    def update(self):
+    def update(self, **kwargs):
         if self.count == 0:
             self.cur_frame = (self.cur_frame + 1) % len(self.frames)
             self.image = self.frames[self.cur_frame]

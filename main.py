@@ -8,14 +8,17 @@ import pygame
 
 class Camera:
     def __init__(self):
-        self.dx = 0
+        self.dx = -(AU * 1.7 + 750)
         self.dy = 0
 
     def apply(self, obj):
         if str(obj) == 'Планета':
             obj.center[0] = sun.rect.x + sun.size[0] // 2
             obj.center[1] = sun.rect.y + sun.size[1] // 2
-        if sprite == bg:
+        elif str(obj) == 'Кристалид':
+            obj.coord[0] += self.dx
+            obj.coord[1] += self.dy
+        elif sprite == bg:
             if self.dx < 0:
                 obj.rect.x += -((-self.dx) // 2)
             else:
@@ -248,7 +251,7 @@ bg = pygame.sprite.Sprite()
 bg.image = pygame.transform.scale(load_image('Space Background.png'), (9000, 9000))
 bg.rect = bg.image.get_rect()
 all_sprites.add(bg)
-bg.rect.x = -4500
+bg.rect.x = -4500 + (AU * 1.7 + 750) // 2
 bg.rect.y = -4500
 
 sun = Objects.Star(load_image('Sun.png'), 25, 10, [1500, 1500], [WIDTH // 2, HEIGHT // 2],
@@ -263,15 +266,18 @@ mars = Objects.Planet(load_image('Mars.png'), 50, 5, [170, 170], [WIDTH // 2, HE
                       AU * 2.5 + 750, 100, all_sprites, planets)
 jupiter = Objects.Planet(load_image('Jupiter.png'), 50, 5, [400, 400], [WIDTH // 2, HEIGHT // 2],
                          AU * 5.2 + 750, 100, all_sprites, planets)
-saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [390, 390], [WIDTH // 2, HEIGHT // 2],
-                       AU * 6.2, 100, all_sprites, planets)
+saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [800, 800], [WIDTH // 2, HEIGHT // 2],
+                        AU * 7.2, 100, all_sprites, planets)
 uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [220, 220], [WIDTH // 2, HEIGHT // 2],
                         AU * 8 + 750, 100, all_sprites, planets)
 neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
                          AU * 10 + 750, 100, all_sprites, planets)
 
-hero_ship = Ships.Ship(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2], 100, 100,
-                       None, camera, all_sprites)
+hero_ship = Ships.NomadShip(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2],
+                            100, 100, [], camera, SIZE, all_sprites)
+
+kristalid_test = Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
+                                 [0, 0], 100, 100, [], all_sprites)
 
 # main cycle
 running = True
@@ -284,7 +290,7 @@ while running:
                     event.key == pygame.K_d:
                 hero_ship.update(event, 'fly')
     screen.fill((0, 0, 0))
-    all_sprites.update()
+    all_sprites.update(hero_coord=[hero_ship.rect.x, hero_ship.rect.y])
     for sprite in all_sprites:
         if sprite != hero_ship:
             camera.apply(sprite)

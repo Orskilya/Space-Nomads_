@@ -1,21 +1,23 @@
 from random import randint
 import pygame
+from math import sqrt
 
 difficult = 50
 fps = 60
 
 
 class Ship(pygame.sprite.Sprite):
-    def __init__(self, sprite, coord, hull, armor, equipment, camera, *group):
+    def __init__(self, sprite, coord, hull, armor, equipment, *group):
         # Work with sprite
         super().__init__(*group)
-        self.camera = camera
         self.image = sprite
         self.coord = coord  # list
         self.rect = self.image.get_rect()
         self.size = self.rect.size
-        self.rect.x = self.coord[0] - self.size[0] // 2
-        self.rect.y = self.coord[1] - self.size[1] // 2
+        self.coord[0] -= self.size[0] // 2
+        self.coord[1] -= self.size[1] // 2
+        self.rect.x = self.coord[0]
+        self.rect.y = self.coord[1]
         # Values
         self.hull = hull
         self.armor = armor
@@ -25,39 +27,11 @@ class Ship(pygame.sprite.Sprite):
         self.space = hull
         self.keys = []
 
-    def fly(self, key=None, par=None):
-        self.dx = 0
-        self.dy = 0
-        if par == 'go':
-            if key in [pygame.K_s, pygame.K_w, pygame.K_a, pygame.K_d]:
-                self.keys.append(key)
-        elif par == 'stop':
-            del self.keys[self.keys.index(key)]
-        if pygame.K_s in self.keys:
-            self.coord[1] += 200 // fps
-            self.dy = -(200 // fps)
-            self.camera.update(self)
-        elif pygame.K_w in self.keys:
-            self.coord[1] -= 200 // fps
-            self.dy = 200 // fps
-            self.camera.update(self)
-        if pygame.K_a in self.keys:
-            self.coord[0] -= 200 // fps
-            self.dx = 200 // fps
-            self.camera.update(self)
-        elif pygame.K_d in self.keys:
-            self.coord[0] += 200 // fps
-            self.dx = -(200 // fps)
-            self.camera.update(self)
+    def fly(self):
+        pass
 
-    def update(self, event=None, par=None):
-        if par == 'fly' or self.keys:
-            if not event:
-                self.fly()
-            elif event.type == pygame.KEYDOWN:
-                self.fly(event.key, 'go')
-            else:
-                self.fly(event.key, 'stop')
+    def update(self):
+        pass
 
     def shoot(self):
         pass
@@ -134,7 +108,7 @@ class CargoShip(Ship):
 
 
 class NomadShip(Ship):
-    def __init__(self, sprite, coord, hull, armor, equipment, *group):
+    def __init__(self, sprite, coord, hull, armor, equipment, camera, scree_size, *group):
         super().__init__(sprite, coord, hull, armor, equipment, *group)
         self.slot_equipment = [(1, 1),  # engine and fuel tank
                                (1, 1, randint(0, 1), 0, 0),  # guns
@@ -150,6 +124,43 @@ class NomadShip(Ship):
                 self.hold.append(i)
                 self.mass += i.get_mass()
                 self.space -= i.get_mass()
+        self.camera = camera
+        self.rect.x = scree_size[0] // 2 - self.size[0] // 2
+        self.rect.y = scree_size[1] // 2 - self.size[1] // 2
+
+    def fly(self, key=None, par=None):
+        self.dx = 0
+        self.dy = 0
+        if par == 'go':
+            if key in [pygame.K_s, pygame.K_w, pygame.K_a, pygame.K_d]:
+                self.keys.append(key)
+        elif par == 'stop':
+            del self.keys[self.keys.index(key)]
+        if pygame.K_s in self.keys:
+            self.coord[1] += 300 // fps
+            self.dy = -(300 // fps)
+            self.camera.update(self)
+        elif pygame.K_w in self.keys:
+            self.coord[1] -= 300 // fps
+            self.dy = 300 // fps
+            self.camera.update(self)
+        if pygame.K_a in self.keys:
+            self.coord[0] -= 300 // fps
+            self.dx = 300 // fps
+            self.camera.update(self)
+        elif pygame.K_d in self.keys:
+            self.coord[0] += 300 // fps
+            self.dx = -(300 // fps)
+            self.camera.update(self)
+
+    def update(self, event=None, par=None, **kwargs):
+        if par == 'fly' or self.keys:
+            if not event:
+                self.fly()
+            elif event.type == pygame.KEYDOWN:
+                self.fly(event.key, 'go')
+            else:
+                self.fly(event.key, 'stop')
 
 
 class Kristalid(Ship):
@@ -169,3 +180,29 @@ class Kristalid(Ship):
             self.hold.append(i)
             self.mass += i.get_mass()
             self.space -= i.get_mass()
+
+    def fly(self, hero_coord, distance):
+        x = abs(hero_coord[0] - self.coord[0])
+        y = abs(hero_coord[1] - self.coord[1])
+        t = distance / (200 // fps)
+        s_x = x / t
+        s_y = y / t
+        if self.coord[0] > hero_coord[0]:
+            self.coord[0] -= s_x
+        else:
+            self.coord[0] += s_x
+        if self.coord[1] > hero_coord[1]:
+            self.coord[1] -= s_y
+        else:
+            self.coord[1] += s_y
+
+    def update(self, hero_coord):
+        distance = ((hero_coord[0] - self.coord[0]) ** 2 + (hero_coord[1]
+                                                            - self.coord[1]) ** 2) ** 0.5
+        if distance <= 2000:
+            self.fly(hero_coord, distance)
+        self.rect.x = self.coord[0]
+        self.rect.y = self.coord[1]
+
+    def __str__(self):
+        return 'Кристалид'
