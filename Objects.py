@@ -1,9 +1,10 @@
 from math import cos, sin, pi
 from random import randrange
 import pygame
+fps = 60
 
 products = (
-'Питание', 'Медикаменты', 'Алкоголь', 'Минералы', 'Роскошь', 'Техника', 'Оружие', 'Наркотики')
+    'Питание', 'Медикаменты', 'Алкоголь', 'Минералы', 'Роскошь', 'Техника', 'Оружие', 'Наркотики')
 equipments = (1,)  # tuple. Add to main code
 
 
@@ -85,8 +86,8 @@ class Star(Object):
 
 
 class Station(Object):
-    def __init__(self, coord, image):
-        super().__init__(coord, image)
+    def __init__(self, sheet, columns, rows, size, coord, *group):
+        super().__init__(sheet, columns, rows, size, coord, *group)
         self.shop = []  # list
         self.market = {i: [randrange(20, 100), randrange(90, 300), randrange(90, 330)] for i in
                        products}  # name: number, purchase, selling
@@ -94,3 +95,33 @@ class Station(Object):
     def market_items(self):  # increasing number of the products
         for i in self.market.keys():
             self.market[i][0] += 10
+
+
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, image, coord, owner, target, speed, maximum, damage, ships, *group):
+        super().__init__(*group)
+        self.maximum = maximum
+        self.start_point = coord
+        self.owner = owner
+        self.damage = damage
+        self.image = image
+        self.ships = ships
+        self.rect = self.image.get_rect()
+        self.rect.x = float(coord[0])
+        self.rect.y = float(coord[1])
+        self.target = target
+        distance = ((target[0] - coord[0]) ** 2 + (target[1] - coord[1]) ** 2) ** 0.5
+        x = abs(target[0] - coord[0])
+        y = abs(target[1] - coord[1])
+        s_x = x / (speed * x)
+        s_y = y / (speed * y)
+        if coord[0] > target[0]:
+            s_x = - s_x
+        if coord[1] > target[1]:
+            s_y = -s_y
+        self.speed_x = s_x
+        self.speed_y = s_y
+
+    def update(self, **kwargs):
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y

@@ -4,6 +4,7 @@ import Ships
 import Objects
 import os
 import pygame
+import Equipments
 
 
 class Camera:
@@ -15,9 +16,6 @@ class Camera:
         if str(obj) == 'Планета':
             obj.center[0] = sun.rect.x + sun.size[0] // 2
             obj.center[1] = sun.rect.y + sun.size[1] // 2
-        elif str(obj) == 'Кристалид':
-            obj.coord[0] += self.dx
-            obj.coord[1] += self.dy
         elif sprite == bg:
             if self.dx < 0:
                 obj.rect.x += -((-self.dx) // 2)
@@ -243,7 +241,6 @@ landing = Landing()
 all_sprites = pygame.sprite.Group()
 planets = pygame.sprite.Group()
 ships = pygame.sprite.Group()
-background = pygame.sprite.Group()
 camera = Camera()
 
 # Объекты
@@ -272,12 +269,16 @@ uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [220, 220], [WIDTH // 2
                         AU * 8 + 750, 100, all_sprites, planets)
 neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
                          AU * 10 + 750, 100, all_sprites, planets)
+station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 525], [
+    AU * 4.2 + 750 + WIDTH // 2, 800], all_sprites)
 
 hero_ship = Ships.NomadShip(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2],
-                            100, 100, [], camera, SIZE, all_sprites)
+                            100, 100, [Equipments.TestGun(load_image('Bullet.png', (50, 50)),
+                                                          (ships, all_sprites), 100, 100)], camera,
+                            SIZE, all_sprites, ships)
 
 kristalid_test = Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
-                                 [0, 0], 100, 100, [], all_sprites)
+                                 [0, 0], 100, 100, [], all_sprites, ships)
 
 # main cycle
 running = True
@@ -289,6 +290,9 @@ while running:
             if event.key == pygame.K_w or event.key == pygame.K_a or event.key == pygame.K_s or \
                     event.key == pygame.K_d:
                 hero_ship.update(event, 'fly')
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            hero_ship.update(event, 'shoot')
+
     screen.fill((0, 0, 0))
     all_sprites.update(hero_coord=[hero_ship.rect.x, hero_ship.rect.y])
     for sprite in all_sprites:

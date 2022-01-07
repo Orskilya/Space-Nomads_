@@ -1,6 +1,3 @@
-import pygame
-
-
 class Engine:
     def __init__(self, speed, jump, price, mass, setup=False):
         self.speed = speed
@@ -74,6 +71,7 @@ class Locator:
 
     def get_dist(self):
         return self.dist
+
 
 class Scanner:
     def __init__(self, scan, price, mass, setup=False):
@@ -168,3 +166,22 @@ class Absorber(Gun):
 
     def get_image(self):
         return self.image
+
+
+class TestGun:
+    def __init__(self, bullet_image, groups, mass, price, setup=False):
+        self.mass = mass
+        self.type = (1, 0)
+        self.price = price
+        self.setup = setup
+        self.bullet_image = bullet_image
+        self.groups = groups
+
+    def get_mass(self):
+        return self.mass
+
+    def get_type(self):
+        return self.type
+
+    def setup(self, setup):
+        self.setup = setup

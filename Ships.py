@@ -1,6 +1,6 @@
 from random import randint
 import pygame
-from math import sqrt
+from Objects import Bullet
 
 difficult = 50
 fps = 60
@@ -26,6 +26,8 @@ class Ship(pygame.sprite.Sprite):
         self.hold = list()
         self.space = hull
         self.keys = []
+        self.mask = pygame.mask.from_surface(self.image)
+        self.bullets = []
 
     def fly(self):
         pass
@@ -118,12 +120,12 @@ class NomadShip(Ship):
         self.hull *= 0.9
 
         # equipment setting up
-        for i in self.equipment:
-            if not self.slot_equipment[i.get_type()[0]][i.get_type()[1]]:
-                self.equipment.remove(i)
-                self.hold.append(i)
-                self.mass += i.get_mass()
-                self.space -= i.get_mass()
+        # for i in self.equipment:
+        #    if not self.slot_equipment[i.get_type()[0]][i.get_type()[1]]:
+        #        self.equipment.remove(i)
+        #        self.hold.append(i)
+        #        self.mass += i.get_mass()
+        #        self.space -= i.get_mass()
         self.camera = camera
         self.rect.x = scree_size[0] // 2 - self.size[0] // 2
         self.rect.y = scree_size[1] // 2 - self.size[1] // 2
@@ -154,13 +156,21 @@ class NomadShip(Ship):
             self.camera.update(self)
 
     def update(self, event=None, par=None, **kwargs):
-        if par == 'fly' or self.keys:
+        if par == 'shoot':
+            self.shoot(event.pos)
+        elif par == 'fly' or self.keys:
             if not event:
                 self.fly()
             elif event.type == pygame.KEYDOWN:
                 self.fly(event.key, 'go')
             else:
                 self.fly(event.key, 'stop')
+
+    def shoot(self, tarjet):
+        gr = self.equipment[0].groups
+        self.bullets.append(
+            Bullet(self.equipment[0].bullet_image, (self.rect.x, self.rect.y), self, tarjet, 200,
+                   2000, 100, gr[0], gr[1]))
 
 
 class Kristalid(Ship):
@@ -182,27 +192,21 @@ class Kristalid(Ship):
             self.space -= i.get_mass()
 
     def fly(self, hero_coord, distance):
-        x = abs(hero_coord[0] - self.coord[0])
-        y = abs(hero_coord[1] - self.coord[1])
+        x = abs(hero_coord[0] - self.rect.x)
+        y = abs(hero_coord[1] - self.rect.y)
         t = distance / (200 // fps)
         s_x = x / t
         s_y = y / t
-        if self.coord[0] > hero_coord[0]:
-            self.coord[0] -= s_x
+        if self.rect.x > hero_coord[0]:
+            self.rect.x -= s_x
         else:
-            self.coord[0] += s_x
-        if self.coord[1] > hero_coord[1]:
-            self.coord[1] -= s_y
+            self.rect.x += s_x
+        if self.rect.y > hero_coord[1]:
+            self.rect.y -= s_y
         else:
-            self.coord[1] += s_y
+            self.rect.y += s_y
 
     def update(self, hero_coord):
-        distance = ((hero_coord[0] - self.coord[0]) ** 2 + (hero_coord[1]
-                                                            - self.coord[1]) ** 2) ** 0.5
-        if distance <= 2000:
+        distance = ((hero_coord[0] - self.rect.x) ** 2 + (hero_coord[1] - self.rect.y) ** 2) ** 0.5
+        if 0 < distance <= 1500:
             self.fly(hero_coord, distance)
-        self.rect.x = self.coord[0]
-        self.rect.y = self.coord[1]
-
-    def __str__(self):
-        return 'Кристалид'
