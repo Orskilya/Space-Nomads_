@@ -1,6 +1,7 @@
 from math import cos, sin, pi
 from random import randrange
 import pygame
+import math
 fps = 60
 
 products = (
@@ -101,27 +102,25 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, image, coord, owner, target, speed, maximum, damage, ships, *group):
         super().__init__(*group)
         self.maximum = maximum
+        self.speed = speed
         self.start_point = coord
         self.owner = owner
         self.damage = damage
         self.image = image
         self.ships = ships
         self.rect = self.image.get_rect()
-        self.rect.x = float(coord[0])
-        self.rect.y = float(coord[1])
+        self.rect.x = coord[0]
+        self.rect.y = coord[1]
         self.target = target
-        distance = ((target[0] - coord[0]) ** 2 + (target[1] - coord[1]) ** 2) ** 0.5
-        x = abs(target[0] - coord[0])
-        y = abs(target[1] - coord[1])
-        s_x = x / (speed * x)
-        s_y = y / (speed * y)
-        if coord[0] > target[0]:
-            s_x = - s_x
-        if coord[1] > target[1]:
-            s_y = -s_y
-        self.speed_x = s_x
-        self.speed_y = s_y
+        self.angle = math.atan((self.target[1] - self.start_point[1]) /
+                            (self.target[0] - self.start_point[0]))
+        self.d = 0
 
     def update(self, **kwargs):
-        self.rect.x += self.speed_x
-        self.rect.y += self.speed_y
+        self.d += self.speed
+        self.rect.center = round(self.d * math.cos(self.angle) / fps) + self.start_point[0], round(self.d * math.sin(self.angle) / fps) + self.start_point[1]
+        # self.rect.x = round(self.d * math.cos(self.angle) / fps) + self.start_point[0]
+        # self.rect.y = round(self.d * math.sin(self.angle) / fps) + self.start_point[1]
+
+    def __str__(self):
+        return 'Пуля'

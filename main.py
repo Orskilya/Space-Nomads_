@@ -25,6 +25,9 @@ class Camera:
                 obj.rect.y += -((-self.dy) // 2)
             else:
                 obj.rect.y += self.dy // 2
+        elif str(sprite) == 'Пуля':
+            obj.start_point[0] += self.dx
+            obj.start_point[1] += self.dy
         else:
             obj.rect.x += self.dx
             obj.rect.y += self.dy
