@@ -5,8 +5,7 @@ import math
 
 fps = 60
 
-products = (
-    'Питание', 'Медикаменты', 'Алкоголь', 'Минералы', 'Роскошь', 'Техника', 'Оружие', 'Наркотики')
+products = ('product', 'medicine', 'alchogol', 'luxury', 'tech', 'weapon')
 equipments = (1,)  # tuple. Add to main code
 
 
@@ -42,7 +41,7 @@ class Planet(Object):
         self.center = coord.copy()
         self.angular_speed = (speed / self.radius) * (pi / 180)
         self.shop = []  # list
-        self.market = {i: [randrange(70, 300), randrange(80, 200), randrange(70, 190)] for i in
+        self.market = {i: [randrange(100, 300), randrange(80, 200), randrange(70, 190)] for i in
                        products}  # name: number, purchase, selling
         self.count = 0
         self.images_speed = 6
@@ -63,6 +62,9 @@ class Planet(Object):
     def market_items(self):  # increasing number of the products
         for i in self.market.keys():
             self.market[i][0] += 10
+
+    def products(self):
+        return self.market
 
     def __str__(self):
         return 'Планета'

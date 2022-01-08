@@ -45,7 +45,7 @@ class Ship(pygame.sprite.Sprite):
         return self.hull
 
     def get_damage(self, dmg):
-        self.hull -= dmg + self.armor
+        self.hull -= dmg - self.armor
 
     def overmass(self):
         return 'Ваш корабль не может поднять столько груза!'
