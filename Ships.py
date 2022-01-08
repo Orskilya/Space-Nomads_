@@ -186,11 +186,12 @@ class Kristalid(Ship):
         self.armor += round(difficult / 100)
 
         # equipment setting up
-        for i in self.equipment:
-            self.equipment.remove(i)
-            self.hold.append(i)
-            self.mass += i.get_mass()
-            self.space -= i.get_mass()
+        # for i in self.equipment:
+        #     self.equipment.remove(i)
+        #     self.hold.append(i)
+        #     self.mass += i.get_mass()
+        #     self.space -= i.get_mass()
+        self.shoot_time = 0
 
     def fly(self, hero_coord, distance):
         x = abs(hero_coord[0] - self.rect.x)
@@ -211,3 +212,14 @@ class Kristalid(Ship):
         distance = ((hero_coord[0] - self.rect.x) ** 2 + (hero_coord[1] - self.rect.y) ** 2) ** 0.5
         if 0 < distance <= 1500:
             self.fly(hero_coord, distance)
+            self.shoot_time = (self.shoot_time + 1) % (fps // 3)
+            if self.shoot_time == 0:
+                self.shoot(hero_coord)
+
+    def shoot(self, hero_coord):
+        gr = self.equipment[0].groups
+        tarjet = hero_coord
+        self.bullets.append(
+            Bullet(self.equipment[0].bullet_image,
+                   [self.rect.x + self.size[0] // 2, self.rect.y + self.size[1] // 2], self, tarjet,
+                   1000, 2000, 100, gr[0], gr[1]))
