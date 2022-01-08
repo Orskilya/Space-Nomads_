@@ -102,7 +102,7 @@ class Station(Object):
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, image, coord, owner, target, speed, maximum, damage, ships, *group):
+    def __init__(self, image, coord, owner, target, speed, maximum, damage, enemy, *group):
         super().__init__(*group)
         self.maximum = maximum
         self.speed = speed
@@ -110,10 +110,11 @@ class Bullet(pygame.sprite.Sprite):
         self.owner = owner
         self.damage = damage
         self.image = image
-        self.ships = ships
+        self.enemy = enemy
         self.rect = self.image.get_rect()
         self.rect.x = coord[0]
         self.rect.y = coord[1]
+        self.mask = pygame.mask.from_surface(self.image)
         if target[0] - self.start_point[0] == 0:
             self.null = True
         else:
@@ -128,14 +129,20 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self, **kwargs):
         if self.minus:
-            self.d -= self.speed
+            self.d -= self.speed / fps
         else:
-            self.d += self.speed
+            self.d += self.speed / fps
         if self.null:
-            self.rect.center = round(self.start_point[0]), round(self.d / fps) + self.start_point[1]
+            self.rect.center = round(self.start_point[0]), round(self.d) + self.start_point[1]
         else:
-            self.rect.center = round(self.d * math.cos(self.angle) / fps) + self.start_point[0], \
-                               round(self.d * math.sin(self.angle) / fps) + self.start_point[1]
+            self.rect.center = round(self.d * math.cos(self.angle)) + self.start_point[0], \
+                               round(self.d * math.sin(self.angle)) + self.start_point[1]
+        if self.d > self.maximum or self.d < -self.maximum:
+            self.kill()
+        for sprite in self.enemy:
+            if pygame.sprite.collide_mask(self, sprite):
+                self.kill()
+                sprite.kill()
 
     def __str__(self):
         return 'Пуля'

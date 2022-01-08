@@ -18,11 +18,11 @@ class Camera:
             obj.center[1] = sun.rect.y + sun.size[1] // 2
         elif sprite == bg:
             if self.dx < 0:
-                obj.rect.x += -((-self.dx) // 2)
+                obj.rect.x += -((-self.dx) // 3)
             else:
-                obj.rect.x += self.dx // 2
+                obj.rect.x += self.dx // 3
             if self.dy < 0:
-                obj.rect.y += -((-self.dy) // 2)
+                obj.rect.y += -((-self.dy) // 3)
             else:
                 obj.rect.y += self.dy // 2
         elif str(sprite) == 'Пуля':
@@ -406,6 +406,7 @@ all_sprites = pygame.sprite.Group()
 planets = pygame.sprite.Group()
 ships = pygame.sprite.Group()
 stations = pygame.sprite.Group()
+enemy = pygame.sprite.Group()
 camera = Camera()
 
 # Объекты
@@ -438,10 +439,10 @@ station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 5
                           [AU * 5.2 + 750, HEIGHT // 2], all_sprites, stations)
 hero_ship = Ships.NomadShip(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2],
                             100, 100, [Equipments.TestGun(load_image('Bullet.png', (50, 50)),
-                                                          (ships, all_sprites), 100, 100)], camera,
+                                                          (enemy, all_sprites), 100, 100)], camera,
                             SIZE, all_sprites, ships)
 kristalid_test = Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
-                                 [0, 0], 100, 100, [], all_sprites, ships)
+                                 [0, 0], 100, 100, [], all_sprites, ships, enemy)
 
 # main cycle
 running = True
