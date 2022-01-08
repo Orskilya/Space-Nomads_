@@ -28,6 +28,12 @@ class Camera:
         elif str(sprite) == 'Пуля':
             obj.start_point[0] += self.dx
             obj.start_point[1] += self.dy
+        elif str(obj) == 'Кристалид':
+            if not obj.first:
+                obj.start_point[0] += self.dx
+                obj.start_point[1] += self.dy
+            obj.rect.x += self.dx
+            obj.rect.y += self.dy
         else:
             obj.rect.x += self.dx
             obj.rect.y += self.dy
@@ -396,7 +402,7 @@ LANGUAGE = 'EN'
 AU = 815
 pygame.init()
 user32 = ctypes.windll.user32
-SIZE = WIDTH, HEIGHT = user32.GetSystemMetrics(0) - 100, user32.GetSystemMetrics(1) - 100
+SIZE = WIDTH, HEIGHT = 1920 - 100, 1080 - 100
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 
@@ -451,6 +457,10 @@ kristalid_test = Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1
                                      Equipments.TestGun(load_image('Bullet.png', (50, 50)),
                                                         (hero, all_sprites), 100, 100)],
                                  all_sprites, ships, enemy)
+for sprite in all_sprites:
+    if sprite != hero_ship:
+        camera.apply(sprite)
+camera.stop_move()
 
 # main cycle
 running = True
