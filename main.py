@@ -405,7 +405,7 @@ landing = Landing()
 all_sprites = pygame.sprite.Group()
 planets = pygame.sprite.Group()
 ships = pygame.sprite.Group()
-station_group = pygame.sprite.Group()
+stations = pygame.sprite.Group()
 camera = Camera()
 
 # Объекты
@@ -435,12 +435,11 @@ uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [220, 220], [WIDTH // 2
 neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
                          AU * 11 + 750, 100, all_sprites, planets)
 station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 525],
-                          [AU * 5.2 + 750, HEIGHT // 2], all_sprites, station_group)
+                          [AU * 5.2 + 750, HEIGHT // 2], all_sprites, stations)
 hero_ship = Ships.NomadShip(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2],
                             100, 100, [Equipments.TestGun(load_image('Bullet.png', (50, 50)),
                                                           (ships, all_sprites), 100, 100)], camera,
                             SIZE, all_sprites, ships)
-
 kristalid_test = Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
                                  [0, 0], 100, 100, [], all_sprites, ships)
 
