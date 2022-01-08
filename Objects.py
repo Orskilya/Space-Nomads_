@@ -2,6 +2,7 @@ from math import cos, sin, pi
 from random import randrange
 import pygame
 import math
+
 fps = 60
 
 products = (
@@ -111,16 +112,28 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = coord[0]
         self.rect.y = coord[1]
-        self.target = target
-        self.angle = math.atan((self.target[1] - self.start_point[1]) /
-                            (self.target[0] - self.start_point[0]))
+        if target[0] - self.start_point[0] == 0:
+            self.null = True
+        else:
+            self.null = False
+            self.angle = math.atan((target[1] - self.start_point[1]) /
+                                   (target[0] - self.start_point[0]))
         self.d = 0
+        if target[0] < self.start_point[0]:
+            self.minus = True
+        else:
+            self.minus = False
 
     def update(self, **kwargs):
-        self.d += self.speed
-        self.rect.center = round(self.d * math.cos(self.angle) / fps) + self.start_point[0], round(self.d * math.sin(self.angle) / fps) + self.start_point[1]
-        # self.rect.x = round(self.d * math.cos(self.angle) / fps) + self.start_point[0]
-        # self.rect.y = round(self.d * math.sin(self.angle) / fps) + self.start_point[1]
+        if self.minus:
+            self.d -= self.speed
+        else:
+            self.d += self.speed
+        if self.null:
+            self.rect.center = round(self.start_point[0]), round(self.d / fps) + self.start_point[1]
+        else:
+            self.rect.center = round(self.d * math.cos(self.angle) / fps) + self.start_point[0], \
+                               round(self.d * math.sin(self.angle) / fps) + self.start_point[1]
 
     def __str__(self):
         return 'Пуля'
