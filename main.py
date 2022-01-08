@@ -77,6 +77,9 @@ class Landing:
             if pygame.sprite.collide_mask(hero_ship, sprite):
                 screen.blit(self.text, (WIDTH // 2 - 150, HEIGHT // 2 + 20))
                 return sprite
+        if pygame.sprite.collide_mask(hero_ship, station):
+            screen.blit(self.text, (WIDTH // 2 - 150, HEIGHT // 2 + 20))
+            return sprite
 
     def cycle(self, planet):
         self.planet = planet
@@ -402,6 +405,7 @@ landing = Landing()
 all_sprites = pygame.sprite.Group()
 planets = pygame.sprite.Group()
 ships = pygame.sprite.Group()
+station_group = pygame.sprite.Group()
 camera = Camera()
 
 # Объекты
@@ -430,7 +434,8 @@ uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [220, 220], [WIDTH // 2
                         AU * 9 + 750, 100, all_sprites, planets)
 neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
                          AU * 11 + 750, 100, all_sprites, planets)
-
+station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 525],
+                          [AU * 5.2 + 750, HEIGHT // 2], all_sprites, station_group)
 hero_ship = Ships.NomadShip(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2],
                             100, 100, [Equipments.TestGun(load_image('Bullet.png', (50, 50)),
                                                           (ships, all_sprites), 100, 100)], camera,
@@ -449,11 +454,11 @@ while running:
             if event.key == pygame.K_w or event.key == pygame.K_a or event.key == pygame.K_s or \
                     event.key == pygame.K_d:
                 hero_ship.update(event, 'fly')
+            elif landing.planet_collide() and event.key == pygame.K_SPACE:
+                hero_ship.keys.clear()
+                landing.cycle(landing.planet_collide())
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             hero_ship.update(event, 'shoot')
-        elif landing.planet_collide() and event.key == pygame.K_SPACE:
-            hero_ship.keys.clear()
-            landing.cycle(landing.planet_collide())
     screen.fill((0, 0, 0))
     all_sprites.update(hero_coord=[hero_ship.rect.x, hero_ship.rect.y])
     for sprite in all_sprites:
