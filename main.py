@@ -61,13 +61,12 @@ class Landing:
     global WIDTH, HEIGHT, FPS, LANGUAGE
 
     def __init__(self):
+        self.font = pygame.font.SysFont('Arialms', 30)
         self.current_window = self.current_bg = 'government'
         self.font = pygame.font.SysFont('Arialms', 30)
         self.text = self.font.render('Press "Space" to land', True, pygame.Color('Yellow'))
         self.planet = None
-
-        #  with open(f'Icon_names {LANGUAGE}', 'r', encoding='utf-8') as f:
-        #      pass
+        self.button_type = None
 
     def planet_collide(self):
         for sprite in planets:
@@ -83,24 +82,40 @@ class Landing:
                     quit()
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # button push
                     pos = event.pos
-                    if HEIGHT - 100 <= pos[1] <= HEIGHT:
-                        if WIDTH * 0.5 - 200 <= pos[0] <= WIDTH * 0.5 - 100:
+                    if HEIGHT * 0.9 <= pos[1] <= HEIGHT:
+                        if WIDTH * 0.5 - 2 * WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5 - WIDTH * 0.055:
                             self.current_window = self.current_bg = 'government'
-                        elif WIDTH * 0.5 - 100 <= pos[0] <= WIDTH * 0.5:
+                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5:
                             self.current_window = 'shop'
                             self.current_bg = 'planet_bg'
-                        elif WIDTH * 0.5 <= pos[0] <= WIDTH * 0.5 + 100:
+                        elif WIDTH * 0.5 <= pos[0] <= WIDTH * 0.5 + WIDTH * 0.055:
                             self.current_window = 'market'
                             self.current_bg = 'planet_bg'
-                        elif WIDTH * 0.5 + 100 <= pos[0] <= WIDTH * 0.5 + 200:
+                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
                             self.current_window = self.current_bg = 'planet_bg'
+                            self.button_type = None
                             return  # undocking
+                elif event.type == pygame.MOUSEMOTION:
+                    pos = event.pos
+                    if HEIGHT - 100 <= pos[1] <= HEIGHT:
+                        if WIDTH * 0.5 - 2 * WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5 - WIDTH * 0.055:
+                            self.button_type = (WIDTH * 0.5 - 2 * WIDTH * 0.055, HEIGHT * 0.85, 0)
+                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5:
+                            self.button_type = (WIDTH * 0.5 - WIDTH * 0.055, HEIGHT * 0.85, 1)
+                        elif WIDTH * 0.5 <= pos[0] <= WIDTH * 0.5 + WIDTH * 0.055:
+                            self.button_type = (WIDTH * 0.5, HEIGHT * 0.85, 2)
+                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
+                            self.button_type = (WIDTH * 0.5 + WIDTH * 0.055, HEIGHT * 0.85, 3)
+                        else:
+                            self.button_type = None
+                    else:
+                        self.button_type = None
 
-            self.update_window()
+            self.update_window(self.button_type)
             pygame.display.flip()
             clock.tick(FPS)
 
-    def update_window(self):
+    def update_window(self, button_type):
         bg = pygame.transform.scale(load_image(self.current_bg + '.png'), SIZE)
         screen.blit(bg, (0, 0))
 
@@ -126,8 +141,20 @@ class Landing:
         if self.current_window != 'planet_bg':
             eval('self.' + self.current_window + '()')
 
+        if button_type:
+            pygame.draw.rect(screen, pygame.Color('#FFFFFF'),
+                             (button_type[0], button_type[1], WIDTH * 0.128, HEIGHT * 0.05),
+                             border_radius=50)
+            pygame.draw.rect(screen, pygame.Color('#04859D'),
+                             (button_type[0] + 5, button_type[1] + 5, WIDTH * 0.128 - 10, HEIGHT * 0.05 - 10), border_radius=50)
+
+            with open(f'data/ico_text {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
+                text = list(map(lambda x: x.rstrip(), f.readlines()))
+
+            screen.blit(self.font.render(text[button_type[2]], True, pygame.Color('White')), (button_type[0] + 10, button_type[1]))
+
     def government(self):
-        with open(f'data/Dialog planets {LANGUAGE}.txt') as f:
+        with open(f'data/Dialog planets {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
             text = map(lambda x: x.rstrip, f.readlines())
 
         pygame.draw.rect(screen, pygame.Color('#C8DFE3'),
@@ -148,7 +175,6 @@ class Landing:
                          border_radius=30)
 
     def market(self):
-        font = pygame.font.SysFont('Arialms', 30)
         pygame.draw.rect(screen, pygame.Color('#04859D'),
                          (WIDTH * 0.28, HEIGHT * 0.15, WIDTH * 0.44, HEIGHT * 0.69),
                          border_radius=30)
@@ -170,7 +196,7 @@ class Landing:
             x_position = WIDTH * 0.43
             flag = True
             for price in products[product]:
-                string_rendered = font.render(str(price), True, pygame.Color('black'))
+                string_rendered = self.font.render(str(price), True, pygame.Color('black'))
                 if flag:
                     string_len = string_rendered.get_width()
                     flag = False
@@ -182,13 +208,16 @@ class Landing:
         with open(f'data/market {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
             text = map(lambda x: x.rstrip(), f.readlines())
 
-        x_position = WIDTH * 0.4
+        if LANGUAGE == 'KR':
+            x_position = WIDTH * 0.44
+        else:
+            x_position = WIDTH * 0.4
         a = 1
         for word in text:
-            string_rendered = font.render(word, True, pygame.Color('black'))
+            string_rendered = self.font.render(word, True, pygame.Color('black'))
             screen.blit(string_rendered, (x_position, HEIGHT * 0.2))
             if a == 2:
-                space = font.render('buy', True, pygame.Color('black'))
+                space = self.font.render('buy', True, pygame.Color('black'))
                 x_position += WIDTH * 0.04 + space.get_width()
             else:
                 x_position += WIDTH * 0.04 + string_rendered.get_width()
@@ -352,7 +381,7 @@ class Lobby:
 
 # PG
 FPS = 60
-LANGUAGE = 'EN'
+LANGUAGE = 'RU'
 AU = 815
 pygame.init()
 user32 = ctypes.windll.user32
@@ -361,7 +390,7 @@ screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 
 # lobby
-lobby = Lobby()
+# lobby = Lobby()
 lobby = None
 landing = Landing()
 
@@ -402,6 +431,7 @@ neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH //
 hero_ship = Ships.Ship(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2], 100, 100,
                        None, camera, all_sprites)
 
+landing.cycle(earth)
 # main cycle
 running = True
 while running:
