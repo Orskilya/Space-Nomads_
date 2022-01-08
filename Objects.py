@@ -33,10 +33,10 @@ class Object(pygame.sprite.Sprite):
 
 
 class Planet(Object):
-    def __init__(self, sheet, columns, rows, size, coord, radius, speed, *group):
+    def __init__(self, sheet, columns, rows, size, coord, radius, speed, grad, *group):
         super().__init__(sheet, columns, rows, size, coord, *group)
         global products, equipments
-        self.grad = 0
+        self.grad = grad
         self.radius = radius
         self.center = coord.copy()
         self.angular_speed = (speed / self.radius) * (pi / 180)
@@ -96,9 +96,15 @@ class Station(Object):
         self.market = {i: [randrange(20, 100), randrange(90, 300), randrange(90, 330)] for i in
                        products}  # name: number, purchase, selling
 
+    def __str__(self):
+        return 'station'
+
     def market_items(self):  # increasing number of the products
         for i in self.market.keys():
             self.market[i][0] += 10
+
+    def products(self):
+        return self.market
 
 
 class Bullet(pygame.sprite.Sprite):
