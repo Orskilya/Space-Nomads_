@@ -169,8 +169,9 @@ class NomadShip(Ship):
     def shoot(self, tarjet):
         gr = self.equipment[0].groups
         self.bullets.append(
-            Bullet(self.equipment[0].bullet_image, [self.rect.x + self.size[0] // 2, self.rect.y + self.size[1] // 2], self, tarjet, 400,
-                   2000, 100, gr[0], gr[1]))
+            Bullet(self.equipment[0].bullet_image,
+                   [self.rect.x + self.size[0] // 2, self.rect.y + self.size[1] // 2], self, tarjet,
+                   400, 2000, 100, gr[0], gr[1]))
 
 
 class Kristalid(Ship):
