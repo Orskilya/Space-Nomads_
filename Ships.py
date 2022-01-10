@@ -155,6 +155,9 @@ class NomadShip(Ship):
             self.dx = -(300 // fps)
             self.camera.update(self)
 
+    def __str__(self):
+        return 'Корабль героя'
+
     def update(self, event=None, par=None, **kwargs):
         if par == 'shoot':
             self.shoot(event.pos)
@@ -214,11 +217,11 @@ class Kristalid(Ship):
             self.first = False
             self.start_point = [self.rect.x, self.rect.y]
         distance = ((hero_coord[0] - self.rect.x) ** 2 + (hero_coord[1] - self.rect.y) ** 2) ** 0.5
-        if 0 < distance <= 500:
+        if 0 < distance <= 1000:
             self.fly(hero_coord, distance)
-            # self.shoot_time = (self.shoot_time + 1) % (fps // 3)
-            # if self.shoot_time == 0:
-            #     self.shoot(hero_coord)
+            self.shoot_time = (self.shoot_time + 1) % (fps // 3)
+            if self.shoot_time == 0:
+                self.shoot(hero_coord)
         else:
             if self.rect.x != self.start_point[0] and self.rect.y != self.start_point[1]:
                 distance = ((self.start_point[0] - self.rect.x) ** 2 + (
