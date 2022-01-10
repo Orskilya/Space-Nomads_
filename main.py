@@ -67,10 +67,9 @@ class Landing:
     global WIDTH, HEIGHT, FPS, LANGUAGE
 
     def __init__(self):
-        self.font = pygame.font.SysFont('Arialms', 30)
+        self.font = pygame.font.SysFont('Arialms', 29)
         self.current_window = 'government'
         self.new_game = True
-        self.font = pygame.font.SysFont('Arialms', 30)
         self.text = self.font.render('Press "Space" to land', True, pygame.Color('Yellow'))
         self.object = None
         self.button_type = None
@@ -207,9 +206,9 @@ class Landing:
                 else:
                     x_position += WIDTH * 0.1
 
-
     def market(self):
-        self.button_names = ('Buy', 'Купить', '구입')
+        button_names = {'EN': 'Buy', 'RU': 'Купить', 'KR': '구입'}
+        button_names_2 = {'EN': 'Sell', 'RU': 'Продать', 'KR': '팔다'}
         pygame.draw.rect(screen, pygame.Color('#04859D'),
                          (WIDTH * 0.28, HEIGHT * 0.15, WIDTH * 0.44, HEIGHT * 0.69),
                          border_radius=30)
@@ -223,8 +222,16 @@ class Landing:
         y_position = HEIGHT * 0.25
         for _ in range(6):
             pygame.draw.rect(screen, pygame.Color('#04859D'),
-                             (WIDTH * 0.62, y_position, WIDTH * 0.07, HEIGHT * 0.04),
+                             (WIDTH * 0.55, y_position, WIDTH * 0.07, HEIGHT * 0.04),
                              border_radius=100)
+            text = self.font.render(button_names[LANGUAGE], True, pygame.Color('white'))
+            screen.blit(text, (WIDTH * 0.56, y_position))
+
+            pygame.draw.rect(screen, pygame.Color('#04859D'),
+                             (WIDTH * 0.63, y_position, WIDTH * 0.075, HEIGHT * 0.04),
+                             border_radius=100)
+            text = self.font.render(button_names_2[LANGUAGE], True, pygame.Color('white'))
+            screen.blit(text, (WIDTH * 0.64, y_position))
             y_position += WIDTH * 0.05
 
         #  icons and prices

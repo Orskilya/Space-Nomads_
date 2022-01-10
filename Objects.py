@@ -41,7 +41,7 @@ class Planet(Object):
         self.radius = radius
         self.center = coord.copy()
         self.angular_speed = (speed / self.radius) * (pi / 180)
-        self.shop = [[eval(f'{product}({randrange(0, 3)})') for _ in range(randrange(1, 3))] for
+        self.shop = [[eval(f'{product}({randrange(0, 4)})') for _ in range(randrange(1, 4))] for
                      product in goods_shop]
         self.market = {i: [randrange(100, 300), randrange(80, 200), randrange(70, 190)] for i in
                        products}  # name: number, purchase, selling
@@ -98,7 +98,7 @@ class Station(Object):
     def __init__(self, sheet, columns, rows, size, coord, *group):
         global products, goods_shop
         super().__init__(sheet, columns, rows, size, coord, *group)
-        self.shop = [[eval(f'{product}({randrange(0, 3)})') for _ in range(randrange(1, 2))] for
+        self.shop = [[eval(f'{product}({randrange(0, 4)})') for _ in range(randrange(1, 3))] for
                      product in goods_shop]
         # t3 equipment generation
         for i in range(7):
