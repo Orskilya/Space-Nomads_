@@ -439,7 +439,6 @@ print(SIZE)
 
 # lobby
 lobby = Lobby()
-lobby = None
 landing = Landing()
 
 # Группы спрайтов
