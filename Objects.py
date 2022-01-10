@@ -1,12 +1,13 @@
 from math import cos, sin, pi
-from random import randrange
+from random import randrange, choice
 import pygame
 import math
+from Equipments import Engine, FuelTank, Grab, Shield, PhotonGun, Absorber, Destructor
 
 fps = 60
 
 products = ('product', 'medicine', 'alchogol', 'luxury', 'tech', 'weapon')
-equipments = (1,)  # tuple. Add to main code
+goods_shop = ('FuelTank', 'Engine', 'Grab', 'Shield', 'PhotonGun', 'Destructor', 'Absorber')
 
 
 class Object(pygame.sprite.Sprite):
@@ -35,12 +36,13 @@ class Object(pygame.sprite.Sprite):
 class Planet(Object):
     def __init__(self, sheet, columns, rows, size, coord, radius, speed, grad, *group):
         super().__init__(sheet, columns, rows, size, coord, *group)
-        global products, equipments
+        global products, goods_shop
         self.grad = grad
         self.radius = radius
         self.center = coord.copy()
         self.angular_speed = (speed / self.radius) * (pi / 180)
-        self.shop = []  # list
+        self.shop = [[eval(f'{product}({randrange(0, 3)})') for _ in range(randrange(1, 3))] for
+                     product in goods_shop]
         self.market = {i: [randrange(100, 300), randrange(80, 200), randrange(70, 190)] for i in
                        products}  # name: number, purchase, selling
         self.count = 0
@@ -65,6 +67,9 @@ class Planet(Object):
 
     def products(self):
         return self.market
+
+    def get_shop(self):
+        return self.shop
 
     def __str__(self):
         return 'Планета'
@@ -91,8 +96,15 @@ class Star(Object):
 
 class Station(Object):
     def __init__(self, sheet, columns, rows, size, coord, *group):
+        global products, goods_shop
         super().__init__(sheet, columns, rows, size, coord, *group)
-        self.shop = []  # list
+        self.shop = [[eval(f'{product}({randrange(0, 3)})') for _ in range(randrange(1, 2))] for
+                     product in goods_shop]
+        # t3 equipment generation
+        for i in range(7):
+            self.shop[i].append(eval(goods_shop[i] + '(3)'))
+
+
         self.market = {i: [randrange(20, 100), randrange(90, 300), randrange(90, 330)] for i in
                        products}  # name: number, purchase, selling
 
@@ -102,6 +114,10 @@ class Station(Object):
     def market_items(self):  # increasing number of the products
         for i in self.market.keys():
             self.market[i][0] += 10
+
+    def get_shop(self):
+        return self.shop
+
 
     def products(self):
         return self.market

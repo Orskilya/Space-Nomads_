@@ -195,7 +195,21 @@ class Landing:
                          (WIDTH * 0.1101, HEIGHT * 0.2201, WIDTH * 0.779, HEIGHT * 0.56), 3,
                          border_radius=30)
 
+        equipment = self.object.get_shop()
+        x_position = WIDTH * 0.12
+        y_position = HEIGHT * 0.25
+        for type in equipment:
+            for i in type:
+                screen.blit(load_image(i.get_img(), (100, 100), -1), (x_position, y_position))
+                if x_position + WIDTH * 0.1 > WIDTH * 0.9:
+                    x_position = WIDTH * 0.12
+                    y_position += HEIGHT * 0.15
+                else:
+                    x_position += WIDTH * 0.1
+
+
     def market(self):
+        self.button_names = ('Buy', 'Купить', '구입')
         pygame.draw.rect(screen, pygame.Color('#04859D'),
                          (WIDTH * 0.28, HEIGHT * 0.15, WIDTH * 0.44, HEIGHT * 0.69),
                          border_radius=30)
@@ -206,6 +220,13 @@ class Landing:
                          (WIDTH * 0.2901, HEIGHT * 0.1701, WIDTH * 0.42, HEIGHT * 0.65), 3,
                          border_radius=30)
 
+        y_position = HEIGHT * 0.25
+        for _ in range(6):
+            pygame.draw.rect(screen, pygame.Color('#04859D'),
+                             (WIDTH * 0.62, y_position, WIDTH * 0.07, HEIGHT * 0.04),
+                             border_radius=100)
+            y_position += WIDTH * 0.05
+
         #  icons and prices
         y_position = HEIGHT * 0.25
         products = self.object.products()
@@ -214,7 +235,7 @@ class Landing:
                                                   (WIDTH * 0.032, WIDTH * 0.032))
             screen.blit(product_icon, (WIDTH * 0.31, y_position))
 
-            x_position = WIDTH * 0.43
+            x_position = WIDTH * 0.38
             flag = True
             for price in products[product]:
                 string_rendered = self.font.render(str(price), True, pygame.Color('black'))
@@ -230,9 +251,9 @@ class Landing:
             text = map(lambda x: x.rstrip(), f.readlines())
 
         if LANGUAGE == 'KR':
-            x_position = WIDTH * 0.44
+            x_position = WIDTH * 0.39
         else:
-            x_position = WIDTH * 0.4
+            x_position = WIDTH * 0.35
         a = 1
         for word in text:
             string_rendered = self.font.render(word, True, pygame.Color('black'))
@@ -393,7 +414,7 @@ class Lobby:
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.quit()
+                    quit()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     return
             pygame.display.flip()
@@ -414,9 +435,10 @@ user32 = ctypes.windll.user32
 SIZE = WIDTH, HEIGHT = user32.GetSystemMetrics(0) - 100, user32.GetSystemMetrics(1) - 100
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
+print(SIZE)
 
 # lobby
-# lobby = Lobby()
+lobby = Lobby()
 lobby = None
 landing = Landing()
 
@@ -456,13 +478,13 @@ neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH //
 station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 525],
                           [AU * 5.2 + 750, HEIGHT // 2], all_sprites, stations)
 hero_ship = Ships.NomadShip(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2],
-                            100, 100, [Equipments.TestGun(load_image('Bullet.png', (50, 50)),
+                            100, 100, [Equipments.Gun(load_image('photon_bullet.png', (50, 50)),
                                                           (ships, all_sprites), 100, 100)], camera,
                             SIZE, all_sprites, ships)
 kristalid_test = Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
                                  [0, 0], 100, 100, [], all_sprites, ships)
 
-landing.cycle(earth)
+
 # main cycle
 running = True
 while running:
