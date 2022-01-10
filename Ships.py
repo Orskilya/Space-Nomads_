@@ -94,7 +94,7 @@ class CargoShip(Ship):
     def __init__(self, sprite, coord, hull, armor, equipment, *group):
         super().__init__(sprite, coord, hull, armor, equipment, *group)
         self.slot_equipment = [(1, 1),  # engine and fuel tank
-                               (1, randint(0, 1), 0, 0, 0),  # guns
+                               (1, randint(0, 1), 0),  # guns
                                (randint(0, 1), 0),  # grab and shield
                                (1, 0),  # locator and scanner
                                0]  # afterburner
@@ -112,6 +112,7 @@ class CargoShip(Ship):
 class NomadShip(Ship):
     def __init__(self, sprite, coord, hull, armor, equipment, camera, scree_size, *group):
         super().__init__(sprite, coord, hull, armor, equipment, *group)
+        self.speed = 500
         self.slot_equipment = [(1, 1),  # engine and fuel tank
                                (1, 1, randint(0, 1), 0, 0),  # guns
                                (1, randint(0, 1)),  # grab and shield
@@ -139,20 +140,20 @@ class NomadShip(Ship):
         elif par == 'stop':
             del self.keys[self.keys.index(key)]
         if pygame.K_s in self.keys:
-            self.coord[1] += 300 // fps
-            self.dy = -(300 // fps)
+            self.coord[1] += self.speed // fps
+            self.dy = -(self.speed // fps)
             self.camera.update(self)
         elif pygame.K_w in self.keys:
-            self.coord[1] -= 300 // fps
-            self.dy = 300 // fps
+            self.coord[1] -= self.speed // fps
+            self.dy = self.speed // fps
             self.camera.update(self)
         if pygame.K_a in self.keys:
-            self.coord[0] -= 300 // fps
-            self.dx = 300 // fps
+            self.coord[0] -= self.speed // fps
+            self.dx = self.speed // fps
             self.camera.update(self)
         elif pygame.K_d in self.keys:
-            self.coord[0] += 300 // fps
-            self.dx = -(300 // fps)
+            self.coord[0] += self.speed // fps
+            self.dx = -(self.speed  // fps)
             self.camera.update(self)
 
     def __str__(self):

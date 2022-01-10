@@ -1,11 +1,12 @@
 import ctypes
-import random
 import sys
 import Ships
 import Objects
 import os
 import pygame
 import Equipments
+from random import randrange
+from math import radians
 import Hero
 
 
@@ -73,24 +74,33 @@ class Landing:
     global WIDTH, HEIGHT, FPS, LANGUAGE
 
     def __init__(self):
-        self.font = pygame.font.SysFont('Arialms', 30)
-        self.current_window = self.current_bg = 'government'
-        self.font = pygame.font.SysFont('Arialms', 30)
+        self.font = pygame.font.SysFont('Arialms', 29)
+        self.current_window = 'government'
+        self.new_game = True
         self.text = self.font.render('Press "Space" to land', True, pygame.Color('Yellow'))
-        self.planet = None
+        self.object = None
         self.button_type = None
 
     def planet_collide(self):
         for sprite in planets:
             if pygame.sprite.collide_mask(hero.ship, sprite):
-                screen.blit(self.text, (WIDTH // 2 - 150, HEIGHT // 2 + 20))
+                screen.blit(self.text, (WIDTH * 0.42, HEIGHT * 0.507))
                 return sprite
         if pygame.sprite.collide_mask(hero.ship, station):
-            screen.blit(self.text, (WIDTH // 2 - 150, HEIGHT // 2 + 20))
-            return sprite
+            screen.blit(self.text, (WIDTH * 0.43, HEIGHT * 0.507))
+            return station
 
-    def cycle(self, planet):
-        self.planet = planet
+    def cycle(self, object):
+        self.object = object
+        if str(self.object) == 'station':
+            self.bg_names = ('government_st', 'station_bg')
+        else:
+            self.bg_names = ('government', 'planet_bg')
+        if self.new_game:
+            self.current_bg = self.bg_names[0]
+            self.new_game = False
+        else:
+            self.current_bg = self.bg_names[1]
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -99,16 +109,17 @@ class Landing:
                     pos = event.pos
                     if HEIGHT * 0.9 <= pos[1] <= HEIGHT:
                         if WIDTH * 0.5 - 2 * WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5 - WIDTH * 0.055:
-                            self.current_window = self.current_bg = 'government'
+                            self.current_window = 'government'
+                            self.current_bg = self.bg_names[0]
                         elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5:
                             self.current_window = 'shop'
-                            self.current_bg = 'planet_bg'
+                            self.current_bg = self.bg_names[1]
                         elif WIDTH * 0.5 <= pos[0] <= WIDTH * 0.5 + WIDTH * 0.055:
                             self.current_window = 'market'
-                            self.current_bg = 'planet_bg'
-                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[
-                            0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
-                            self.current_window = self.current_bg = 'planet_bg'
+                            self.current_bg = self.bg_names[1]
+                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
+                            self.current_window = 'main'
+                            self.current_bg = self.bg_names[1]
                             self.button_type = None
                             return  # undocking
                 elif event.type == pygame.MOUSEMOTION:
@@ -120,8 +131,7 @@ class Landing:
                             self.button_type = (WIDTH * 0.5 - WIDTH * 0.055, HEIGHT * 0.85, 1)
                         elif WIDTH * 0.5 <= pos[0] <= WIDTH * 0.5 + WIDTH * 0.055:
                             self.button_type = (WIDTH * 0.5, HEIGHT * 0.85, 2)
-                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[
-                            0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
+                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
                             self.button_type = (WIDTH * 0.5 + WIDTH * 0.055, HEIGHT * 0.85, 3)
                         else:
                             self.button_type = None
@@ -155,7 +165,7 @@ class Landing:
             screen.blit(button, (button_cord_x, HEIGHT * 0.9))
             button_cord_x += 100
 
-        if self.current_window != 'planet_bg':
+        if self.current_window != 'main':
             eval('self.' + self.current_window + '()')
 
         if button_type:
@@ -163,14 +173,12 @@ class Landing:
                              (button_type[0], button_type[1], WIDTH * 0.128, HEIGHT * 0.05),
                              border_radius=50)
             pygame.draw.rect(screen, pygame.Color('#04859D'),
-                             (button_type[0] + 5, button_type[1] + 5, WIDTH * 0.128 - 10,
-                              HEIGHT * 0.05 - 10), border_radius=50)
+                             (button_type[0] + 5, button_type[1] + 5, WIDTH * 0.128 - 10, HEIGHT * 0.05 - 10), border_radius=50)
 
             with open(f'data/ico_text {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
                 text = list(map(lambda x: x.rstrip(), f.readlines()))
 
-            screen.blit(self.font.render(text[button_type[2]], True, pygame.Color('White')),
-                        (button_type[0] + 10, button_type[1]))
+            screen.blit(self.font.render(text[button_type[2]], True, pygame.Color('White')), (button_type[0] + 10, button_type[1]))
 
     def government(self):
         with open(f'data/Dialog planets {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
@@ -193,7 +201,21 @@ class Landing:
                          (WIDTH * 0.1101, HEIGHT * 0.2201, WIDTH * 0.779, HEIGHT * 0.56), 3,
                          border_radius=30)
 
+        equipment = self.object.get_shop()
+        x_position = WIDTH * 0.12
+        y_position = HEIGHT * 0.25
+        for type in equipment:
+            for i in type:
+                screen.blit(load_image(i.get_img(), (100, 100), -1), (x_position, y_position))
+                if x_position + WIDTH * 0.1 > WIDTH * 0.9:
+                    x_position = WIDTH * 0.12
+                    y_position += HEIGHT * 0.15
+                else:
+                    x_position += WIDTH * 0.1
+
     def market(self):
+        button_names = {'EN': 'Buy', 'RU': 'Купить', 'KR': '구입'}
+        button_names_2 = {'EN': 'Sell', 'RU': 'Продать', 'KR': '팔다'}
         pygame.draw.rect(screen, pygame.Color('#04859D'),
                          (WIDTH * 0.28, HEIGHT * 0.15, WIDTH * 0.44, HEIGHT * 0.69),
                          border_radius=30)
@@ -204,15 +226,30 @@ class Landing:
                          (WIDTH * 0.2901, HEIGHT * 0.1701, WIDTH * 0.42, HEIGHT * 0.65), 3,
                          border_radius=30)
 
+        y_position = HEIGHT * 0.25
+        for _ in range(6):
+            pygame.draw.rect(screen, pygame.Color('#04859D'),
+                             (WIDTH * 0.55, y_position, WIDTH * 0.07, HEIGHT * 0.04),
+                             border_radius=100)
+            text = self.font.render(button_names[LANGUAGE], True, pygame.Color('white'))
+            screen.blit(text, (WIDTH * 0.56, y_position))
+
+            pygame.draw.rect(screen, pygame.Color('#04859D'),
+                             (WIDTH * 0.63, y_position, WIDTH * 0.075, HEIGHT * 0.04),
+                             border_radius=100)
+            text = self.font.render(button_names_2[LANGUAGE], True, pygame.Color('white'))
+            screen.blit(text, (WIDTH * 0.64, y_position))
+            y_position += WIDTH * 0.05
+
         #  icons and prices
         y_position = HEIGHT * 0.25
-        products = self.planet.products()
+        products = self.object.products()
         for product in products:
             product_icon = pygame.transform.scale(load_image(product + '_icon.png'),
                                                   (WIDTH * 0.032, WIDTH * 0.032))
             screen.blit(product_icon, (WIDTH * 0.31, y_position))
 
-            x_position = WIDTH * 0.43
+            x_position = WIDTH * 0.38
             flag = True
             for price in products[product]:
                 string_rendered = self.font.render(str(price), True, pygame.Color('black'))
@@ -228,9 +265,9 @@ class Landing:
             text = map(lambda x: x.rstrip(), f.readlines())
 
         if LANGUAGE == 'KR':
-            x_position = WIDTH * 0.44
+            x_position = WIDTH * 0.39
         else:
-            x_position = WIDTH * 0.4
+            x_position = WIDTH * 0.35
         a = 1
         for word in text:
             string_rendered = self.font.render(word, True, pygame.Color('black'))
@@ -391,7 +428,7 @@ class Lobby:
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.quit()
+                    quit()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     return
             pygame.display.flip()
@@ -409,13 +446,12 @@ LANGUAGE = 'EN'
 AU = 815
 pygame.init()
 user32 = ctypes.windll.user32
-SIZE = WIDTH, HEIGHT = 1920 - 100, 1080 - 100
+SIZE = WIDTH, HEIGHT = user32.GetSystemMetrics(0) - 100, user32.GetSystemMetrics(1) - 100
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 
 # lobby
 lobby = Lobby()
-lobby = None
 landing = Landing()
 
 # Группы спрайтов
@@ -438,21 +474,21 @@ bg.rect.y = -4500
 sun = Objects.Star(load_image('Sun.png'), 25, 10, [1500, 1500], [WIDTH // 2, HEIGHT // 2],
                    all_sprites)
 mercury = Objects.Planet(load_image('Mercury.png'), 50, 5, [80, 80], [WIDTH // 2, HEIGHT // 2],
-                         AU * 0.387 + 750, 100, all_sprites, planets)
+                         AU * 0.387 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
 venus = Objects.Planet(load_image('Venus.png'), 50, 5, [260, 260], [WIDTH // 2, HEIGHT // 2],
-                       AU * 0.9 + 750, 100, all_sprites, planets)
+                       AU * 0.9 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
 earth = Objects.Planet(load_image('Earth.png'), 50, 5, [280, 280], [WIDTH // 2, HEIGHT // 2],
-                       AU * 1.7 + 750, 100, all_sprites, planets)
+                       AU * 1.7 + 750, 100, 0, all_sprites, planets)
 mars = Objects.Planet(load_image('Mars.png'), 50, 5, [170, 170], [WIDTH // 2, HEIGHT // 2],
-                      AU * 2.5 + 750, 100, all_sprites, planets)
+                      AU * 2.5 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
 jupiter = Objects.Planet(load_image('Jupiter.png'), 50, 5, [400, 400], [WIDTH // 2, HEIGHT // 2],
-                         AU * 5.2 + 750, 100, all_sprites, planets)
+                         AU * 5.2 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
 saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [800, 800], [WIDTH // 2, HEIGHT // 2],
-                        AU * 8.2, 100, all_sprites, planets)
+                       AU * 8.2, 100, radians(randrange(0,360)), all_sprites, planets)
 uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [220, 220], [WIDTH // 2, HEIGHT // 2],
-                        AU * 9 + 750, 100, all_sprites, planets)
+                        AU * 9 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
 neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
-                         AU * 11 + 750, 100, all_sprites, planets)
+                         AU * 11 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
 station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 525],
                           [AU * 5.2 + 750, HEIGHT // 2], all_sprites, stations)
 hero = Hero.Hero(Ships.NomadShip(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2],

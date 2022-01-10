@@ -1,10 +1,14 @@
 class Engine:
-    def __init__(self, speed, jump, price, mass, setup=False):
-        self.speed = speed
-        self.jump = jump
-        self.price = price
-        self.mass = mass
-        self.setup = setup
+    def __init__(self, tier):
+        self.engines_img = ['engine0.png', 'engine1.png', 'engine2.png', 'engine3.png']
+        self.tier = tier
+
+        # features
+        self.speed = 300 + 300 * self.tier
+        self.jump = 15 + self.tier
+        self.price = 800 + 1000 * self.tier
+        self.mass = 20 + 5 * self.tier
+        self.img = self.engines_img[self.tier]
 
     def get_speed(self):
         return self.speed
@@ -12,51 +16,72 @@ class Engine:
     def get_jump(self):
         return self.jump
 
-    def setup(self, setup):
-        self.setup = setup
+    def get_img(self):
+        return self.img
+
+    def get_features(self):
+        return self.speed, self.jump, self.tier, self.mass, self.price
 
 
 class FuelTank:
-    def __init__(self, fuel, price, mass, setup=False):
-        self.fuel = fuel
-        self.price = price
-        self.mass = mass
-        self.setup = setup
+    def __init__(self, tier):
+        self.fuel_tank_img = ['fueltank0.png', 'fueltank1.png', 'fueltank2.png', 'fueltank3.png']
+        self.tier = tier
+
+        self.mass = 15 + 5 * self.tier
+        self.fuel = 15 + self.tier
+        self.price = 500 + 1000 * self.tier
+        self.img = self.fuel_tank_img[self.tier]
 
     def get_fuel(self):
         return self.fuel
 
-    def setup(self, setup):
-        self.setup = setup
+    def get_img(self):
+        return self.img
+
+    def get_features(self):
+        return self.fuel, self.tier, self.mass, self.price
 
 
 class Grab:
-    def __init__(self, power, dist, price, mass, setup=False):
-        self.power = power
-        self.dist = dist
-        self.price = price
-        self.mass = mass
-        self.setup = setup
+    def __init__(self, tier):
+        self.grab_img = ['grab0.png', 'grab1.png', 'grab2.png', 'grab3.png']
+        self.tier = tier
+
+        self.power = 20 + self.tier * 15
+        self.dist = 100 + self.tier * 25
+        self.price = 900 + 1100 * self.tier
+        self.mass = 20 + 5 * self.tier
+        self.img = self.grab_img[self.tier]
 
     def get_power_dist(self):
         return self.power, self.dist
 
-    def setup(self, setup):
-        self.setup = setup
+    def get_img(self):
+        return self.img
+
+    def get_features(self):
+        return self.power, self.dist, self.tier, self.mass, self.price
 
 
 class Shield:
-    def __init__(self, defend, price, mass, setup=False):
-        self.defend = defend
-        self.price = price
-        self.mass = mass
-        self.setup = setup
+    def __init__(self, tier):
+        self.shield_img = ['shield0.png', 'shield1.png', 'shield2.png', 'shield3.png']
+        self.tier = tier
+
+        self.defend = 5 + 15 * self.tier
+        self.price = 1500 + 1500 * self.tier
+        self.mass = 30 + 10 * self.tier
+        self.img = self.shield_img[self.tier]
 
     def get_defend(self):
         return self.defend
 
-    def setup(self, setup):
-        self.setup = setup
+    def get_img(self):
+        return self.img
+
+    def get_features(self):
+        return self.defend, self.tier, self.mass, self.price
 
 
 class Locator:
@@ -87,88 +112,64 @@ class Scanner:
         return self.scan
 
 
+class PhotonGun:
+    def __init__(self, tier, groups=None):
+        self.img = 'photongun.png'
+        self.tier = tier
+        self.bullet_image = 'photon_bullet.png'
+        self.groups = groups
+
+        self.damage = (5 + self.tier, 10 + self.tier)
+        self.distance = 300 + self.tier + 15
+        self.price = 700 + self.tier * 100
+        self.mass = 11 + 3 * self.tier
+
+    def get_img(self):
+        return self.img
+
+    def get_features(self):
+        return self.damage, self.distance, self.tier, self.mass, self.price
+
+
+class Destructor:
+    def __init__(self, tier, groups=None):
+        self.img = 'destructor.png'
+        self.tier = tier
+        self.bullet_image = None
+        self.groups = groups
+
+        self.damage = (20 + round(self.tier * 3.3), 25 + round(self.tier * 3.3))
+        self.distance = 350 + round(self.tier * 16.6)
+        self.price = 5000 + self.tier * 2000
+        self.mass = 30 + 15 * self.tier
+
+    def get_img(self):
+        return self.img
+
+    def get_features(self):
+        return self.damage, self.distance, self.tier, self.mass, self.price
+
+
+class Absorber:
+    def __init__(self, tier, groups=None):
+        self.img = 'absorber.png'
+        self.tier = tier
+        self.bullet_image = 'absorber_bullet.png'
+        self.groups = groups
+
+        self.damage = (50 + round(self.tier * 13.3), 60 + round(self.tier * 13.3))
+        self.distance = 250 - round(self.tier * 16.6)
+        self.price = 10000 * self.tier
+        self.mass = 50 + 50 * self.tier
+
+    def get_img(self):
+        return self.img
+
+    def get_features(self):
+        return self.damage, self.distance, self.tier, self.mass, self.price
+
+
 class Gun:
-    def __init__(self, mass, price, setup=False):
-        self.mass = mass
-        self.type = (1, 0)
-        self.price = price
-        self.setup = setup
-
-    def shoot(self):
-        pass
-
-    def get_mass(self):
-        return self.mass
-
-    def get_type(self):
-        return self.type
-
-    def setup(self, setup):
-        self.setup = setup
-
-
-class PhotonGun(Gun):
-    def __init__(self, mass, price):
-        super().__init__(mass, price)
-        self.image = None
-        self.damage = (5, 8)
-        self.distance = 300
-        self.price *= 0.1
-
-    def get_image(self):
-        return self.image
-
-
-class LaserGun(Gun):
-    def __init__(self, mass, price):
-        super().__init__(mass, price)
-        self.image = None
-        self.damage = (9, 10)
-        self.distance = 250
-        self.price *= 0.2
-
-    def get_image(self):
-        return self.image
-
-
-class Destructor(Gun):
-    def __init__(self, mass, price):
-        super().__init__(mass, price)
-        self.image = None
-        self.damage = (20, 25)
-        self.distance = 200
-        self.price *= 0.6
-
-    def get_image(self):
-        return self.image
-
-
-class Catcher(Gun):
-    def __init__(self, mass, price):
-        super().__init__(mass, price)
-        self.image = None
-        self.damage = (2, 5)
-        self.distance = 400
-        self.speed_down = 0.1
-        self.price *= 1
-
-    def get_image(self):
-        return self.image
-
-
-class Absorber(Gun):
-    def __init__(self, mass, price):
-        super().__init__(mass, price)
-        self.image = None
-        self.damage = (50, 60)
-        self.distance = 250
-        self.price *= 1.5
-
-    def get_image(self):
-        return self.image
-
-
-class TestGun:
     def __init__(self, bullet_image, groups, mass, price, setup=False):
         self.mass = mass
         self.type = (1, 0)
