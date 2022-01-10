@@ -396,6 +396,11 @@ class Lobby:
             clock.tick(FPS)
 
 
+def mini_map():
+    pygame.draw.rect(screen, pygame.Color('black'), (WIDTH * 0.9, 0, WIDTH * 0.1, WIDTH * 0.1))
+    pygame.draw.rect(screen, pygame.Color('#04859D'), (WIDTH * 0.9, 0, WIDTH * 0.1, WIDTH * 0.1), 3)
+
+
 # PG
 FPS = 60
 LANGUAGE = 'EN'
