@@ -483,7 +483,7 @@ neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH //
                          AU * 11 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
 station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 525],
                           [AU * 5.2 + 750, HEIGHT // 2], all_sprites, stations)
-hero_ship = Ships.NomadShip(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2],
+hero_ship = Ships.NomadShip(load_image('Nomad_ship_fly.png', (100, 100)), [WIDTH // 2, HEIGHT // 2],
                             100, 100, [Equipments.Gun(load_image('photon_bullet.png', (50, 50)),
                                                           (ships, all_sprites), 100, 100)], camera,
                             SIZE, all_sprites, ships)
