@@ -71,15 +71,17 @@ def load_image(name, size_of_sprite=None, color_key=None):
 
 
 class Landing:
-    global WIDTH, HEIGHT, FPS, LANGUAGE
+    global WIDTH, HEIGHT, FPS, LANGUAGE, hero
 
     def __init__(self):
         self.font = pygame.font.SysFont('Arialms', 29)
         self.current_window = 'government'
+        self.current_song = pygame.mixer.Sound('soundtracks/planet.mp3')
         self.new_game = True
         self.text = self.font.render('Press "Space" to land', True, pygame.Color('Yellow'))
         self.object = None
         self.button_type = None
+        self.market_buttons = None
 
     def planet_collide(self):
         for sprite in planets:
@@ -94,8 +96,12 @@ class Landing:
         self.object = object
         if str(self.object) == 'station':
             self.bg_names = ('government_st', 'station_bg')
+            self.current_song = pygame.mixer.Sound('soundtracks/station.mp3')
+            self.song_play = True
         else:
             self.bg_names = ('government', 'planet_bg')
+            self.current_song = pygame.mixer.Sound('soundtracks/planet.mp3')
+            self.song_play = True
         if self.new_game:
             self.current_bg = self.bg_names[0]
             self.new_game = False
@@ -105,7 +111,7 @@ class Landing:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     quit()
-                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # button push
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # button push
                     pos = event.pos
                     if HEIGHT * 0.9 <= pos[1] <= HEIGHT:
                         if WIDTH * 0.5 - 2 * WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5 - WIDTH * 0.055:
@@ -117,12 +123,14 @@ class Landing:
                         elif WIDTH * 0.5 <= pos[0] <= WIDTH * 0.5 + WIDTH * 0.055:
                             self.current_window = 'market'
                             self.current_bg = self.bg_names[1]
-                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
+                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[
+                            0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
                             self.current_window = 'main'
                             self.current_bg = self.bg_names[1]
                             self.button_type = None
-                            return  # undocking
-                elif event.type == pygame.MOUSEMOTION:
+                            self.current_song.stop()
+                            return True # undocking
+                if event.type == pygame.MOUSEMOTION:
                     pos = event.pos
                     if HEIGHT - 100 <= pos[1] <= HEIGHT:
                         if WIDTH * 0.5 - 2 * WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5 - WIDTH * 0.055:
@@ -131,13 +139,48 @@ class Landing:
                             self.button_type = (WIDTH * 0.5 - WIDTH * 0.055, HEIGHT * 0.85, 1)
                         elif WIDTH * 0.5 <= pos[0] <= WIDTH * 0.5 + WIDTH * 0.055:
                             self.button_type = (WIDTH * 0.5, HEIGHT * 0.85, 2)
-                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
+                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[
+                            0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
                             self.button_type = (WIDTH * 0.5 + WIDTH * 0.055, HEIGHT * 0.85, 3)
                         else:
                             self.button_type = None
                     else:
                         self.button_type = None
-
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.market_buttons:
+                    pos = event.pos
+                    if self.market_buttons['x'][0][0] <= pos[0] <= self.market_buttons['x'][0][1]:
+                        if self.market_buttons['y'][0] <= pos[1] <= self.market_buttons['y'][1] or \
+                                self.market_buttons['y'][0] + self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + self.market_buttons['y_step'] or \
+                                self.market_buttons['y'][0] + 2 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 2 * self.market_buttons['y_step'] or \
+                                self.market_buttons['y'][0] + 3 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 3 * self.market_buttons['y_step'] or \
+                                self.market_buttons['y'][0] + 4 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 4 * self.market_buttons['y_step'] or \
+                                self.market_buttons['y'][0] + 5 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 5 * self.market_buttons['y_step'] or \
+                                self.market_buttons['y'][0] + 6 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 6 * self.market_buttons['y_step']:
+                            print(1)
+                    elif self.market_buttons['x'][1][0] <= pos[0] <= self.market_buttons['x'][1][1]:
+                        if self.market_buttons['y'][0] <= pos[1] <= self.market_buttons['y'][1] or \
+                                self.market_buttons['y'][0] + self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + self.market_buttons['y_step'] or \
+                                self.market_buttons['y'][0] + 2 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 2 * self.market_buttons['y_step'] or \
+                                self.market_buttons['y'][0] + 3 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 3 * self.market_buttons['y_step'] or \
+                                self.market_buttons['y'][0] + 4 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 4 * self.market_buttons['y_step'] or \
+                                self.market_buttons['y'][0] + 5 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 5 * self.market_buttons['y_step'] or \
+                                self.market_buttons['y'][0] + 6 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 6 * self.market_buttons['y_step']:
+                            print(2)
+            if self.song_play:
+                self.current_song.play()
+                self.song_play = False
             self.update_window(self.button_type)
             pygame.display.flip()
             clock.tick(FPS)
@@ -146,7 +189,24 @@ class Landing:
         bg = pygame.transform.scale(load_image(self.current_bg + '.png'), SIZE)
         screen.blit(bg, (0, 0))
 
-        # buttons
+        # buttons, money and space
+        pygame.draw.rect(screen, pygame.Color('#FFFFFF'), (WIDTH * 0.6, HEIGHT * 0.94, WIDTH * 0.4, HEIGHT * 0.2), 0)
+        pygame.draw.rect(screen, pygame.Color('#04859D'),
+                         (WIDTH * 0.6, HEIGHT * 0.945, WIDTH * 0.4, HEIGHT * 0.2), 0)
+        # money
+        pygame.draw.rect(screen, pygame.Color('#000000'), (WIDTH * 0.75, HEIGHT * 0.958, WIDTH * 0.07, HEIGHT * 0.03), 0, border_radius=100)
+        font = pygame.font.SysFont('Arialms', 20)
+        money_img = load_image('money.png', (20, 20))
+        screen.blit(money_img, (WIDTH * 0.754, HEIGHT * 0.9595))
+        screen.blit(font.render(str(hero.get_money()), True, pygame.Color('white')), (WIDTH * 0.77, HEIGHT * 0.956))
+        # space
+        pygame.draw.rect(screen, pygame.Color('#000000'),
+                         (WIDTH * 0.83, HEIGHT * 0.958, WIDTH * 0.05, HEIGHT * 0.03), 0,
+                         border_radius=100)
+        space_img = load_image('cube.png', (20, 20))
+        screen.blit(space_img, (WIDTH * 0.834, HEIGHT * 0.9595))
+        screen.blit(font.render(str(hero.get_ship().get_space()), True, pygame.Color('white')), (WIDTH * 0.85, HEIGHT * 0.956))
+
         pygame.draw.ellipse(screen, pygame.Color('#FFFFFF'),
                             (WIDTH * 0.27, HEIGHT * 0.88, WIDTH * 0.44, HEIGHT * 0.25), 0)
         pygame.draw.ellipse(screen, pygame.Color('#04859D'),
@@ -173,12 +233,14 @@ class Landing:
                              (button_type[0], button_type[1], WIDTH * 0.128, HEIGHT * 0.05),
                              border_radius=50)
             pygame.draw.rect(screen, pygame.Color('#04859D'),
-                             (button_type[0] + 5, button_type[1] + 5, WIDTH * 0.128 - 10, HEIGHT * 0.05 - 10), border_radius=50)
+                             (button_type[0] + 5, button_type[1] + 5, WIDTH * 0.128 - 10,
+                              HEIGHT * 0.05 - 10), border_radius=50)
 
             with open(f'data/ico_text {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
                 text = list(map(lambda x: x.rstrip(), f.readlines()))
 
-            screen.blit(self.font.render(text[button_type[2]], True, pygame.Color('White')), (button_type[0] + 10, button_type[1]))
+            screen.blit(self.font.render(text[button_type[2]], True, pygame.Color('White')),
+                        (button_type[0] + 10, button_type[1]))
 
     def government(self):
         with open(f'data/Dialog planets {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
@@ -214,8 +276,13 @@ class Landing:
                     x_position += WIDTH * 0.1
 
     def market(self):
+        self.market_buttons = {'x': ((WIDTH * 0.55, WIDTH * 0.62), (WIDTH * 0.63, WIDTH * 0.7)),
+                              'y': (HEIGHT * 0.25, HEIGHT * 0.29),
+                              'y_step': WIDTH * 0.05}
         button_names = {'EN': 'Buy', 'RU': 'Купить', 'KR': '구입'}
         button_names_2 = {'EN': 'Sell', 'RU': 'Продать', 'KR': '팔다'}
+
+        # shop bg
         pygame.draw.rect(screen, pygame.Color('#04859D'),
                          (WIDTH * 0.28, HEIGHT * 0.15, WIDTH * 0.44, HEIGHT * 0.69),
                          border_radius=30)
@@ -226,6 +293,7 @@ class Landing:
                          (WIDTH * 0.2901, HEIGHT * 0.1701, WIDTH * 0.42, HEIGHT * 0.65), 3,
                          border_radius=30)
 
+        # buy-sell buttons
         y_position = HEIGHT * 0.25
         for _ in range(6):
             pygame.draw.rect(screen, pygame.Color('#04859D'),
@@ -449,6 +517,7 @@ user32 = ctypes.windll.user32
 SIZE = WIDTH, HEIGHT = user32.GetSystemMetrics(0) - 100, user32.GetSystemMetrics(1) - 100
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
+song = pygame.mixer.Sound('soundtracks/space_theme.mp3')
 
 # lobby
 lobby = Lobby()
@@ -474,28 +543,30 @@ bg.rect.y = -4500
 sun = Objects.Star(load_image('Sun.png'), 25, 10, [1500, 1500], [WIDTH // 2, HEIGHT // 2],
                    all_sprites)
 mercury = Objects.Planet(load_image('Mercury.png'), 50, 5, [80, 80], [WIDTH // 2, HEIGHT // 2],
-                         AU * 0.387 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
+                         AU * 0.387 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
 venus = Objects.Planet(load_image('Venus.png'), 50, 5, [260, 260], [WIDTH // 2, HEIGHT // 2],
-                       AU * 0.9 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
+                       AU * 0.9 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
 earth = Objects.Planet(load_image('Earth.png'), 50, 5, [280, 280], [WIDTH // 2, HEIGHT // 2],
                        AU * 1.7 + 750, 100, 0, all_sprites, planets)
 mars = Objects.Planet(load_image('Mars.png'), 50, 5, [170, 170], [WIDTH // 2, HEIGHT // 2],
-                      AU * 2.5 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
+                      AU * 2.5 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
 jupiter = Objects.Planet(load_image('Jupiter.png'), 50, 5, [400, 400], [WIDTH // 2, HEIGHT // 2],
-                         AU * 5.2 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
+                         AU * 5.2 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
 saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [800, 800], [WIDTH // 2, HEIGHT // 2],
-                       AU * 8.2, 100, radians(randrange(0,360)), all_sprites, planets)
+                        AU * 8.2, 100, radians(randrange(0, 360)), all_sprites, planets)
 uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [220, 220], [WIDTH // 2, HEIGHT // 2],
-                        AU * 9 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
+                        AU * 9 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
 neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
-                         AU * 11 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
+                         AU * 11 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
 station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 525],
                           [AU * 5.2 + 750, HEIGHT // 2], all_sprites, stations)
-hero = Hero.Hero(Ships.NomadShip(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2],
-                                 100, 100, [Equipments.TestGun(load_image('Bullet.png', (50, 50)),
-                                                               (enemy, all_sprites), 100, 100)],
-                                 camera,
-                                 SIZE, all_sprites, ships, hero_group), 1000, None)
+hero = Hero.Hero(
+    Ships.NomadShip(load_image('Nomad_ship_fly.png', (64, 64)), [WIDTH // 2, HEIGHT // 2],
+                    500, 100, [Equipments.Gun(load_image('photon_bullet.png', (50, 50)),
+                                              (enemy, all_sprites), 100, 100),
+                               Equipments.Engine(3), ],
+                    camera,
+                    SIZE, all_sprites, ships, hero_group), 1000000, None)
 kristalids = []
 for sprite in all_sprites:
     if sprite != hero.ship:
@@ -504,16 +575,17 @@ camera.stop_move()
 
 # main cycle
 running = True
+song_p = True
 while running:
     while len(kristalids) != 20:
-        spawn_coord = [random.randrange(-5000, 5000), random.randrange(-5000, 5000)]
+        spawn_coord = [randrange(-5000, 5000), randrange(-5000, 5000)]
         if spawn_coord[0] >= AU * 2.5 + 750 and spawn_coord[1] >= AU * 2.5 + 750 or spawn_coord[
             0] <= -(AU * 2.5 + 750) and spawn_coord[1] <= -(AU * 2.5 + 750):
             kristalids.append(Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
                                               spawn_coord,
                                               100, 100, [
-                                                  Equipments.TestGun(
-                                                      load_image('Bullet.png', (50, 50)),
+                                                  Equipments.Gun(
+                                                      load_image('photon_bullet.png', (50, 50)),
                                                       (hero_group, all_sprites), 100,
                                                       100)],
                                               all_sprites, ships, enemy))
@@ -526,7 +598,8 @@ while running:
                 hero.ship.update(event, 'fly')
             elif landing.planet_collide() and event.key == pygame.K_SPACE:
                 hero.ship.keys.clear()
-                landing.cycle(landing.planet_collide())
+                song.stop()
+                song_p = landing.cycle(landing.planet_collide())
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             hero.ship.update(event, 'shoot')
     screen.fill((0, 0, 0))
@@ -534,6 +607,9 @@ while running:
     for sprite in all_sprites:
         if sprite != hero.ship:
             camera.apply(sprite)
+    if song_p:
+        song.play()
+        song_p = False
     camera.stop_move()
     all_sprites.draw(screen)
     landing.planet_collide()
