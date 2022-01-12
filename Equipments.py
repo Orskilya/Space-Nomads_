@@ -2,39 +2,38 @@ class Engine:
     def __init__(self, tier):
         self.engines_img = ['engine0.png', 'engine1.png', 'engine2.png', 'engine3.png']
         self.tier = tier
+        self.type = (0, 0)
 
         # features
-        self.speed = 300 + 300 * self.tier
+        self.speed = 300 + 150 * self.tier
         self.jump = 15 + self.tier
         self.price = 800 + 1000 * self.tier
         self.mass = 20 + 5 * self.tier
         self.img = self.engines_img[self.tier]
 
-    def get_speed(self):
-        return self.speed
-
-    def get_jump(self):
-        return self.jump
-
     def get_img(self):
         return self.img
 
+    def get_mass(self):
+        return self.mass
+
     def get_features(self):
         return self.speed, self.jump, self.tier, self.mass, self.price
+
+    def get_type(self):
+        return self.type
 
 
 class FuelTank:
     def __init__(self, tier):
         self.fuel_tank_img = ['fueltank0.png', 'fueltank1.png', 'fueltank2.png', 'fueltank3.png']
         self.tier = tier
+        self.type = (0, 1)
 
         self.mass = 15 + 5 * self.tier
         self.fuel = 15 + self.tier
         self.price = 500 + 1000 * self.tier
         self.img = self.fuel_tank_img[self.tier]
-
-    def get_fuel(self):
-        return self.fuel
 
     def get_img(self):
         return self.img
@@ -42,11 +41,18 @@ class FuelTank:
     def get_features(self):
         return self.fuel, self.tier, self.mass, self.price
 
+    def get_mass(self):
+        return self.mass
+
+    def get_type(self):
+        return self.type
+
 
 class Grab:
     def __init__(self, tier):
         self.grab_img = ['grab0.png', 'grab1.png', 'grab2.png', 'grab3.png']
         self.tier = tier
+        self.type = (2, 0)
 
         self.power = 20 + self.tier * 15
         self.dist = 100 + self.tier * 25
@@ -54,20 +60,24 @@ class Grab:
         self.mass = 20 + 5 * self.tier
         self.img = self.grab_img[self.tier]
 
-    def get_power_dist(self):
-        return self.power, self.dist
-
     def get_img(self):
         return self.img
 
     def get_features(self):
         return self.power, self.dist, self.tier, self.mass, self.price
 
+    def get_type(self):
+        return self.type
+
+    def get_mass(self):
+        return self.mass
+
 
 class Shield:
     def __init__(self, tier):
         self.shield_img = ['shield0.png', 'shield1.png', 'shield2.png', 'shield3.png']
         self.tier = tier
+        self.type = (2, 1)
 
         self.defend = 5 + 15 * self.tier
         self.price = 1500 + 1500 * self.tier
@@ -82,6 +92,12 @@ class Shield:
 
     def get_features(self):
         return self.defend, self.tier, self.mass, self.price
+
+    def get_type(self):
+        return self.type
+
+    def get_mass(self):
+        return self.mass
 
 
 class Locator:
@@ -118,6 +134,7 @@ class PhotonGun:
         self.tier = tier
         self.bullet_image = 'photon_bullet.png'
         self.groups = groups
+        self.type = (1, 0)
 
         self.damage = (5 + self.tier, 10 + self.tier)
         self.distance = 300 + self.tier + 15
@@ -130,6 +147,12 @@ class PhotonGun:
     def get_features(self):
         return self.damage, self.distance, self.tier, self.mass, self.price
 
+    def get_type(self):
+        return self.type
+
+    def get_mass(self):
+        return self.mass
+
 
 class Destructor:
     def __init__(self, tier, groups=None):
@@ -137,6 +160,7 @@ class Destructor:
         self.tier = tier
         self.bullet_image = None
         self.groups = groups
+        self.type = (1, 0)
 
         self.damage = (20 + round(self.tier * 3.3), 25 + round(self.tier * 3.3))
         self.distance = 350 + round(self.tier * 16.6)
@@ -149,6 +173,12 @@ class Destructor:
     def get_features(self):
         return self.damage, self.distance, self.tier, self.mass, self.price
 
+    def get_type(self):
+        return self.type
+
+    def get_mass(self):
+        return self.mass
+
 
 class Absorber:
     def __init__(self, tier, groups=None):
@@ -156,6 +186,7 @@ class Absorber:
         self.tier = tier
         self.bullet_image = 'absorber_bullet.png'
         self.groups = groups
+        self.type = (1, 0)
 
         self.damage = (50 + round(self.tier * 13.3), 60 + round(self.tier * 13.3))
         self.distance = 250 - round(self.tier * 16.6)
@@ -167,6 +198,12 @@ class Absorber:
 
     def get_features(self):
         return self.damage, self.distance, self.tier, self.mass, self.price
+
+    def get_type(self):
+        return self.type
+
+    def get_mass(self):
+        return self.mass
 
 
 class Gun:
