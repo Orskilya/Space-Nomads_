@@ -1,3 +1,6 @@
+from Bullet import Bullet
+
+
 class Engine:
     def __init__(self, tier):
         self.engines_img = ['engine0.png', 'engine1.png', 'engine2.png', 'engine3.png']
@@ -129,17 +132,20 @@ class Scanner:
 
 
 class PhotonGun:
-    def __init__(self, tier, groups=None):
+    def __init__(self, tier, groups=None, bullet_image=None):
         self.img = 'photongun.png'
         self.tier = tier
-        self.bullet_image = 'photon_bullet.png'
+        if bullet_image:
+            self.bullet_image = bullet_image
         self.groups = groups
         self.type = (1, 0)
 
         self.damage = (5 + self.tier, 10 + self.tier)
-        self.distance = 300 + self.tier + 15
+        self.distance = 500 + self.tier * 50
         self.price = 700 + self.tier * 100
         self.mass = 11 + 3 * self.tier
+        self.bullet_speed = 500 + self.tier * 250
+        self.bullets = []
 
     def get_img(self):
         return self.img
@@ -152,6 +158,14 @@ class PhotonGun:
 
     def get_mass(self):
         return self.mass
+
+    def set_bullet_img(self, image):
+        self.bullet_image = image
+
+    def shoot(self, start_coord, owner, target_coord):
+        self.bullets.append(Bullet(self.bullet_image, start_coord, owner, target_coord,
+                                   self.bullet_speed, self.distance, self.damage, self.groups[0],
+                                   self.groups[1]))
 
 
 class Destructor:
@@ -207,19 +221,10 @@ class Absorber:
 
 
 class Gun:
-    def __init__(self, bullet_image, groups, mass, price, setup=False):
-        self.mass = mass
+    def __init__(self, bullet_image, groups):
         self.type = (1, 0)
-        self.price = price
-        self.setup = setup
         self.bullet_image = bullet_image
         self.groups = groups
 
-    def get_mass(self):
-        return self.mass
-
     def get_type(self):
         return self.type
-
-    def setup(self, setup):
-        self.setup = setup

@@ -104,7 +104,6 @@ class Station(Object):
         for i in range(7):
             self.shop[i].append(eval(goods_shop[i] + '(3)'))
 
-
         self.market = {i: [randrange(20, 100), randrange(90, 300), randrange(90, 330)] for i in
                        products}  # name: number, purchase, selling
 
@@ -118,53 +117,5 @@ class Station(Object):
     def get_shop(self):
         return self.shop
 
-
     def products(self):
         return self.market
-
-
-class Bullet(pygame.sprite.Sprite):
-    def __init__(self, image, coord, owner, target, speed, maximum, damage, enemy, *group):
-        super().__init__(*group)
-        self.maximum = maximum
-        self.speed = speed
-        self.start_point = coord
-        self.owner = owner
-        self.damage = damage
-        self.image = image
-        self.enemy = enemy
-        self.rect = self.image.get_rect()
-        self.rect.x = coord[0]
-        self.rect.y = coord[1]
-        self.mask = pygame.mask.from_surface(self.image)
-        if target[0] - self.start_point[0] == 0:
-            self.null = True
-        else:
-            self.null = False
-            self.angle = math.atan((target[1] - self.start_point[1]) /
-                                   (target[0] - self.start_point[0]))
-        self.d = 0
-        if target[0] < self.start_point[0]:
-            self.minus = True
-        else:
-            self.minus = False
-
-    def update(self, **kwargs):
-        if self.minus:
-            self.d -= self.speed / fps
-        else:
-            self.d += self.speed / fps
-        if self.null:
-            self.rect.center = round(self.start_point[0]), round(self.d) + self.start_point[1]
-        else:
-            self.rect.center = round(self.d * math.cos(self.angle)) + self.start_point[0], \
-                               round(self.d * math.sin(self.angle)) + self.start_point[1]
-        if self.d > self.maximum or self.d < -self.maximum:
-            self.kill()
-        for sprite in self.enemy:
-            if pygame.sprite.collide_mask(self, sprite):
-                self.kill()
-                sprite.kill()
-
-    def __str__(self):
-        return 'Пуля'

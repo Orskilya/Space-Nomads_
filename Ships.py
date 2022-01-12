@@ -1,6 +1,5 @@
 from random import randint
 import pygame
-from Objects import Bullet
 
 difficult = 50
 fps = 60
@@ -27,7 +26,6 @@ class Ship(pygame.sprite.Sprite):
         self.space = hull
         self.keys = []
         self.mask = pygame.mask.from_surface(self.image)
-        self.bullets = []
 
     def death(self):
         pass
@@ -129,7 +127,7 @@ class NomadShip(Ship):
             self.camera.update(self)
         elif pygame.K_d in self.keys:
             self.coord[0] += speed // fps
-            self.dx = -(speed  // fps)
+            self.dx = -(speed // fps)
             self.camera.update(self)
 
     def __str__(self):
@@ -146,12 +144,9 @@ class NomadShip(Ship):
             else:
                 self.fly(event.key, 'stop')
 
-    def shoot(self, tarjet):
-        gr = self.slot_equipment[1][0].groups
-        self.bullets.append(
-            Bullet(self.slot_equipment[1][0].bullet_image,
-                   [self.rect.x + self.size[0] // 2, self.rect.y + self.size[1] // 2], self, tarjet,
-                   400, 2000, 100, gr[0], gr[1]))
+    def shoot(self, target):
+        self.slot_equipment[1][0].shoot(
+            [self.rect.x + self.size[0] // 2, self.rect.y + self.size[1] // 2], self, target)
 
     def equipment_setting(self):
         for i in self.equipment:
@@ -170,13 +165,6 @@ class Kristalid(Ship):
                                [1, 1]]  # locator and scanner
         self.hull *= difficult
         self.armor += round(difficult / 100)
-
-        # equipment setting up
-        # for i in self.equipment:
-        #     self.equipment.remove(i)
-        #     self.hold.append(i)
-        #     self.mass += i.get_mass()
-        #     self.space -= i.get_mass()
         self.shoot_time = 0
         self.first = True
         self.equipment_setting()
@@ -212,16 +200,12 @@ class Kristalid(Ship):
         else:
             if self.rect.x != self.start_point[0] and self.rect.y != self.start_point[1]:
                 distance = ((self.start_point[0] - self.rect.x) ** 2 + (
-                            self.start_point[1] - self.rect.y) ** 2) ** 0.5
+                        self.start_point[1] - self.rect.y) ** 2) ** 0.5
                 self.fly(self.start_point, distance)
 
     def shoot(self, hero_coord):
-        gr = self.equipment[0].groups
-        tarjet = hero_coord
-        self.bullets.append(
-            Bullet(self.equipment[0].bullet_image,
-                   [self.rect.x + self.size[0] // 2, self.rect.y + self.size[1] // 2], self, tarjet,
-                   1000, 2000, 100, gr[0], gr[1]))
+        self.slot_equipment[1][0].shoot(
+            [self.rect.x + self.size[0] // 2, self.rect.y + self.size[1] // 2], self, hero_coord)
 
     def equipment_setting(self):
         for i in self.equipment:

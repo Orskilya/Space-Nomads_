@@ -129,7 +129,7 @@ class Landing:
                             self.current_bg = self.bg_names[1]
                             self.button_type = None
                             self.current_song.stop()
-                            return True # undocking
+                            return True  # undocking
                 if event.type == pygame.MOUSEMOTION:
                     pos = event.pos
                     if HEIGHT - 100 <= pos[1] <= HEIGHT:
@@ -152,31 +152,51 @@ class Landing:
                         if self.market_buttons['y'][0] <= pos[1] <= self.market_buttons['y'][1] or \
                                 self.market_buttons['y'][0] + self.market_buttons['y_step'] <= pos[
                             1] <= self.market_buttons['y'][1] + self.market_buttons['y_step'] or \
-                                self.market_buttons['y'][0] + 2 * self.market_buttons['y_step'] <= pos[
-                            1] <= self.market_buttons['y'][1] + 2 * self.market_buttons['y_step'] or \
-                                self.market_buttons['y'][0] + 3 * self.market_buttons['y_step'] <= pos[
-                            1] <= self.market_buttons['y'][1] + 3 * self.market_buttons['y_step'] or \
-                                self.market_buttons['y'][0] + 4 * self.market_buttons['y_step'] <= pos[
-                            1] <= self.market_buttons['y'][1] + 4 * self.market_buttons['y_step'] or \
-                                self.market_buttons['y'][0] + 5 * self.market_buttons['y_step'] <= pos[
-                            1] <= self.market_buttons['y'][1] + 5 * self.market_buttons['y_step'] or \
-                                self.market_buttons['y'][0] + 6 * self.market_buttons['y_step'] <= pos[
-                            1] <= self.market_buttons['y'][1] + 6 * self.market_buttons['y_step']:
+                                self.market_buttons['y'][0] + 2 * self.market_buttons['y_step'] <= \
+                                pos[
+                                    1] <= self.market_buttons['y'][1] + 2 * self.market_buttons[
+                            'y_step'] or \
+                                self.market_buttons['y'][0] + 3 * self.market_buttons['y_step'] <= \
+                                pos[
+                                    1] <= self.market_buttons['y'][1] + 3 * self.market_buttons[
+                            'y_step'] or \
+                                self.market_buttons['y'][0] + 4 * self.market_buttons['y_step'] <= \
+                                pos[
+                                    1] <= self.market_buttons['y'][1] + 4 * self.market_buttons[
+                            'y_step'] or \
+                                self.market_buttons['y'][0] + 5 * self.market_buttons['y_step'] <= \
+                                pos[
+                                    1] <= self.market_buttons['y'][1] + 5 * self.market_buttons[
+                            'y_step'] or \
+                                self.market_buttons['y'][0] + 6 * self.market_buttons['y_step'] <= \
+                                pos[
+                                    1] <= self.market_buttons['y'][1] + 6 * self.market_buttons[
+                            'y_step']:
                             print(1)
                     elif self.market_buttons['x'][1][0] <= pos[0] <= self.market_buttons['x'][1][1]:
                         if self.market_buttons['y'][0] <= pos[1] <= self.market_buttons['y'][1] or \
                                 self.market_buttons['y'][0] + self.market_buttons['y_step'] <= pos[
                             1] <= self.market_buttons['y'][1] + self.market_buttons['y_step'] or \
-                                self.market_buttons['y'][0] + 2 * self.market_buttons['y_step'] <= pos[
-                            1] <= self.market_buttons['y'][1] + 2 * self.market_buttons['y_step'] or \
-                                self.market_buttons['y'][0] + 3 * self.market_buttons['y_step'] <= pos[
-                            1] <= self.market_buttons['y'][1] + 3 * self.market_buttons['y_step'] or \
-                                self.market_buttons['y'][0] + 4 * self.market_buttons['y_step'] <= pos[
-                            1] <= self.market_buttons['y'][1] + 4 * self.market_buttons['y_step'] or \
-                                self.market_buttons['y'][0] + 5 * self.market_buttons['y_step'] <= pos[
-                            1] <= self.market_buttons['y'][1] + 5 * self.market_buttons['y_step'] or \
-                                self.market_buttons['y'][0] + 6 * self.market_buttons['y_step'] <= pos[
-                            1] <= self.market_buttons['y'][1] + 6 * self.market_buttons['y_step']:
+                                self.market_buttons['y'][0] + 2 * self.market_buttons['y_step'] <= \
+                                pos[
+                                    1] <= self.market_buttons['y'][1] + 2 * self.market_buttons[
+                            'y_step'] or \
+                                self.market_buttons['y'][0] + 3 * self.market_buttons['y_step'] <= \
+                                pos[
+                                    1] <= self.market_buttons['y'][1] + 3 * self.market_buttons[
+                            'y_step'] or \
+                                self.market_buttons['y'][0] + 4 * self.market_buttons['y_step'] <= \
+                                pos[
+                                    1] <= self.market_buttons['y'][1] + 4 * self.market_buttons[
+                            'y_step'] or \
+                                self.market_buttons['y'][0] + 5 * self.market_buttons['y_step'] <= \
+                                pos[
+                                    1] <= self.market_buttons['y'][1] + 5 * self.market_buttons[
+                            'y_step'] or \
+                                self.market_buttons['y'][0] + 6 * self.market_buttons['y_step'] <= \
+                                pos[
+                                    1] <= self.market_buttons['y'][1] + 6 * self.market_buttons[
+                            'y_step']:
                             print(2)
             if self.song_play:
                 self.current_song.play()
@@ -190,22 +210,27 @@ class Landing:
         screen.blit(bg, (0, 0))
 
         # buttons, money and space
-        pygame.draw.rect(screen, pygame.Color('#FFFFFF'), (WIDTH * 0.6, HEIGHT * 0.94, WIDTH * 0.4, HEIGHT * 0.2), 0)
+        pygame.draw.rect(screen, pygame.Color('#FFFFFF'),
+                         (WIDTH * 0.6, HEIGHT * 0.94, WIDTH * 0.4, HEIGHT * 0.2), 0)
         pygame.draw.rect(screen, pygame.Color('#04859D'),
                          (WIDTH * 0.6, HEIGHT * 0.945, WIDTH * 0.4, HEIGHT * 0.2), 0)
         # money
-        pygame.draw.rect(screen, pygame.Color('#000000'), (WIDTH * 0.75, HEIGHT * 0.958, WIDTH * 0.07, HEIGHT * 0.03), 0, border_radius=100)
+        pygame.draw.rect(screen, pygame.Color('#000000'),
+                         (WIDTH * 0.75, HEIGHT * 0.958, WIDTH * 0.07, HEIGHT * 0.03), 0,
+                         border_radius=100)
         font = pygame.font.SysFont('Arialms', 20)
         money_img = load_image('money.png', (20, 20))
         screen.blit(money_img, (WIDTH * 0.754, HEIGHT * 0.9595))
-        screen.blit(font.render(str(hero.get_money()), True, pygame.Color('white')), (WIDTH * 0.77, HEIGHT * 0.956))
+        screen.blit(font.render(str(hero.get_money()), True, pygame.Color('white')),
+                    (WIDTH * 0.77, HEIGHT * 0.956))
         # space
         pygame.draw.rect(screen, pygame.Color('#000000'),
                          (WIDTH * 0.83, HEIGHT * 0.958, WIDTH * 0.05, HEIGHT * 0.03), 0,
                          border_radius=100)
         space_img = load_image('cube.png', (20, 20))
         screen.blit(space_img, (WIDTH * 0.834, HEIGHT * 0.9595))
-        screen.blit(font.render(str(hero.get_ship().get_space()), True, pygame.Color('white')), (WIDTH * 0.85, HEIGHT * 0.956))
+        screen.blit(font.render(str(hero.get_ship().get_space()), True, pygame.Color('white')),
+                    (WIDTH * 0.85, HEIGHT * 0.956))
 
         pygame.draw.ellipse(screen, pygame.Color('#FFFFFF'),
                             (WIDTH * 0.27, HEIGHT * 0.88, WIDTH * 0.44, HEIGHT * 0.25), 0)
@@ -277,8 +302,8 @@ class Landing:
 
     def market(self):
         self.market_buttons = {'x': ((WIDTH * 0.55, WIDTH * 0.62), (WIDTH * 0.63, WIDTH * 0.7)),
-                              'y': (HEIGHT * 0.25, HEIGHT * 0.29),
-                              'y_step': WIDTH * 0.05}
+                               'y': (HEIGHT * 0.25, HEIGHT * 0.29),
+                               'y_step': WIDTH * 0.05}
         button_names = {'EN': 'Buy', 'RU': 'Купить', 'KR': '구입'}
         button_names_2 = {'EN': 'Sell', 'RU': 'Продать', 'KR': '팔다'}
 
@@ -562,8 +587,8 @@ station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 5
                           [AU * 5.2 + 750, HEIGHT // 2], all_sprites, stations)
 hero = Hero.Hero(
     Ships.NomadShip(load_image('Nomad_ship_fly.png', (64, 64)), [WIDTH // 2, HEIGHT // 2],
-                    500, 100, [Equipments.Gun(load_image('photon_bullet.png', (50, 50)),
-                                              (enemy, all_sprites), 100, 100),
+                    500, 100, [Equipments.PhotonGun(3, (enemy, all_sprites),
+                                                    load_image('photon_bullet.png', (50, 50))),
                                Equipments.Engine(3), ],
                     camera,
                     SIZE, all_sprites, ships, hero_group), 1000000, None)
@@ -584,10 +609,10 @@ while running:
             kristalids.append(Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
                                               spawn_coord,
                                               100, 100, [
-                                                  Equipments.Gun(
-                                                      load_image('photon_bullet.png', (50, 50)),
-                                                      (hero_group, all_sprites), 100,
-                                                      100)],
+                                                  Equipments.PhotonGun(0, (enemy, all_sprites),
+                                                                       load_image(
+                                                                           'photon_bullet.png',
+                                                                           (50, 50)))],
                                               all_sprites, ships, enemy))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
