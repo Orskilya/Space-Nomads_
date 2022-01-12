@@ -117,7 +117,8 @@ class Landing:
                         elif WIDTH * 0.5 <= pos[0] <= WIDTH * 0.5 + WIDTH * 0.055:
                             self.current_window = 'market'
                             self.current_bg = self.bg_names[1]
-                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
+                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[
+                            0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
                             self.current_window = 'main'
                             self.current_bg = self.bg_names[1]
                             self.button_type = None
@@ -131,7 +132,8 @@ class Landing:
                             self.button_type = (WIDTH * 0.5 - WIDTH * 0.055, HEIGHT * 0.85, 1)
                         elif WIDTH * 0.5 <= pos[0] <= WIDTH * 0.5 + WIDTH * 0.055:
                             self.button_type = (WIDTH * 0.5, HEIGHT * 0.85, 2)
-                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
+                        elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[
+                            0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
                             self.button_type = (WIDTH * 0.5 + WIDTH * 0.055, HEIGHT * 0.85, 3)
                         else:
                             self.button_type = None
@@ -173,12 +175,14 @@ class Landing:
                              (button_type[0], button_type[1], WIDTH * 0.128, HEIGHT * 0.05),
                              border_radius=50)
             pygame.draw.rect(screen, pygame.Color('#04859D'),
-                             (button_type[0] + 5, button_type[1] + 5, WIDTH * 0.128 - 10, HEIGHT * 0.05 - 10), border_radius=50)
+                             (button_type[0] + 5, button_type[1] + 5, WIDTH * 0.128 - 10,
+                              HEIGHT * 0.05 - 10), border_radius=50)
 
             with open(f'data/ico_text {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
                 text = list(map(lambda x: x.rstrip(), f.readlines()))
 
-            screen.blit(self.font.render(text[button_type[2]], True, pygame.Color('White')), (button_type[0] + 10, button_type[1]))
+            screen.blit(self.font.render(text[button_type[2]], True, pygame.Color('White')),
+                        (button_type[0] + 10, button_type[1]))
 
     def government(self):
         with open(f'data/Dialog planets {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
@@ -474,26 +478,26 @@ bg.rect.y = -4500
 sun = Objects.Star(load_image('Sun.png'), 25, 10, [1500, 1500], [WIDTH // 2, HEIGHT // 2],
                    all_sprites)
 mercury = Objects.Planet(load_image('Mercury.png'), 50, 5, [80, 80], [WIDTH // 2, HEIGHT // 2],
-                         AU * 0.387 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
+                         AU * 0.387 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
 venus = Objects.Planet(load_image('Venus.png'), 50, 5, [260, 260], [WIDTH // 2, HEIGHT // 2],
-                       AU * 0.9 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
+                       AU * 0.9 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
 earth = Objects.Planet(load_image('Earth.png'), 50, 5, [280, 280], [WIDTH // 2, HEIGHT // 2],
                        AU * 1.7 + 750, 100, 0, all_sprites, planets)
 mars = Objects.Planet(load_image('Mars.png'), 50, 5, [170, 170], [WIDTH // 2, HEIGHT // 2],
-                      AU * 2.5 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
+                      AU * 2.5 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
 jupiter = Objects.Planet(load_image('Jupiter.png'), 50, 5, [400, 400], [WIDTH // 2, HEIGHT // 2],
-                         AU * 5.2 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
+                         AU * 5.2 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
 saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [800, 800], [WIDTH // 2, HEIGHT // 2],
-                       AU * 8.2, 100, radians(randrange(0,360)), all_sprites, planets)
+                        AU * 8.2, 100, radians(randrange(0, 360)), all_sprites, planets)
 uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [220, 220], [WIDTH // 2, HEIGHT // 2],
-                        AU * 9 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
+                        AU * 9 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
 neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
-                         AU * 11 + 750, 100, radians(randrange(0,360)), all_sprites, planets)
+                         AU * 11 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
 station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 525],
                           [AU * 5.2 + 750, HEIGHT // 2], all_sprites, stations)
 hero = Hero.Hero(Ships.NomadShip(load_image('hero_ship.png', (50, 50)), [WIDTH // 2, HEIGHT // 2],
-                                 100, 100, [Equipments.TestGun(load_image('Bullet.png', (50, 50)),
-                                                               (enemy, all_sprites), 100, 100)],
+                                 100, 100, [Equipments.Gun(load_image('photon_bullet.png', (50, 50)),
+                                                           (enemy, all_sprites), 100, 100)],
                                  camera,
                                  SIZE, all_sprites, ships, hero_group), 1000, None)
 kristalids = []
@@ -506,14 +510,14 @@ camera.stop_move()
 running = True
 while running:
     while len(kristalids) != 20:
-        spawn_coord = [random.randrange(-5000, 5000), random.randrange(-5000, 5000)]
-        if spawn_coord[0] >= AU * 2.5 + 750 and spawn_coord[1] >= AU * 2.5 + 750 or spawn_coord[
-            0] <= -(AU * 2.5 + 750) and spawn_coord[1] <= -(AU * 2.5 + 750):
+        spawn_coord = [randrange(-9700, 9700), randrange(-9700, 9700)]
+        if (spawn_coord[0] >= AU * 2.5 + 750 or spawn_coord[0] <= -(AU * 2.5 + 750)) and (
+                spawn_coord[1] <= -(AU * 2.5 + 750) or spawn_coord[1] <= -(AU * 2.5 + 750)):
             kristalids.append(Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
                                               spawn_coord,
                                               100, 100, [
-                                                  Equipments.TestGun(
-                                                      load_image('Bullet.png', (50, 50)),
+                                                  Equipments.Gun(
+                                                      load_image('photon_bullet.png', (50, 50)),
                                                       (hero_group, all_sprites), 100,
                                                       100)],
                                               all_sprites, ships, enemy))
