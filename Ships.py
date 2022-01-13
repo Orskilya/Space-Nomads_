@@ -38,6 +38,9 @@ class Ship(pygame.sprite.Sprite):
     def get_space(self):
         return self.space
 
+    def change_space(self, amount):
+        self.space += amount
+
     def get_damage(self, dmg):
         self.hull -= dmg - self.armor
 
@@ -170,13 +173,6 @@ class Kristalid(Ship):
                                [1, 1]]  # locator and scanner
         self.hull *= difficult
         self.armor += round(difficult / 100)
-
-        # equipment setting up
-        # for i in self.equipment:
-        #     self.equipment.remove(i)
-        #     self.hold.append(i)
-        #     self.mass += i.get_mass()
-        #     self.space -= i.get_mass()
         self.shoot_time = 0
         self.first = True
         self.equipment_setting()

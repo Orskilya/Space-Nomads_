@@ -41,8 +41,7 @@ class Planet(Object):
         self.radius = radius
         self.center = coord.copy()
         self.angular_speed = (speed / self.radius) * (pi / 180)
-        self.shop = [[eval(f'{product}({randrange(0, 4)})') for _ in range(randrange(1, 4))] for
-                     product in goods_shop]
+        self.shop = self.make_shop()
         self.market = {i: [randrange(100, 300), randrange(80, 200), randrange(70, 190)] for i in
                        products}  # name: number, purchase, selling
         self.count = 0
@@ -71,6 +70,19 @@ class Planet(Object):
     def get_shop(self):
         return self.shop
 
+    def shop_change(self, index):
+        return self.shop.pop(index)
+
+    def make_shop(self):
+        shop = [[eval(f'{product}({randrange(0, 4)})') for _ in range(randrange(1, 4))] for
+         product in goods_shop]
+        normal_shop = list()
+        for i in shop:
+            i.sort(key=lambda x: x.tier)
+            normal_shop.extend(i)
+        return normal_shop
+
+
     def __str__(self):
         return 'Планета'
 
@@ -98,11 +110,7 @@ class Station(Object):
     def __init__(self, sheet, columns, rows, size, coord, *group):
         global products, goods_shop
         super().__init__(sheet, columns, rows, size, coord, *group)
-        self.shop = [[eval(f'{product}({randrange(0, 4)})') for _ in range(randrange(1, 3))] for
-                     product in goods_shop]
-        # t3 equipment generation
-        for i in range(7):
-            self.shop[i].append(eval(goods_shop[i] + '(3)'))
+        self.shop = self.make_shop()
 
 
         self.market = {i: [randrange(20, 100), randrange(90, 300), randrange(90, 330)] for i in
@@ -118,9 +126,23 @@ class Station(Object):
     def get_shop(self):
         return self.shop
 
+    def shop_change(self, index):
+        return self.shop.pop(index)
 
     def products(self):
         return self.market
+
+    def make_shop(self):
+        shop = [[eval(f'{product}({randrange(0, 3)})') for _ in range(randrange(1, 3))] for
+         product in goods_shop]
+        # t3 equipment generation
+        for i in range(7):
+            shop[i].append(eval(goods_shop[i] + '(3)'))
+        normal_shop = list()
+        for i in shop:
+            i.sort(key=lambda x: x.tier)
+            normal_shop.extend(i)
+        return normal_shop
 
 
 class Bullet(pygame.sprite.Sprite):

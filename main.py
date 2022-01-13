@@ -82,6 +82,7 @@ class Landing:
         self.object = None
         self.button_type = None
         self.market_buttons = None
+        self.shop_buttons = None
 
     def planet_collide(self):
         for sprite in planets:
@@ -178,6 +179,16 @@ class Landing:
                                 self.market_buttons['y'][0] + 6 * self.market_buttons['y_step'] <= pos[
                             1] <= self.market_buttons['y'][1] + 6 * self.market_buttons['y_step']:
                             print(2)
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.shop_buttons:
+                    pos = event.pos
+                    for row in self.shop_buttons.keys():
+                        if self.shop_buttons[row]['y'][0] <= pos[1] <= self.shop_buttons[row]['y'][1]:
+                            for i in range(self.shop_buttons[row]['amount']):
+                                if self.shop_buttons[row]['x'][0] + i * self.shop_buttons[row]['step'] <= pos[0] <= self.shop_buttons[row]['x'][1] + i * self.shop_buttons[row]['step']:
+                                    item = self.object.shop_change(i + 8 * int(row[-1]))
+                                    hero.money_change(-item.get_price())
+                                    hero.get_ship().change_space(-item.get_mass())
+
             if self.song_play:
                 self.current_song.play()
                 self.song_play = False
@@ -254,6 +265,7 @@ class Landing:
         screen.blit(frame, (WIDTH * 0.05, - HEIGHT * 0.1))
 
     def shop(self):
+        self.shop_buttons = {'row0': {'x': (WIDTH * 0.12, WIDTH * 0.175), 'y': (HEIGHT * 0.25, HEIGHT * 0.25 + WIDTH * 0.055), 'step': WIDTH * 0.1, 'amount': 0}}
         pygame.draw.rect(screen, pygame.Color('#04859D'),
                          (WIDTH * 0.1, HEIGHT * 0.2, WIDTH * 0.8, HEIGHT * 0.6), border_radius=30)
         pygame.draw.rect(screen, pygame.Color('#C8DFE3'),
@@ -266,14 +278,17 @@ class Landing:
         equipment = self.object.get_shop()
         x_position = WIDTH * 0.12
         y_position = HEIGHT * 0.25
-        for type in equipment:
-            for i in type:
-                screen.blit(load_image(i.get_img(), (100, 100), -1), (x_position, y_position))
-                if x_position + WIDTH * 0.1 > WIDTH * 0.9:
-                    x_position = WIDTH * 0.12
-                    y_position += HEIGHT * 0.15
-                else:
-                    x_position += WIDTH * 0.1
+        row = 0
+        for i in equipment:
+            screen.blit(load_image(i.get_img(), (WIDTH * 0.055, WIDTH * 0.055), -1), (x_position, y_position))
+            self.shop_buttons[f'row{row}']['amount'] += 1
+            if x_position + WIDTH * 0.1 > WIDTH * 0.9:
+                x_position = WIDTH * 0.12
+                y_position += HEIGHT * 0.15
+                row += 1
+                self.shop_buttons[f'row{row}'] = {'x': (WIDTH * 0.12, WIDTH * 0.175), 'y': (y_position, y_position + WIDTH * 0.055), 'step': WIDTH * 0.1, 'amount': 0}
+            else:
+                x_position += WIDTH * 0.1
 
     def market(self):
         self.market_buttons = {'x': ((WIDTH * 0.55, WIDTH * 0.62), (WIDTH * 0.63, WIDTH * 0.7)),
@@ -515,6 +530,7 @@ AU = 815
 pygame.init()
 user32 = ctypes.windll.user32
 SIZE = WIDTH, HEIGHT = user32.GetSystemMetrics(0) - 100, user32.GetSystemMetrics(1) - 100
+print(SIZE)
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 song = pygame.mixer.Sound('soundtracks/space_theme.mp3')
@@ -567,7 +583,7 @@ hero = Hero.Hero(
                                Equipments.Engine(3), ],
                     camera,
                     SIZE, all_sprites, ships, hero_group), 1000000, None)
-kristalids = []
+kristalids = list()
 for sprite in all_sprites:
     if sprite != hero.ship:
         camera.apply(sprite)

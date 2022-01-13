@@ -23,6 +23,9 @@ class Engine:
     def get_type(self):
         return self.type
 
+    def get_price(self):
+        return self.price
+
 
 class FuelTank:
     def __init__(self, tier):
@@ -46,6 +49,9 @@ class FuelTank:
 
     def get_type(self):
         return self.type
+
+    def get_price(self):
+        return self.price
 
 
 class Grab:
@@ -71,6 +77,9 @@ class Grab:
 
     def get_mass(self):
         return self.mass
+
+    def get_price(self):
+        return self.price
 
 
 class Shield:
@@ -98,6 +107,9 @@ class Shield:
 
     def get_mass(self):
         return self.mass
+
+    def get_price(self):
+        return self.price
 
 
 class Locator:
@@ -153,6 +165,12 @@ class PhotonGun:
     def get_mass(self):
         return self.mass
 
+    def set_bullet_img(self, image):
+        self.bullet_image = image
+
+    def get_price(self):
+        return self.price
+
 
 class Destructor:
     def __init__(self, tier, groups=None):
@@ -179,6 +197,11 @@ class Destructor:
     def get_mass(self):
         return self.mass
 
+    def set_bullet_img(self, image):
+        self.bullet_image = image
+
+    def get_price(self):
+        return self.price
 
 class Absorber:
     def __init__(self, tier, groups=None):
@@ -205,6 +228,11 @@ class Absorber:
     def get_mass(self):
         return self.mass
 
+    def set_bullet_img(self, image):
+        self.bullet_image = image
+
+    def get_price(self):
+        return self.price
 
 class Gun:
     def __init__(self, bullet_image, groups, mass, price, setup=False):
