@@ -1,7 +1,7 @@
 from random import randint
 import pygame
 
-difficult = 50
+difficult = 1
 fps = 60
 
 
@@ -38,6 +38,8 @@ class Ship(pygame.sprite.Sprite):
 
     def get_damage(self, dmg):
         self.hull -= dmg - self.armor
+        if self.hull <= 0:
+            self.kill()
 
 
 class WarriorShip(Ship):

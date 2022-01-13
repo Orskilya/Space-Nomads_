@@ -587,7 +587,7 @@ station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 5
                           [AU * 5.2 + 750, HEIGHT // 2], all_sprites, stations)
 hero = Hero.Hero(
     Ships.NomadShip(load_image('Nomad_ship_fly.png', (64, 64)), [WIDTH // 2, HEIGHT // 2],
-                    500, 100, [Equipments.PhotonGun(3, (enemy, all_sprites),
+                    500, 0, [Equipments.PhotonGun(3, (enemy, all_sprites),
                                                     load_image('photon_bullet.png', (50, 50))),
                                Equipments.Engine(3), ],
                     camera,
@@ -608,8 +608,8 @@ while running:
                 spawn_coord[1] <= -(AU * 2.5 + 750) or spawn_coord[1] <= -(AU * 2.5 + 750)):
             kristalids.append(Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
                                               spawn_coord,
-                                              100, 100, [
-                                                  Equipments.PhotonGun(0, (enemy, all_sprites),
+                                              100, 0, [
+                                                  Equipments.PhotonGun(3, (hero_group, all_sprites),
                                                                        load_image(
                                                                            'photon_bullet.png',
                                                                            (50, 50)))],

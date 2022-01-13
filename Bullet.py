@@ -1,5 +1,6 @@
 import pygame
 import math
+from random import randrange
 
 fps = 60
 
@@ -45,7 +46,7 @@ class Bullet(pygame.sprite.Sprite):
         for sprite in self.enemy:
             if pygame.sprite.collide_mask(self, sprite):
                 self.kill()
-                sprite.kill()
+                sprite.get_damage(randrange(self.damage[0], self.damage[1] + 1))
 
     def __str__(self):
         return 'Пуля'
