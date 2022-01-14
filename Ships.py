@@ -36,6 +36,9 @@ class Ship(pygame.sprite.Sprite):
     def get_space(self):
         return self.space
 
+    def change_space(self, amount):
+        self.space += amount
+
     def get_damage(self, dmg):
         self.hull -= dmg - self.armor
         if self.hull <= 0:
