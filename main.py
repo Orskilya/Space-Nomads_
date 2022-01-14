@@ -608,7 +608,7 @@ hero = Hero.Hero(
     Ships.NomadShip(load_image('Nomad_ship_fly.png', (64, 64)), [WIDTH // 2, HEIGHT // 2],
                     500, 0, [Equipments.PhotonGun(3, (enemy, all_sprites),
                                                     load_image('photon_bullet.png', (50, 50))),
-                               Equipments.Engine(0), ],
+                               Equipments.Engine(3), ],
                     camera,
                     SIZE, all_sprites, ships, hero_group), 1000000, None)
 kristalids = list()
@@ -621,10 +621,10 @@ camera.stop_move()
 running = True
 song_p = True
 while running:
-    while len(kristalids) != 20:
+    while len(kristalids) != 30:
         spawn_coord = [randrange(-9700, 9700), randrange(-9700, 9700)]
         if (spawn_coord[0] >= AU * 2.5 + 750 or spawn_coord[0] <= -(AU * 2.5 + 750)) and (
-                spawn_coord[1] <= -(AU * 2.5 + 750) or spawn_coord[1] <= -(AU * 2.5 + 750)):
+                spawn_coord[1] >= AU * 2.5 + 750 or spawn_coord[1] <= -(AU * 2.5 + 750)):
             kristalids.append(Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
                                               spawn_coord,
                                               100, 0, [

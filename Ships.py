@@ -116,7 +116,8 @@ class NomadShip(Ship):
             if key in [pygame.K_s, pygame.K_w, pygame.K_a, pygame.K_d]:
                 self.keys.append(key)
         elif par == 'stop':
-            del self.keys[self.keys.index(key)]
+            if key in self.keys:
+                del self.keys[self.keys.index(key)]
         if pygame.K_s in self.keys:
             self.coord[1] += speed // fps
             self.dy = -(speed // fps)
