@@ -160,6 +160,10 @@ class NomadShip(Ship):
                 self.slot_equipment[e_type[0]][e_type[1]] = i
                 self.space -= i.get_mass()
 
+    def new_equipment(self, item):
+        i1, i2 = item.get_type()
+        self.slot_equipment[i1][i2] = item
+
 
 class Kristalid(Ship):
     def __init__(self, sprite, coord, hull, armor, equipment, hero, *group):
