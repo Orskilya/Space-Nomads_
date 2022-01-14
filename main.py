@@ -527,6 +527,9 @@ class Lobby:
             pygame.display.flip()
             clock.tick(FPS)
 
+def game_over():
+    pass
+
 
 def mini_map():
     pygame.draw.rect(screen, pygame.Color('black'), (WIDTH * 0.9, 0, WIDTH * 0.1, WIDTH * 0.1))
@@ -589,7 +592,7 @@ hero = Hero.Hero(
     Ships.NomadShip(load_image('Nomad_ship_fly.png', (64, 64)), [WIDTH // 2, HEIGHT // 2],
                     500, 0, [Equipments.PhotonGun(3, (enemy, all_sprites),
                                                     load_image('photon_bullet.png', (50, 50))),
-                               Equipments.Engine(3), ],
+                               Equipments.Engine(0), ],
                     camera,
                     SIZE, all_sprites, ships, hero_group), 1000000, None)
 kristalids = []
@@ -613,7 +616,7 @@ while running:
                                                                        load_image(
                                                                            'photon_bullet.png',
                                                                            (50, 50)))],
-                                              all_sprites, ships, enemy))
+                                              hero, all_sprites, ships, enemy))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False

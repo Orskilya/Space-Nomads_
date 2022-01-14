@@ -16,3 +16,7 @@ class Hero:
 
     def get_ship(self):
         return self.ship
+
+    def destroy_enemy(self):
+        self.money += 200
+        self.score += 1

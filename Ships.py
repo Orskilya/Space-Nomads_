@@ -104,7 +104,6 @@ class NomadShip(Ship):
         self.rect.x = scree_size[0] // 2 - self.size[0] // 2
         self.rect.y = scree_size[1] // 2 - self.size[1] // 2
         self.equipment_setting()
-        self.equipment = self.equipment[1]
 
     def fly(self, key=None, par=None):
         speed = self.slot_equipment[0][0].get_features()[0]
@@ -159,7 +158,7 @@ class NomadShip(Ship):
 
 
 class Kristalid(Ship):
-    def __init__(self, sprite, coord, hull, armor, equipment, *group):
+    def __init__(self, sprite, coord, hull, armor, equipment, hero, *group):
         super().__init__(sprite, coord, hull, armor, equipment, *group)
         self.slot_equipment = [[1, 1],  # engine and fuel tank
                                [1, 1, 1, 1, 1],  # guns
@@ -170,6 +169,7 @@ class Kristalid(Ship):
         self.shoot_time = 0
         self.first = True
         self.equipment_setting()
+        self.hero = hero  # Для добавления денег и уничтожений
 
     def __str__(self):
         return 'Кристалид'
@@ -215,3 +215,9 @@ class Kristalid(Ship):
             if self.slot_equipment[e_type[0]][e_type[1]] != 0:
                 self.slot_equipment[e_type[0]][e_type[1]] = i
                 self.space -= i.get_mass()
+
+    def get_damage(self, dmg):
+        self.hull -= dmg - self.armor
+        if self.hull <= 0:
+            self.kill()
+            self.hero.destroy_enemy()
