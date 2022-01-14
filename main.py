@@ -204,7 +204,8 @@ class Landing:
                     for row in self.shop_buttons.keys():
                         if self.shop_buttons[row]['y'][0] <= pos[1] <= self.shop_buttons[row]['y'][1]:
                             for i in range(self.shop_buttons[row]['amount']):
-                                if self.shop_buttons[row]['x'][0] + i * self.shop_buttons[row]['step'] <= pos[0] <= self.shop_buttons[row]['x'][1] + i * self.shop_buttons[row]['step']:
+                                if self.shop_buttons[row]['x'][0] + i * self.shop_buttons[row]['step'] <= pos[0] <= \
+                                        self.shop_buttons[row]['x'][1] + i * self.shop_buttons[row]['step']:
                                     item = self.object.shop_change(i + 8 * int(row[-1]))
                                     hero.money_change(-item.get_price())
                                     hero.get_ship().change_space(-item.get_mass())
@@ -290,7 +291,9 @@ class Landing:
         screen.blit(frame, (WIDTH * 0.05, - HEIGHT * 0.1))
 
     def shop(self):
-        self.shop_buttons = {'row0': {'x': (WIDTH * 0.12, WIDTH * 0.175), 'y': (HEIGHT * 0.25, HEIGHT * 0.25 + WIDTH * 0.055), 'step': WIDTH * 0.1, 'amount': 0}}
+        self.shop_buttons = {
+            'row0': {'x': (WIDTH * 0.12, WIDTH * 0.175), 'y': (HEIGHT * 0.25, HEIGHT * 0.25 + WIDTH * 0.055),
+                     'step': WIDTH * 0.1, 'amount': 0}}
         pygame.draw.rect(screen, pygame.Color('#04859D'),
                          (WIDTH * 0.1, HEIGHT * 0.2, WIDTH * 0.8, HEIGHT * 0.6), border_radius=30)
         pygame.draw.rect(screen, pygame.Color('#C8DFE3'),
@@ -311,7 +314,9 @@ class Landing:
                 x_position = WIDTH * 0.12
                 y_position += HEIGHT * 0.15
                 row += 1
-                self.shop_buttons[f'row{row}'] = {'x': (WIDTH * 0.12, WIDTH * 0.175), 'y': (y_position, y_position + WIDTH * 0.055), 'step': WIDTH * 0.1, 'amount': 0}
+                self.shop_buttons[f'row{row}'] = {'x': (WIDTH * 0.12, WIDTH * 0.175),
+                                                  'y': (y_position, y_position + WIDTH * 0.055), 'step': WIDTH * 0.1,
+                                                  'amount': 0}
             else:
                 x_position += WIDTH * 0.1
 
@@ -542,13 +547,18 @@ class Lobby:
             pygame.display.flip()
             clock.tick(FPS)
 
+
 def game_over():
     pass
 
 
 def mini_map():
-    pygame.draw.rect(screen, pygame.Color('black'), (WIDTH * 0.9, 0, WIDTH * 0.1, WIDTH * 0.1))
-    pygame.draw.rect(screen, pygame.Color('#04859D'), (WIDTH * 0.9, 0, WIDTH * 0.1, WIDTH * 0.1), 3)
+    minimap = pygame.Surface((9700, 9700))
+    all_sprites.draw(minimap)
+    minimap = pygame.transform.scale(minimap, (500, 500))
+    screen.blit(minimap, (100, 100))
+    # pygame.draw.rect(screen, pygame.Color('#04859D'), (WIDTH * 0.9, 0, WIDTH * 0.1, WIDTH * 0.1), 3)
+
 
 
 # PG
@@ -607,8 +617,8 @@ station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 5
 hero = Hero.Hero(
     Ships.NomadShip(load_image('Nomad_ship_fly.png', (64, 64)), [WIDTH // 2, HEIGHT // 2],
                     500, 0, [Equipments.PhotonGun(3, (enemy, all_sprites),
-                                                    load_image('photon_bullet.png', (50, 50))),
-                               Equipments.Engine(3), ],
+                                                  load_image('photon_bullet.png', (50, 50))),
+                             Equipments.Engine(3), ],
                     camera,
                     SIZE, all_sprites, ships, hero_group), 1000000, None)
 kristalids = list()
@@ -657,6 +667,7 @@ while running:
     camera.stop_move()
     all_sprites.draw(screen)
     landing.planet_collide()
+    mini_map()
     pygame.display.flip()
     clock.tick(FPS)
 pygame.quit()
