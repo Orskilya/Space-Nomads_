@@ -202,10 +202,13 @@ class Landing:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.shop_buttons:
                     pos = event.pos
                     for row in self.shop_buttons.keys():
-                        if self.shop_buttons[row]['y'][0] <= pos[1] <= self.shop_buttons[row]['y'][1]:
+                        if self.shop_buttons[row]['y'][0] <= pos[1] <= self.shop_buttons[row]['y'][
+                            1]:
                             for i in range(self.shop_buttons[row]['amount']):
-                                if self.shop_buttons[row]['x'][0] + i * self.shop_buttons[row]['step'] <= pos[0] <= \
-                                        self.shop_buttons[row]['x'][1] + i * self.shop_buttons[row]['step']:
+                                if self.shop_buttons[row]['x'][0] + i * self.shop_buttons[row][
+                                    'step'] <= pos[0] <= \
+                                        self.shop_buttons[row]['x'][1] + i * self.shop_buttons[row][
+                                    'step']:
                                     item = self.object.shop_change(i + 8 * int(row[-1]))
                                     hero.money_change(-item.get_price())
                                     hero.get_ship().change_space(-item.get_mass())
@@ -292,7 +295,8 @@ class Landing:
 
     def shop(self):
         self.shop_buttons = {
-            'row0': {'x': (WIDTH * 0.12, WIDTH * 0.175), 'y': (HEIGHT * 0.25, HEIGHT * 0.25 + WIDTH * 0.055),
+            'row0': {'x': (WIDTH * 0.12, WIDTH * 0.175),
+                     'y': (HEIGHT * 0.25, HEIGHT * 0.25 + WIDTH * 0.055),
                      'step': WIDTH * 0.1, 'amount': 0}}
         pygame.draw.rect(screen, pygame.Color('#04859D'),
                          (WIDTH * 0.1, HEIGHT * 0.2, WIDTH * 0.8, HEIGHT * 0.6), border_radius=30)
@@ -308,14 +312,16 @@ class Landing:
         y_position = HEIGHT * 0.25
         row = 0
         for i in equipment:
-            screen.blit(load_image(i.get_img(), (WIDTH * 0.055, WIDTH * 0.055), -1), (x_position, y_position))
+            screen.blit(load_image(i.get_img(), (WIDTH * 0.055, WIDTH * 0.055), -1),
+                        (x_position, y_position))
             self.shop_buttons[f'row{row}']['amount'] += 1
             if x_position + WIDTH * 0.1 > WIDTH * 0.9:
                 x_position = WIDTH * 0.12
                 y_position += HEIGHT * 0.15
                 row += 1
                 self.shop_buttons[f'row{row}'] = {'x': (WIDTH * 0.12, WIDTH * 0.175),
-                                                  'y': (y_position, y_position + WIDTH * 0.055), 'step': WIDTH * 0.1,
+                                                  'y': (y_position, y_position + WIDTH * 0.055),
+                                                  'step': WIDTH * 0.1,
                                                   'amount': 0}
             else:
                 x_position += WIDTH * 0.1
@@ -549,7 +555,13 @@ class Lobby:
 
 
 def game_over():
-    pass
+    death_screen = pygame.transform.scale(load_image('death.png'), SIZE)
+    screen.blit(death_screen, (0, 0))
+    pygame.display.flip()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quit()
 
 
 def mini_map():
@@ -560,6 +572,15 @@ def mini_map():
     # pygame.draw.rect(screen, pygame.Color('#04859D'), (WIDTH * 0.9, 0, WIDTH * 0.1, WIDTH * 0.1), 3)
 
 
+def render_hp():
+    for ship in ships:
+        if ship == hero.ship:
+            hp = font.render(str(int(hero.ship.hull)), True, pygame.Color('blue'))
+            screen.blit(hp, (20, 40))
+        else:
+            hp = font.render(str(int(ship.hull)), True, pygame.Color('blue'))
+            screen.blit(hp, (ship.rect.x + ship.size[0] // 2 - 35, ship.rect.y + ship.size[1] - 20))
+
 
 # PG
 FPS = 60
@@ -568,7 +589,6 @@ AU = 815
 pygame.init()
 user32 = ctypes.windll.user32
 SIZE = WIDTH, HEIGHT = user32.GetSystemMetrics(0) - 100, user32.GetSystemMetrics(1) - 100
-print(SIZE)
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 song = pygame.mixer.Sound('soundtracks/space_theme.mp3')
@@ -593,6 +613,7 @@ bg.rect = bg.image.get_rect()
 all_sprites.add(bg)
 bg.rect.x = bg.rect.x = -4500 + (AU * 1.7 + 750) // 2
 bg.rect.y = -4500
+font = pygame.font.SysFont('Arialms', 60)
 
 sun = Objects.Star(load_image('Sun.png'), 25, 10, [1500, 1500], [WIDTH // 2, HEIGHT // 2],
                    all_sprites)
@@ -616,7 +637,7 @@ station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 5
                           [AU * 5.2 + 750, HEIGHT // 2], all_sprites, stations)
 hero = Hero.Hero(
     Ships.NomadShip(load_image('Nomad_ship_fly.png', (64, 64)), [WIDTH // 2, HEIGHT // 2],
-                    500, 0, [Equipments.PhotonGun(3, (enemy, all_sprites),
+                    100, 0, [Equipments.PhotonGun(3, (enemy, all_sprites),
                                                   load_image('photon_bullet.png', (50, 50))),
                              Equipments.Engine(3), ],
                     camera,
@@ -657,7 +678,10 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             hero.ship.update(event, 'shoot')
     screen.fill((0, 0, 0))
-    all_sprites.update(hero_coord=[hero.ship.rect.x, hero.ship.rect.y])
+    if hero.ship.death_flag:
+        game_over()
+    all_sprites.update(hero_coord=[hero.ship.rect.x + hero.ship.size[0] // 2, hero.ship.rect.y +
+                                   hero.ship.size[1] // 2])
     for sprite in all_sprites:
         if sprite != hero.ship:
             camera.apply(sprite)
@@ -667,7 +691,7 @@ while running:
     camera.stop_move()
     all_sprites.draw(screen)
     landing.planet_collide()
-    mini_map()
+    render_hp()
     pygame.display.flip()
     clock.tick(FPS)
 pygame.quit()

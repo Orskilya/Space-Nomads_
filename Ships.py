@@ -107,6 +107,7 @@ class NomadShip(Ship):
         self.rect.x = scree_size[0] // 2 - self.size[0] // 2
         self.rect.y = scree_size[1] // 2 - self.size[1] // 2
         self.equipment_setting()
+        self.death_flag = False
 
     def fly(self, key=None, par=None):
         speed = self.slot_equipment[0][0].get_features()[0]
@@ -160,6 +161,11 @@ class NomadShip(Ship):
                 self.slot_equipment[e_type[0]][e_type[1]] = i
                 self.space -= i.get_mass()
 
+    def get_damage(self, dmg):
+        self.hull -= dmg - self.armor
+        if self.hull <= 0:
+            self.death_flag = True
+
 
 class Kristalid(Ship):
     def __init__(self, sprite, coord, hull, armor, equipment, hero, *group):
@@ -201,7 +207,7 @@ class Kristalid(Ship):
         if 0 < distance <= 1000:
             self.fly(hero_coord, distance)
             self.shoot_time = (self.shoot_time + 1) % (fps // 3)
-            if self.shoot_time == 0:
+            if self.shoot_time == 0 and self.slot_equipment[1][0].distance >= distance:
                 self.shoot(hero_coord)
         else:
             if self.rect.x != self.start_point[0] and self.rect.y != self.start_point[1]:
