@@ -8,6 +8,7 @@ import Equipments
 from random import randrange
 from math import radians
 import Hero
+import sqlite3
 
 
 class Camera:
@@ -561,6 +562,7 @@ def game_over():
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                right_record()
                 quit()
 
 
@@ -571,7 +573,16 @@ def win():
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                right_record('Yes')
                 quit()
+
+
+def right_record(win_='No'):
+    con = sqlite3.connect('data/scores.db')
+    cursor = con.cursor()
+    cursor.execute(
+        f'INSERT INTO Score(name, score, win) VALUES("{hero.name}", {hero.score}, "{win_}")')
+    con.commit()
 
 
 def mini_map():
@@ -652,7 +663,7 @@ hero = Hero.Hero(
                                                   load_image('photon_bullet.png', (50, 50))),
                              Equipments.Engine(3), ],
                     camera,
-                    SIZE, all_sprites, ships, hero_group), 1000000, None)
+                    SIZE, all_sprites, ships, hero_group), 1000000, 'Test')
 kristalids = list()
 for sprite in all_sprites:
     if sprite != hero.ship:
