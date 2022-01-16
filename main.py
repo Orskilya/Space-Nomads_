@@ -4,10 +4,12 @@ import Ships
 import Objects
 import os
 import pygame
+import pygame.gfxdraw
 import Equipments
 from random import randrange
 from math import radians
 import Hero
+from googletrans import Translator
 
 
 class Camera:
@@ -71,14 +73,14 @@ def load_image(name, size_of_sprite=None, color_key=None):
 
 
 class Landing:
-    global WIDTH, HEIGHT, FPS, LANGUAGE, hero
+    global WIDTH, HEIGHT, FPS, LANGUAGE, hero, TRANSLATOR
 
     def __init__(self):
         self.font = pygame.font.SysFont('Arialms', 29)
         self.current_window = 'government'
         self.current_song = pygame.mixer.Sound('soundtracks/planet.mp3')
         self.new_game = True
-        self.text = self.font.render('Press "Space" to land', True, pygame.Color('Yellow'))
+        self.text = self.font.render(TRANSLATOR.translate('Press "Space" to land', src='en', dest=LANGUAGE).text, True, pygame.Color('Yellow'))
         self.object = None
         self.button_type = None
         self.market_buttons = None
@@ -206,9 +208,14 @@ class Landing:
                         if self.shop_buttons[row]['y'][0] <= pos[1] <= self.shop_buttons[row]['y'][1]:
                             for i in range(self.shop_buttons[row]['amount']):
                                 if self.shop_buttons[row]['x'][0] + i * self.shop_buttons[row]['step'] <= pos[0] <= self.shop_buttons[row]['x'][1] + i * self.shop_buttons[row]['step']:
-                                    item = self.object.shop_change(i + 8 * int(row[-1]))
-                                    hero.money_change(-item.get_price())
-                                    hero.get_ship().change_space(-item.get_mass())
+                                    item = self.object.shopping(i + 8 * int(row[-1]))
+                                    error = pygame.mixer.Sound('soundtracks/error.mp3')
+                                    if hero.money_change(-item.get_price()):
+                                        error.play()
+                                    elif hero.get_ship().change_space(-item.get_mass()):
+                                        error.play()
+                                    else:
+                                        self.object.shop_change(i + 8 * int(row[-1]))
                                     hero.get_ship().new_equipment(item)
                 if event.type == pygame.MOUSEMOTION and self.shop_buttons:
                     pos = event.pos
@@ -222,10 +229,10 @@ class Landing:
                             for i in range(self.shop_buttons[row]['amount']):
                                 if self.shop_buttons[row]['x'][0] + i * self.shop_buttons[row][
                                     'step'] <= pos[0] <= self.shop_buttons[row]['x'][1] + i * self.shop_buttons[row]['step']:
-                                    self.shop_info = self.object.get_shop()[i + 8 * int(row[-1])]
+                                    self.shop_info = [self.object.get_shop()[i + 8 * int(row[-1])], (self.shop_buttons[row]['x'][0] + i * self.shop_buttons[row][
+                                    'step'], self.shop_buttons[row]['y'][0])]
                         else:
                             self.shop_info = None
-
 
             if self.song_play:
                 self.current_song.play()
@@ -339,14 +346,31 @@ class Landing:
                 x_position += WIDTH * 0.1
 
         if self.shop_info:
-            pygame.draw.rect(screen, (23, 100, 255, 50), (100, 100, 100, 100), 0)
+            font = pygame.font.SysFont('Arialms', 20)
+            pygame.gfxdraw.box(screen, pygame.Rect(self.shop_info[1][0] - 100, self.shop_info[1][1] - 100, 300, 300), (51, 51, 51, 230))
+            features = self.shop_info[0].get_features()
+            step = 0
+            for i in features:
+                text = self.font.render(TRANSLATOR.translate(i, src='en', dest=LANGUAGE).text + ' ' + str(features[i]), True, pygame.Color('white'))
+                screen.blit(text, (self.shop_info[1][0] - 85, self.shop_info[1][1] + step))
+                step += 30
+
+            name = self.font.render(self.shop_info[0].get_name(), True, pygame.Color('white'))
+            screen.blit(name, (self.shop_info[1][0] - 85, self.shop_info[1][1] - 85))
+            screen.blit(load_image('money.png', (20, 20)), (self.shop_info[1][0] + 50, self.shop_info[1][1] + 160))
+            money = font.render(str(self.shop_info[0].get_price()), True, pygame.Color('white'))
+            screen.blit(money, (self.shop_info[1][0] + 70, self.shop_info[1][1] + 155))
+            screen.blit(load_image('cube.png', (20, 20)),
+                        (self.shop_info[1][0] + 130, self.shop_info[1][1] + 160))
+            mass = font.render(str(self.shop_info[0].get_mass()), True, pygame.Color('white'))
+            screen.blit(mass, (self.shop_info[1][0] + 150, self.shop_info[1][1] + 155))
 
     def market(self):
         self.market_buttons = {'x': ((WIDTH * 0.55, WIDTH * 0.62), (WIDTH * 0.63, WIDTH * 0.7)),
                                'y': (HEIGHT * 0.25, HEIGHT * 0.29),
                                'y_step': WIDTH * 0.05}
-        button_names = {'EN': 'Buy', 'RU': 'Купить', 'KR': '구입'}
-        button_names_2 = {'EN': 'Sell', 'RU': 'Продать', 'KR': '팔다'}
+        button_names = {'en': 'Buy', 'ru': 'Купить', 'ko': '구입'}
+        button_names_2 = {'en': 'Sell', 'ru': 'Продать', 'ko': '팔다'}
 
         # shop bg
         pygame.draw.rect(screen, pygame.Color('#04859D'),
@@ -398,7 +422,7 @@ class Landing:
         with open(f'data/market {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
             text = map(lambda x: x.rstrip(), f.readlines())
 
-        if LANGUAGE == 'KR':
+        if LANGUAGE == 'ko':
             x_position = WIDTH * 0.39
         else:
             x_position = WIDTH * 0.35
@@ -453,15 +477,15 @@ class Lobby:
                         elif self.buttons_type == 'Options':
                             if HEIGHT * 0.3 + self.buttons.height + 15 <= pos[1] \
                                     <= HEIGHT * 0.3 + 2 * self.buttons.height + 15:
-                                LANGUAGE = 'KR'
+                                LANGUAGE = 'ko'
                                 self.update_window()
                             elif HEIGHT * 0.3 + 2 * self.buttons.height + 30 <= pos[1] \
                                     <= HEIGHT * 0.3 + 3 * self.buttons.height + 30:
-                                LANGUAGE = 'EN'
+                                LANGUAGE = 'en'
                                 self.update_window()
                             elif HEIGHT * 0.3 + 3 * self.buttons.height + 45 <= pos[1] \
                                     <= HEIGHT * 0.3 + 4 * self.buttons.height + 45:
-                                LANGUAGE = 'RU'
+                                LANGUAGE = 'ru'
                                 self.update_window()
                             elif HEIGHT * 0.3 + 4 * self.buttons.height + 60 <= pos[1] \
                                     <= HEIGHT * 0.3 + 5 * self.buttons.height + 60:
@@ -568,6 +592,7 @@ class Lobby:
             pygame.display.flip()
             clock.tick(FPS)
 
+
 def game_over():
     pass
 
@@ -579,7 +604,7 @@ def mini_map():
 
 # PG
 FPS = 60
-LANGUAGE = 'EN'
+LANGUAGE = 'en'
 AU = 815
 pygame.init()
 user32 = ctypes.windll.user32
@@ -588,6 +613,7 @@ print(SIZE)
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 song = pygame.mixer.Sound('soundtracks/space_theme.mp3')
+TRANSLATOR = Translator()
 
 # lobby
 lobby = Lobby()

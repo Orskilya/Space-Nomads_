@@ -71,7 +71,11 @@ class Planet(Object):
         return self.shop
 
     def shop_change(self, index):
-        return self.shop.pop(index)
+        self.shop.pop(index)
+
+    def shopping(self, index):
+        return self.shop[index]
+
 
     def make_shop(self):
         shop = [[eval(f'{product}({randrange(0, 4)})') for _ in range(randrange(1, 4))] for
@@ -126,7 +130,7 @@ class Station(Object):
         return self.shop
 
     def shop_change(self, index):
-        return self.shop.pop(index)
+        self.shop.pop(index)
 
     def products(self):
         return self.market
@@ -142,3 +146,6 @@ class Station(Object):
             i.sort(key=lambda x: x.tier)
             normal_shop.extend(i)
         return normal_shop
+
+    def shopping(self, index):
+        return self.shop[index]

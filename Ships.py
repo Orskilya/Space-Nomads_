@@ -37,6 +37,8 @@ class Ship(pygame.sprite.Sprite):
         return self.space
 
     def change_space(self, amount):
+        if self.space + amount < 0:
+            return True
         self.space += amount
 
     def get_damage(self, dmg):
@@ -109,7 +111,7 @@ class NomadShip(Ship):
         self.equipment_setting()
 
     def fly(self, key=None, par=None):
-        speed = self.slot_equipment[0][0].get_features()[0]
+        speed = self.slot_equipment[0][0].get_speed()
         self.dx = 0
         self.dy = 0
         if par == 'go':
