@@ -108,6 +108,7 @@ class NomadShip(Ship):
         self.rect.y = scree_size[1] // 2 - self.size[1] // 2
         self.equipment_setting()
         self.death_flag = False
+        self.end_jump = False
 
     def fly(self, key=None, par=None):
         speed = self.slot_equipment[0][0].get_features()[0]
@@ -149,6 +150,10 @@ class NomadShip(Ship):
                 self.fly(event.key, 'go')
             else:
                 self.fly(event.key, 'stop')
+        if not self.end_jump and self.slot_equipment[0][0].tier == 3 and \
+                self.slot_equipment[0][1] != 1 \
+                and self.slot_equipment[0][1].tier == 3:
+            self.end_jump = True
 
     def shoot(self, target):
         self.slot_equipment[1][0].shoot(

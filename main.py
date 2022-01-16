@@ -564,12 +564,23 @@ def game_over():
                 quit()
 
 
+def win():
+    death_screen = pygame.transform.scale(load_image('jump.png'), SIZE)
+    screen.blit(death_screen, (0, 0))
+    pygame.display.flip()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quit()
+
+
 def mini_map():
     minimap = pygame.Surface((9700, 9700))
     all_sprites.draw(minimap)
     minimap = pygame.transform.scale(minimap, (500, 500))
     screen.blit(minimap, (100, 100))
-    # pygame.draw.rect(screen, pygame.Color('#04859D'), (WIDTH * 0.9, 0, WIDTH * 0.1, WIDTH * 0.1), 3)
+    # pygame.draw.rect(screen, pygame.Color('#04859D'),
+    # (WIDTH * 0.9, 0, WIDTH * 0.1, WIDTH * 0.1), 3)
 
 
 def render_hp():
@@ -675,6 +686,9 @@ while running:
                 hero.ship.keys.clear()
                 song.stop()
                 song_p = landing.cycle(landing.planet_collide())
+            elif hero.ship.end_jump and \
+                    (event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT):
+                win()
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             hero.ship.update(event, 'shoot')
     screen.fill((0, 0, 0))
@@ -692,6 +706,10 @@ while running:
     all_sprites.draw(screen)
     landing.planet_collide()
     render_hp()
+    if hero.ship.end_jump:
+        text = font.render(str('Вы можете совершить прыжок!(Нажмите "Shift")'),
+                           True, pygame.Color('blue'))
+        screen.blit(text, (WIDTH // 2 - text.get_width() // 2, 10 + text.get_height()))
     pygame.display.flip()
     clock.tick(FPS)
 pygame.quit()
