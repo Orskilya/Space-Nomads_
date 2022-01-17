@@ -172,16 +172,20 @@ class PhotonGun:
         self.tier = tier
         if bullet_image:
             self.bullet_image = bullet_image
+        self.bullet_size = (50, 50)
         self.groups = groups
         self.type = (1, 0)
 
         self.name = 'Photon Gun'
         self.damage = (5 + self.tier, 10 + self.tier)
-        self.distance = 500 + self.tier * 50
+        self.distance = 500 + self.tier * 25
         self.price = 700 + self.tier * 100
         self.mass = 11 + 3 * self.tier
         self.bullet_speed = 500 + self.tier * 250
         self.bullets = []
+
+    def __str__(self):
+        return 'photon'
 
     def get_img(self):
         return self.img
@@ -198,6 +202,9 @@ class PhotonGun:
     def set_bullet_img(self, image):
         self.bullet_image = image
 
+    def set_groups(self, *args):
+        self.groups = args
+
     def shoot(self, start_coord, owner, target_coord):
         self.bullets.append(Bullet(self.bullet_image, start_coord, owner, target_coord,
                                    self.bullet_speed, self.distance, self.damage, self.groups[0],
@@ -208,6 +215,9 @@ class PhotonGun:
 
     def get_name(self):
         return self.name
+
+    def get_size(self):
+        return self.bullet_size
 
 
 class Destructor:
@@ -216,16 +226,20 @@ class Destructor:
         self.tier = tier
         if bullet_image:
             self.bullet_image = bullet_image
+        self.bullet_size = (50, 40)
         self.groups = groups
         self.type = (1, 0)
 
         self.name = 'Destructor'
         self.damage = (20 + round(self.tier * 3.3), 25 + round(self.tier * 3.3))
-        self.distance = 350 + round(self.tier * 16.6)
+        self.distance = 700 + self.tier * 50
         self.price = 5000 + self.tier * 2000
         self.mass = 30 + 15 * self.tier
-        self.bullet_speed = 500 + self.tier * 250
+        self.bullet_speed = 1000 + self.tier * 250
         self.bullets = []
+
+    def __str__(self):
+        return 'destructor'
 
     def get_img(self):
         return self.img
@@ -241,6 +255,9 @@ class Destructor:
 
     def set_bullet_img(self, image):
         self.bullet_image = image
+
+    def set_groups(self, *args):
+        self.groups = args
 
     def shoot(self, start_coord, owner, target_coord):
         self.bullets.append(Bullet(self.bullet_image, start_coord, owner, target_coord,
@@ -253,20 +270,27 @@ class Destructor:
     def get_name(self):
         return self.name
 
+    def get_size(self):
+        return self.bullet_size
+
 
 class Absorber:
     def __init__(self, tier, groups=None):
         self.img = 'absorber.png'
         self.tier = tier
         self.bullet_image = 'absorber_bullet.png'
+        self.bullet_size = (10, 10)
         self.groups = groups
         self.type = (1, 0)
 
         self.name = 'Absorber'
         self.damage = (50 + round(self.tier * 13.3), 60 + round(self.tier * 13.3))
-        self.distance = 250 - round(self.tier * 16.6)
+        self.distance = 400 - round(self.tier * 16.6)
         self.price = 10000 + 10000 * self.tier
         self.mass = 50 + 50 * self.tier
+
+    def __str__(self):
+        return 'absorber'
 
     def get_img(self):
         return self.img
@@ -283,8 +307,14 @@ class Absorber:
     def set_bullet_img(self, image):
         self.bullet_image = image
 
+    def set_groups(self, *args):
+        self.groups = args
+
     def get_price(self):
         return self.price
 
     def get_name(self):
         return self.name
+
+    def get_size(self):
+        return self.bullet_size

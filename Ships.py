@@ -104,7 +104,6 @@ class NomadShip(Ship):
                                [1, 1, randint(0, 1), 0, 0],  # guns
                                [1, randint(0, 1)],  # grab and shield
                                [1, randint(0, 1)]]  # locator and scanner
-        self.hull *= 0.9
         self.camera = camera
         self.rect.x = scree_size[0] // 2 - self.size[0] // 2
         self.rect.y = scree_size[1] // 2 - self.size[1] // 2
