@@ -37,6 +37,8 @@ class Ship(pygame.sprite.Sprite):
         return self.space
 
     def change_space(self, amount):
+        if self.space + amount < 0:
+            return True
         self.space += amount
 
     def get_damage(self, dmg):
@@ -102,7 +104,6 @@ class NomadShip(Ship):
                                [1, 1, randint(0, 1), 0, 0],  # guns
                                [1, randint(0, 1)],  # grab and shield
                                [1, randint(0, 1)]]  # locator and scanner
-        self.hull *= 0.9
         self.camera = camera
         self.rect.x = scree_size[0] // 2 - self.size[0] // 2
         self.rect.y = scree_size[1] // 2 - self.size[1] // 2
@@ -113,7 +114,7 @@ class NomadShip(Ship):
         self.cur_frame = 0
 
     def fly(self, key=None, par=None):
-        speed = self.slot_equipment[0][0].get_features()[0]
+        speed = self.slot_equipment[0][0].get_speed()
         self.dx = 0
         self.dy = 0
         if par == 'go':
@@ -186,6 +187,10 @@ class NomadShip(Ship):
             if self.slot_equipment[e_type[0]][e_type[1]] != 0:
                 self.slot_equipment[e_type[0]][e_type[1]] = i
                 self.space -= i.get_mass()
+
+    def new_equipment(self, item):
+        i1, i2 = item.get_type()
+        self.slot_equipment[i1][i2] = item
 
     def get_damage(self, dmg):
         self.hull -= dmg - self.armor

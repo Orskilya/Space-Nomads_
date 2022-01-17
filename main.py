@@ -4,10 +4,12 @@ import Ships
 import Objects
 import os
 import pygame
+import pygame.gfxdraw
 import Equipments
 from random import randrange
 from math import radians
 import Hero
+from googletrans import Translator
 import sqlite3
 
 
@@ -72,7 +74,7 @@ def load_image(name, size_of_sprite=None, color_key=None):
 
 
 class Landing:
-    global WIDTH, HEIGHT, FPS, LANGUAGE, hero
+    global WIDTH, HEIGHT, FPS, LANGUAGE, hero, TRANSLATOR
 
     def __init__(self):
         self.font = pygame.font.SysFont('Arialms', 29)
@@ -84,6 +86,7 @@ class Landing:
         self.button_type = None
         self.market_buttons = None
         self.shop_buttons = None
+        self.shop_info = None
 
     def planet_collide(self):
         for sprite in planets:
@@ -106,7 +109,6 @@ class Landing:
             self.song_play = True
         if self.new_game:
             self.current_bg = self.bg_names[0]
-            self.new_game = False
         else:
             self.current_bg = self.bg_names[1]
         while True:
@@ -118,16 +120,20 @@ class Landing:
                     if HEIGHT * 0.9 <= pos[1] <= HEIGHT:
                         if WIDTH * 0.5 - 2 * WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5 - WIDTH * 0.055:
                             self.current_window = 'government'
+                            self.new_game = False
                             self.current_bg = self.bg_names[0]
                         elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5:
                             self.current_window = 'shop'
+                            self.new_game = False
                             self.current_bg = self.bg_names[1]
                         elif WIDTH * 0.5 <= pos[0] <= WIDTH * 0.5 + WIDTH * 0.055:
                             self.current_window = 'market'
+                            self.new_game = False
                             self.current_bg = self.bg_names[1]
                         elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[
-                            0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
+                                0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
                             self.current_window = 'main'
+                            self.new_game = False
                             self.current_bg = self.bg_names[1]
                             self.button_type = None
                             self.current_song.stop()
@@ -142,13 +148,14 @@ class Landing:
                         elif WIDTH * 0.5 <= pos[0] <= WIDTH * 0.5 + WIDTH * 0.055:
                             self.button_type = (WIDTH * 0.5, HEIGHT * 0.85, 2)
                         elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[
-                            0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
+                                0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
                             self.button_type = (WIDTH * 0.5 + WIDTH * 0.055, HEIGHT * 0.85, 3)
                         else:
                             self.button_type = None
                     else:
                         self.button_type = None
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.market_buttons:
+                if event.type == pygame.MOUSEBUTTONDOWN and \
+                        event.button == 1 and self.market_buttons:
                     pos = event.pos
                     if self.market_buttons['x'][0][0] <= pos[0] <= self.market_buttons['x'][0][1]:
                         if self.market_buttons['y'][0] <= pos[1] <= self.market_buttons['y'][1] or \
@@ -173,7 +180,7 @@ class Landing:
                                 self.market_buttons['y'][0] + 6 * self.market_buttons['y_step'] <= \
                                 pos[
                                     1] <= self.market_buttons['y'][1] + 6 * self.market_buttons[
-                            'y_step']:
+                                'y_step']:
                             print(1)
                     elif self.market_buttons['x'][1][0] <= pos[0] <= self.market_buttons['x'][1][1]:
                         if self.market_buttons['y'][0] <= pos[1] <= self.market_buttons['y'][1] or \
@@ -198,21 +205,51 @@ class Landing:
                                 self.market_buttons['y'][0] + 6 * self.market_buttons['y_step'] <= \
                                 pos[
                                     1] <= self.market_buttons['y'][1] + 6 * self.market_buttons[
-                            'y_step']:
+                                'y_step']:
                             print(2)
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.shop_buttons:
                     pos = event.pos
                     for row in self.shop_buttons.keys():
                         if self.shop_buttons[row]['y'][0] <= pos[1] <= self.shop_buttons[row]['y'][
-                            1]:
+                                1]:
                             for i in range(self.shop_buttons[row]['amount']):
                                 if self.shop_buttons[row]['x'][0] + i * self.shop_buttons[row][
-                                    'step'] <= pos[0] <= \
-                                        self.shop_buttons[row]['x'][1] + i * self.shop_buttons[row][
-                                    'step']:
-                                    item = self.object.shop_change(i + 8 * int(row[-1]))
-                                    hero.money_change(-item.get_price())
-                                    hero.get_ship().change_space(-item.get_mass())
+                                    'step'] <= pos[0] <= self.shop_buttons[row]['x'][1] + i * \
+                                        self.shop_buttons[row]['step']:
+                                    item = self.object.shopping(i + 8 * int(row[-1]))
+                                    error = pygame.mixer.Sound('soundtracks/error.mp3')
+                                    selling = pygame.mixer.Sound('soundtracks/selling.mp3')
+                                    if hero.money_change(-item.get_price()):
+                                        error.play()
+                                    elif hero.get_ship().change_space(-item.get_mass()):
+                                        error.play()
+                                    else:
+                                        selling.play()
+                                        self.object.shop_change(i + 8 * int(row[-1]))
+
+                                    if str(item) in 'photon absorber destructor':
+                                        item.set_bullet_img(load_image(str(item) + '_bullet.png', item.get_size(), -1))
+                                        item.set_groups(enemy, all_sprites)
+
+                                    hero.get_ship().new_equipment(item)
+                if event.type == pygame.MOUSEMOTION and self.shop_buttons:
+                    pos = event.pos
+                    flag = False
+                    for row in self.shop_buttons.keys():
+                        if flag:
+                            break
+                        if self.shop_buttons[row]['y'][0] <= pos[1] <= self.shop_buttons[row]['y'][
+                                1]:
+                            flag = True
+                            for i in range(self.shop_buttons[row]['amount']):
+                                if self.shop_buttons[row]['x'][0] + i * self.shop_buttons[row][
+                                    'step'] <= pos[0] <= self.shop_buttons[row]['x'][1] + i * \
+                                        self.shop_buttons[row]['step']:
+                                    self.shop_info = [self.object.get_shop()[i + 8 * int(row[-1])], (
+                                        self.shop_buttons[row]['x'][0] + i * self.shop_buttons[row][
+                                            'step'], self.shop_buttons[row]['y'][0])]
+                        else:
+                            self.shop_info = None
 
             if self.song_play:
                 self.current_song.play()
@@ -284,15 +321,31 @@ class Landing:
                         (button_type[0] + 10, button_type[1]))
 
     def government(self):
-        with open(f'data/Dialog planets {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
-            text = map(lambda x: x.rstrip, f.readlines())
-
+        font = pygame.font.SysFont('Arialms', 20)
         pygame.draw.rect(screen, pygame.Color('#C8DFE3'),
                          (WIDTH * 0.06, HEIGHT * 0.06, WIDTH * 0.381, HEIGHT * 0.77))
         pygame.draw.line(screen, pygame.Color('Blue'), (WIDTH * 0.06, HEIGHT * 0.65),
                          (WIDTH * 0.44, HEIGHT * 0.65), 5)
         frame = pygame.transform.scale(load_image('frame.png'), (WIDTH * 0.4, HEIGHT * 1.1))
         screen.blit(frame, (WIDTH * 0.05, - HEIGHT * 0.1))
+
+        if self.new_game:
+            with open(f'data/Starting phrase {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
+                hero_text = f.readline()
+                text = map(lambda x: x.rstrip(), f.readlines())
+            y_pos = HEIGHT * 0.13
+            for line in text:
+                string_render = font.render(line, True, pygame.Color('black'))
+                screen.blit(string_render, (WIDTH * 0.07, y_pos))
+                y_pos += HEIGHT * 0.03
+
+            string_render = font.render(hero_text, True, pygame.Color('black'))
+            screen.blit(string_render, (WIDTH * 0.07, HEIGHT * 0.66))
+        else:
+            with open(f'data/Dialog planets {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
+                government_text = f.readline().rstrip()
+                hero_text = map(lambda x: x.rstrip, f.readlines())
+
 
     def shop(self):
         self.shop_buttons = {
@@ -315,6 +368,12 @@ class Landing:
         for i in equipment:
             screen.blit(load_image(i.get_img(), (WIDTH * 0.055, WIDTH * 0.055), -1),
                         (x_position, y_position))
+            if hero.get_money() >= i.get_price() and hero.get_ship().get_space() >= i.get_mass():
+                color = pygame.Color('green')
+            else:
+                color = pygame.Color('red')
+            pygame.draw.rect(screen, color, (
+                x_position - 10, y_position - 10, WIDTH * 0.055 + 20, WIDTH * 0.055 + 20), 5)
             self.shop_buttons[f'row{row}']['amount'] += 1
             if x_position + WIDTH * 0.1 > WIDTH * 0.9:
                 x_position = WIDTH * 0.12
@@ -327,12 +386,35 @@ class Landing:
             else:
                 x_position += WIDTH * 0.1
 
+        if self.shop_info:
+            font = pygame.font.SysFont('Arialms', 20)
+            pygame.gfxdraw.box(screen,
+                               pygame.Rect(self.shop_info[1][0] - 100, self.shop_info[1][1] - 100,
+                                           300, 300), (51, 51, 51, 230))
+            features = self.shop_info[0].get_features()
+            step = 0
+            for i in features:
+                text = self.font.render(i + ' ' + str(features[i]), True, pygame.Color('white'))
+                screen.blit(text, (self.shop_info[1][0] - 85, self.shop_info[1][1] + step))
+                step += 30
+
+            name = self.font.render(self.shop_info[0].get_name(), True, pygame.Color('white'))
+            screen.blit(name, (self.shop_info[1][0] - 85, self.shop_info[1][1] - 85))
+            screen.blit(load_image('money.png', (20, 20)),
+                        (self.shop_info[1][0] + 50, self.shop_info[1][1] + 160))
+            money = font.render(str(self.shop_info[0].get_price()), True, pygame.Color('white'))
+            screen.blit(money, (self.shop_info[1][0] + 70, self.shop_info[1][1] + 155))
+            screen.blit(load_image('cube.png', (20, 20)),
+                        (self.shop_info[1][0] + 130, self.shop_info[1][1] + 160))
+            mass = font.render(str(self.shop_info[0].get_mass()), True, pygame.Color('white'))
+            screen.blit(mass, (self.shop_info[1][0] + 150, self.shop_info[1][1] + 155))
+
     def market(self):
         self.market_buttons = {'x': ((WIDTH * 0.55, WIDTH * 0.62), (WIDTH * 0.63, WIDTH * 0.7)),
                                'y': (HEIGHT * 0.25, HEIGHT * 0.29),
                                'y_step': WIDTH * 0.05}
-        button_names = {'EN': 'Buy', 'RU': 'Купить', 'KR': '구입'}
-        button_names_2 = {'EN': 'Sell', 'RU': 'Продать', 'KR': '팔다'}
+        button_names = {'en': 'Buy', 'ru': 'Купить', 'ko': '구입'}
+        button_names_2 = {'en': 'Sell', 'ru': 'Продать', 'ko': '팔다'}
 
         # shop bg
         pygame.draw.rect(screen, pygame.Color('#04859D'),
@@ -384,7 +466,7 @@ class Landing:
         with open(f'data/market {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
             text = map(lambda x: x.rstrip(), f.readlines())
 
-        if LANGUAGE == 'KR':
+        if LANGUAGE == 'ko':
             x_position = WIDTH * 0.39
         else:
             x_position = WIDTH * 0.35
@@ -439,15 +521,15 @@ class Lobby:
                         elif self.buttons_type == 'Options':
                             if HEIGHT * 0.3 + self.buttons.height + 15 <= pos[1] \
                                     <= HEIGHT * 0.3 + 2 * self.buttons.height + 15:
-                                LANGUAGE = 'KR'
+                                LANGUAGE = 'ko'
                                 self.update_window()
                             elif HEIGHT * 0.3 + 2 * self.buttons.height + 30 <= pos[1] \
                                     <= HEIGHT * 0.3 + 3 * self.buttons.height + 30:
-                                LANGUAGE = 'EN'
+                                LANGUAGE = 'en'
                                 self.update_window()
                             elif HEIGHT * 0.3 + 3 * self.buttons.height + 45 <= pos[1] \
                                     <= HEIGHT * 0.3 + 4 * self.buttons.height + 45:
-                                LANGUAGE = 'RU'
+                                LANGUAGE = 'ru'
                                 self.update_window()
                             elif HEIGHT * 0.3 + 4 * self.buttons.height + 60 <= pos[1] \
                                     <= HEIGHT * 0.3 + 5 * self.buttons.height + 60:
@@ -530,7 +612,7 @@ class Lobby:
             start_game = f.readline().rstrip()
             self.buttons = map(lambda x: x.rstrip(), f.readlines())
 
-        self.text_coord = HEIGHT * 0.15
+        self.text_coord = HEIGHT * 0.1
         button = 1
         for line in self.buttons:
             string_rendered = font.render(line, True, pygame.Color('white'))
@@ -542,8 +624,15 @@ class Lobby:
             screen.blit(string_rendered, self.buttons)
             button += 1
 
-        screen.blit(font.render(start_game, True, pygame.Color('white')),
-                    (WIDTH * 0.3, HEIGHT * 0.9))
+        if LANGUAGE == 'ko':
+            screen.blit(font.render(start_game, True, pygame.Color('white')),
+                        (WIDTH * 0.5, HEIGHT * 0.9))
+        elif LANGUAGE == 'en':
+            screen.blit(font.render(start_game, True, pygame.Color('white')),
+                        (WIDTH * 0.3, HEIGHT * 0.9))
+        else:
+            screen.blit(font.render(start_game, True, pygame.Color('white')),
+                        (WIDTH * 0.25, HEIGHT * 0.9))
 
         while True:
             for event in pygame.event.get():
@@ -556,8 +645,23 @@ class Lobby:
 
 
 def game_over():
+    global LANGUAGE, SIZE
+    font = pygame.font.SysFont('Arialms', 40)
     death_screen = pygame.transform.scale(load_image('death.png'), SIZE)
     screen.blit(death_screen, (0, 0))
+    with open(f'data/Game_over {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
+        text = map(lambda x: x.rstrip(), f.readlines())
+
+    text_coord = HEIGHT * 0.3
+    for line in text:
+        string_rendered = font.render(line, True, pygame.Color('white'))
+        text = string_rendered.get_rect()
+        text_coord += 10
+        text.top = text_coord
+        text.x = WIDTH * 0.3
+        text_coord += text.height
+        screen.blit(string_rendered, text)
+
     pygame.display.flip()
     while True:
         for event in pygame.event.get():
@@ -606,14 +710,15 @@ def render_hp():
 
 # PG
 FPS = 60
-LANGUAGE = 'EN'
+LANGUAGE = 'en'
 AU = 815
 pygame.init()
 user32 = ctypes.windll.user32
-SIZE = WIDTH, HEIGHT = user32.GetSystemMetrics(0) - 100, user32.GetSystemMetrics(1) - 100
+SIZE = WIDTH, HEIGHT = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 song = pygame.mixer.Sound('soundtracks/space_theme.mp3')
+TRANSLATOR = Translator()
 
 # lobby
 lobby = Lobby()
@@ -692,10 +797,10 @@ while running:
             kristalids.append(Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
                                               spawn_coord,
                                               100, 0, [
-                                                  Equipments.PhotonGun(3, (hero_group, all_sprites),
+                                                  Equipments.Destructor(1, (hero_group, all_sprites),
                                                                        load_image(
-                                                                           'photon_bullet.png',
-                                                                           (50, 50)))],
+                                                                           'destructor_bullet.png',
+                                                                           (40, 40), -1))],
                                               hero, all_sprites, ships, enemy))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
