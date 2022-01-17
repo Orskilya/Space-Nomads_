@@ -657,8 +657,19 @@ neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH //
                          AU * 11 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
 station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 525],
                           [AU * 5.2 + 750, HEIGHT // 2], all_sprites, stations)
+image = (load_image('Nomad_ship_fly.png', (64, 64)), load_image('Nomad_ship_stop.png', (64, 64)))
+hero_images = (image[0], pygame.transform.rotate(image[0], 45),
+               pygame.transform.rotate(image[0], 90),
+               pygame.transform.rotate(image[0], 135), pygame.transform.rotate(image[0], 180),
+               pygame.transform.rotate(image[0], 225), pygame.transform.rotate(image[0], 270),
+               pygame.transform.rotate(image[0], 315),
+               image[1], pygame.transform.rotate(image[1], 45),
+               pygame.transform.rotate(image[1], 90),
+               pygame.transform.rotate(image[1], 135), pygame.transform.rotate(image[1], 180),
+               pygame.transform.rotate(image[1], 225), pygame.transform.rotate(image[1], 270),
+               pygame.transform.rotate(image[1], 315))
 hero = Hero.Hero(
-    Ships.NomadShip(load_image('Nomad_ship_fly.png', (64, 64)), [WIDTH // 2, HEIGHT // 2],
+    Ships.NomadShip(hero_images, [WIDTH // 2, HEIGHT // 2],
                     100, 0, [Equipments.PhotonGun(3, (enemy, all_sprites),
                                                   load_image('photon_bullet.png', (50, 50))),
                              Equipments.Engine(3), ],

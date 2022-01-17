@@ -96,8 +96,8 @@ class CargoShip(Ship):
 
 
 class NomadShip(Ship):
-    def __init__(self, sprite, coord, hull, armor, equipment, camera, scree_size, *group):
-        super().__init__(sprite, coord, hull, armor, equipment, *group)
+    def __init__(self, images, coord, hull, armor, equipment, camera, scree_size, *group):
+        super().__init__(images[8], coord, hull, armor, equipment, *group)
         self.slot_equipment = [[1, 1],  # engine and fuel tank
                                [1, 1, randint(0, 1), 0, 0],  # guns
                                [1, randint(0, 1)],  # grab and shield
@@ -109,6 +109,8 @@ class NomadShip(Ship):
         self.equipment_setting()
         self.death_flag = False
         self.end_jump = False
+        self.images = images
+        self.cur_frame = 0
 
     def fly(self, key=None, par=None):
         speed = self.slot_equipment[0][0].get_features()[0]
@@ -117,6 +119,7 @@ class NomadShip(Ship):
         if par == 'go':
             if key in [pygame.K_s, pygame.K_w, pygame.K_a, pygame.K_d]:
                 self.keys.append(key)
+                self.cur_frame = None
         elif par == 'stop':
             if key in self.keys:
                 del self.keys[self.keys.index(key)]
@@ -124,18 +127,32 @@ class NomadShip(Ship):
             self.coord[1] += speed // fps
             self.dy = -(speed // fps)
             self.camera.update(self)
+            self.cur_frame = 4
         elif pygame.K_w in self.keys:
             self.coord[1] -= speed // fps
             self.dy = speed // fps
             self.camera.update(self)
+            self.cur_frame = 0
         if pygame.K_a in self.keys:
             self.coord[0] -= speed // fps
             self.dx = speed // fps
             self.camera.update(self)
+            if self.cur_frame == 0:
+                self.cur_frame = 1
+            elif self.cur_frame == 4:
+                self.cur_frame = 3
+            else:
+                self.cur_frame = 2
         elif pygame.K_d in self.keys:
             self.coord[0] += speed // fps
             self.dx = -(speed // fps)
             self.camera.update(self)
+            if self.cur_frame == 0:
+                self.cur_frame = 7
+            elif self.cur_frame == 4:
+                self.cur_frame = 5
+            else:
+                self.cur_frame = 6
 
     def __str__(self):
         return 'Корабль героя'
@@ -150,6 +167,10 @@ class NomadShip(Ship):
                 self.fly(event.key, 'go')
             else:
                 self.fly(event.key, 'stop')
+        if self.keys:
+            self.image = self.images[self.cur_frame]
+        else:
+            self.image = self.images[self.cur_frame + 8]
         if not self.end_jump and self.slot_equipment[0][0].tier == 3 and \
                 self.slot_equipment[0][1] != 1 \
                 and self.slot_equipment[0][1].tier == 3:
