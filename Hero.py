@@ -11,10 +11,12 @@ class Hero:
     def money_change(self, amount):
         if self.money + amount > 1000000:
             self.money = 1000000
-        elif self.money + amount < 0:
-            return True
         else:
             self.money += amount
+
+    def buy(self, price, mass):
+        if self.money >= price and self.ship.get_space() >= mass:
+            return True
 
     def get_ship(self):
         return self.ship

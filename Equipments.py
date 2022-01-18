@@ -104,16 +104,20 @@ class Grab:
 
 
 class Shield:
-    def __init__(self, tier):
+    def __init__(self, tier=-1):
         self.shield_img = ['shield0.png', 'shield1.png', 'shield2.png', 'shield3.png']
         self.names = ['Reticulate Shield', 'Polygonal Grab', 'Zonal Shield', 'Ultraplasm shield']
         self.tier = tier
         self.type = (2, 1)
+        if self.tier == -1:
+            self.mass = 0
+            self.defend = 0
+        else:
+            self.mass = 30 + 10 * self.tier
+            self.defend = 5 + 15 * self.tier
 
         self.name = self.names[self.tier]
-        self.defend = 5 + 15 * self.tier
         self.price = 1500 + 1500 * self.tier
-        self.mass = 30 + 10 * self.tier
         self.img = self.shield_img[self.tier]
 
     def get_defend(self):
