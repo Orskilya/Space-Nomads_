@@ -331,7 +331,7 @@ class Landing:
 
         if self.new_game:
             with open(f'data/Starting phrase {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
-                hero_text = f.readline()
+                hero_text = f.readline().rstrip()
                 text = map(lambda x: x.rstrip(), f.readlines())
             y_pos = HEIGHT * 0.13
             for line in text:

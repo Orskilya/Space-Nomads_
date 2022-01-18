@@ -1,5 +1,5 @@
 New Game
-Continue
+Tuition
 Settings
 Records
 Quit
