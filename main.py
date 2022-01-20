@@ -9,7 +9,6 @@ import Equipments
 from random import randrange
 from math import radians
 import Hero
-from googletrans import Translator
 import sqlite3
 
 
@@ -87,6 +86,8 @@ class Landing:
         self.market_buttons = None
         self.shop_buttons = None
         self.shop_info = None
+        self.government_buttons = None
+        self.repairing = None
 
     def planet_collide(self):
         for sprite in planets:
@@ -129,12 +130,14 @@ class Landing:
                             self.current_window = 'shop'
                             self.new_game = False
                             self.current_bg = self.bg_names[1]
+                            self.government_buttons = None
                             self.market_buttons = None
                             self.shop_info = None
                         elif WIDTH * 0.5 <= pos[0] <= WIDTH * 0.5 + WIDTH * 0.055:
                             self.current_window = 'market'
                             self.new_game = False
                             self.current_bg = self.bg_names[1]
+                            self.government_buttons = None
                             self.shop_buttons = None
                             self.shop_info = None
                         elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[
@@ -261,6 +264,25 @@ class Landing:
                                             'step'], self.shop_buttons[row]['y'][0])]
                         else:
                             self.shop_info = None
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.government_buttons:
+                    pos = event.pos
+                    if WIDTH * 0.07 <= pos[0] <= WIDTH * 0.38:
+                        if len(self.government_buttons) == 2:
+                            if self.government_buttons[0][0] <= pos[1] <= self.government_buttons[0][
+                                1]:
+                                self.repairing = True
+                            elif self.government_buttons[1][0] <= pos[1] <= \
+                                    self.government_buttons[1][1]:
+                                self.current_window = 'main'
+                                self.new_game = False
+                                self.current_bg = self.bg_names[1]
+                        else:
+                            if self.government_buttons[0][0] <= pos[1] <= self.government_buttons[0][
+                                1]:
+                                self.current_window = 'government'
+                                self.repairing = False
+                                self.new_game = False
+                                self.current_bg = self.bg_names[0]
 
             if self.song_play:
                 self.current_song.play()
@@ -344,10 +366,24 @@ class Landing:
             with open(f'data/Starting phrase {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
                 hero_text = (f.readline().rstrip(),)
                 government_text = map(lambda x: x.rstrip(), f.readlines())
+                self.government_buttons = ((HEIGHT * 0.66, HEIGHT * 0.69),)
+        elif self.repairing:
+            if hero.get_ship().get_hull() == 500:
+                with open(f'data/repair fall {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
+                    hero_text = (f.readline().rstrip(),)
+                    government_text = (f.readline().rstrip(),)
+                    self.government_buttons = ((HEIGHT * 0.66, HEIGHT * 0.69),)
+            else:
+                with open(f'data/repair {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
+                    hero_text = (f.readline().rstrip(),)
+                    government_text = map(lambda x: x.rstrip(), f.readlines())
+                    self.government_buttons = ((HEIGHT * 0.66, HEIGHT * 0.69),)
         else:
             with open(f'data/Dialog planets {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
                 government_text = (f.readline().rstrip(),)
                 hero_text = map(lambda x: x.rstrip(), f.readlines())
+                self.government_buttons = ((HEIGHT * 0.66, HEIGHT * 0.69),
+                                           (HEIGHT * 0.69, HEIGHT * 0.72))
         y_pos = HEIGHT * 0.13
         for line in government_text:
             string_render = font.render(line, True, pygame.Color('black'))
@@ -731,7 +767,6 @@ SIZE = WIDTH, HEIGHT = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 song = pygame.mixer.Sound('soundtracks/space_theme.mp3')
-TRANSLATOR = Translator()
 
 # lobby
 lobby = Lobby()
