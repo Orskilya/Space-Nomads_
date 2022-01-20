@@ -88,6 +88,8 @@ class Landing:
         self.shop_info = None
         self.government_buttons = None
         self.repairing = None
+        self.wait = None
+        self.government_design = None
 
     def planet_collide(self):
         for sprite in planets:
@@ -283,6 +285,33 @@ class Landing:
                                 self.repairing = False
                                 self.new_game = False
                                 self.current_bg = self.bg_names[0]
+                                self.wait = False
+                if event.type == pygame.MOUSEMOTION and self.government_buttons:
+                    pos = event.pos
+                    if WIDTH * 0.07 <= pos[0] <= WIDTH * 0.38:
+                        if len(self.government_buttons) == 2:
+                            if self.government_buttons[0][0] <= pos[1] <= self.government_buttons[0][
+                                1]:
+                                self.government_design = pygame.Rect(WIDTH * 0.06,
+                                                                     HEIGHT * 0.665,
+                                                                     WIDTH * 0.38, HEIGHT * 0.02)
+                            elif self.government_buttons[1][0] <= pos[1] <= \
+                                    self.government_buttons[1][1]:
+                                self.government_design = pygame.Rect(WIDTH * 0.06,
+                                                                     HEIGHT * 0.695,
+                                                                     WIDTH * 0.38, HEIGHT * 0.02)
+                            else:
+                                self.government_design = None
+                        else:
+                            if self.government_buttons[0][0] <= pos[1] <= self.government_buttons[0][
+                                1]:
+                                self.government_design = pygame.Rect(WIDTH * 0.06,
+                                                                     HEIGHT * 0.665,
+                                                                     WIDTH * 0.38, HEIGHT * 0.02)
+                            else:
+                                self.government_design = None
+                    else:
+                        self.government_design = None
 
             if self.song_play:
                 self.current_song.play()
@@ -359,6 +388,8 @@ class Landing:
                          (WIDTH * 0.06, HEIGHT * 0.06, WIDTH * 0.381, HEIGHT * 0.77))
         pygame.draw.line(screen, pygame.Color('Blue'), (WIDTH * 0.06, HEIGHT * 0.65),
                          (WIDTH * 0.44, HEIGHT * 0.65), 5)
+        if self.government_design:
+            pygame.gfxdraw.box(screen, self.government_design, (100, 100, 100, 230))
         frame = pygame.transform.scale(load_image('frame.png'), (WIDTH * 0.4, HEIGHT * 1.1))
         screen.blit(frame, (WIDTH * 0.05, - HEIGHT * 0.1))
 
@@ -368,15 +399,23 @@ class Landing:
                 government_text = map(lambda x: x.rstrip(), f.readlines())
                 self.government_buttons = ((HEIGHT * 0.66, HEIGHT * 0.69),)
         elif self.repairing:
-            if hero.get_ship().get_hull() == 500:
-                with open(f'data/repair fall {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
-                    hero_text = (f.readline().rstrip(),)
-                    government_text = (f.readline().rstrip(),)
-                    self.government_buttons = ((HEIGHT * 0.66, HEIGHT * 0.69),)
-            else:
+            if hero.get_ship().get_hull() != 500:
                 with open(f'data/repair {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
                     hero_text = (f.readline().rstrip(),)
                     government_text = map(lambda x: x.rstrip(), f.readlines())
+                    self.government_buttons = ((HEIGHT * 0.66, HEIGHT * 0.69),)
+                    hero.get_ship().repair()
+                    hero.money_change(-500)
+                    self.wait = True
+            elif self.wait:
+                with open(f'data/repair {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
+                    hero_text = (f.readline().rstrip(),)
+                    government_text = map(lambda x: x.rstrip(), f.readlines())
+                    self.government_buttons = ((HEIGHT * 0.66, HEIGHT * 0.69),)
+            else:
+                with open(f'data/repair fall {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
+                    hero_text = (f.readline().rstrip(),)
+                    government_text = (f.readline().rstrip(),)
                     self.government_buttons = ((HEIGHT * 0.66, HEIGHT * 0.69),)
         else:
             with open(f'data/Dialog planets {LANGUAGE}.txt', 'r', encoding='utf-8') as f:

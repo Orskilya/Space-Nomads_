@@ -199,6 +199,9 @@ class NomadShip(Ship):
     def get_equipment(self, type):
         return self.slot_equipment[type[0]][type[1]]
 
+    def repair(self):
+        self.hull = 500
+
 
 class Kristalid(Ship):
     def __init__(self, sprite, coord, hull, armor, equipment, hero, *group):
