@@ -147,6 +147,7 @@ class Landing:
                             self.current_window = 'main'
                             self.new_game = False
                             self.current_bg = self.bg_names[1]
+                            self.button_type = None
                             self.current_song.stop()
                             return True  # undocking
                 if event.type == pygame.MOUSEMOTION:
@@ -884,7 +885,7 @@ while running:
                 spawn_coord[1] >= AU * 2.5 + 750 or spawn_coord[1] <= -(AU * 2.5 + 750)):
             kristalids.append(Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
                                               spawn_coord,
-                                              100, 0, [
+                                              500, 0, [
                                                   Equipments.Destructor(1, (hero_group, all_sprites),
                                                                         load_image(
                                                                             'destructor_bullet.png',

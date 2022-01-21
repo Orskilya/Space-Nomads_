@@ -50,3 +50,32 @@ class Bullet(pygame.sprite.Sprite):
 
     def __str__(self):
         return 'Пуля'
+
+
+class AbsorberBullet(pygame.sprite.Sprite):
+    def __init__(self, image, coord, owner, target_coord, speed, maximum, damage, enemy, *group):
+        super().__init__(*group)
+        self.owner = owner
+        self.damage = damage
+        self.image = image
+        self.enemy = enemy
+        self.rect = self.image.get_rect()
+        self.rect.x = target_coord[0]
+        self.rect.y = target_coord[1]
+        self.mask = pygame.mask.from_surface(self.image)
+        if ((target_coord[0] - coord[0]) ** 2 + (target_coord[1] - coord[1]) ** 2) ** 0.5 > maximum:
+            self.kill()
+        self.can_cause_damage = True
+        self.time = 0
+
+    def update(self, **kwargs):
+        if self.time >= fps * 1:
+            self.kill()
+        self.time += 1
+        for sprite in self.enemy:
+            if self.can_cause_damage and pygame.sprite.collide_mask(self, sprite):
+                sprite.get_damage(randrange(self.damage[0], self.damage[1] + 1))
+                self.can_cause_damage = False
+
+    def __str__(self):
+        return 'Пуля абсорбера'

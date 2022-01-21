@@ -45,6 +45,9 @@ class Ship(pygame.sprite.Sprite):
         if self.hull <= 0:
             self.kill()
 
+    def reload(self):
+        pass
+
 
 class WarriorShip(Ship):
     def __init__(self, sprite, coord, hull, armor, equipment, *group):
@@ -175,6 +178,7 @@ class NomadShip(Ship):
                 self.slot_equipment[0][1] != 1 \
                 and self.slot_equipment[0][1].tier == 3:
             self.end_jump = True
+        self.reload()
 
     def shoot(self, target):
         self.slot_equipment[1][0].shoot(
@@ -201,6 +205,10 @@ class NomadShip(Ship):
 
     def repair(self):
         self.hull = 500
+
+    def reload(self):
+        if self.slot_equipment[1][0] != 1 and self.slot_equipment != 0:
+            self.slot_equipment[1][0].reloading()
 
 
 class Kristalid(Ship):
@@ -242,14 +250,14 @@ class Kristalid(Ship):
         distance = ((hero_coord[0] - self.rect.x) ** 2 + (hero_coord[1] - self.rect.y) ** 2) ** 0.5
         if 0 < distance <= 1000:
             self.fly(hero_coord, distance)
-            self.shoot_time = (self.shoot_time + 1) % (fps // 3)
-            if self.shoot_time == 0 and self.slot_equipment[1][0].distance >= distance:
+            if self.slot_equipment[1][0].distance >= distance:
                 self.shoot(hero_coord)
         else:
             if self.rect.x != self.start_point[0] and self.rect.y != self.start_point[1]:
                 distance = ((self.start_point[0] - self.rect.x) ** 2 + (
                         self.start_point[1] - self.rect.y) ** 2) ** 0.5
                 self.fly(self.start_point, distance)
+        self.reload()
 
     def shoot(self, hero_coord):
         self.slot_equipment[1][0].shoot(
@@ -267,3 +275,7 @@ class Kristalid(Ship):
         if self.hull <= 0:
             self.kill()
             self.hero.destroy_enemy()
+
+    def reload(self):
+        if self.slot_equipment[1][0] != 1 and self.slot_equipment != 0:
+            self.slot_equipment[1][0].reloading()
