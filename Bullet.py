@@ -63,13 +63,13 @@ class AbsorberBullet(pygame.sprite.Sprite):
         self.rect.x = target_coord[0]
         self.rect.y = target_coord[1]
         self.mask = pygame.mask.from_surface(self.image)
-        if (coord[0] ** 2 + coord[1] ** 2) ** 0.5 > maximum:
+        if ((target_coord[0] - coord[0]) ** 2 + (target_coord[1] - coord[1]) ** 2) ** 0.5 > maximum:
             self.kill()
         self.can_cause_damage = True
         self.time = 0
 
     def update(self, **kwargs):
-        if self.time >= fps * 5:
+        if self.time >= fps * 1:
             self.kill()
         self.time += 1
         for sprite in self.enemy:

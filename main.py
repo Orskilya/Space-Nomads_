@@ -796,7 +796,7 @@ while running:
                 spawn_coord[1] >= AU * 2.5 + 750 or spawn_coord[1] <= -(AU * 2.5 + 750)):
             kristalids.append(Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
                                               spawn_coord,
-                                              100, 0, [
+                                              500, 0, [
                                                   Equipments.Destructor(1, (hero_group, all_sprites),
                                                                        load_image(
                                                                            'destructor_bullet.png',

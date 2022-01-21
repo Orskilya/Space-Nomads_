@@ -1,4 +1,5 @@
 from Bullet import Bullet, AbsorberBullet
+fps = 60
 
 
 class Engine:
@@ -184,6 +185,8 @@ class PhotonGun:
         self.mass = 11 + 3 * self.tier
         self.bullet_speed = 500 + self.tier * 250
         self.bullets = []
+        self.reload_time = 1 * fps
+        self.reload = 0
 
     def __str__(self):
         return 'photon'
@@ -207,9 +210,11 @@ class PhotonGun:
         self.groups = args
 
     def shoot(self, start_coord, owner, target_coord):
-        self.bullets.append(Bullet(self.bullet_image, start_coord, owner, target_coord,
-                                   self.bullet_speed, self.distance, self.damage, self.groups[0],
-                                   self.groups[1]))
+        if self.reload == 0:
+            self.bullets.append(Bullet(self.bullet_image, start_coord, owner, target_coord,
+                                       self.bullet_speed, self.distance, self.damage, self.groups[0],
+                                       self.groups[1]))
+            self.reload += self.reload_time
 
     def get_price(self):
         return self.price
@@ -219,6 +224,10 @@ class PhotonGun:
 
     def get_size(self):
         return self.bullet_size
+
+    def reloading(self):
+        if self.reload > 0:
+            self.reload -= 1
 
 
 class Destructor:
@@ -238,6 +247,8 @@ class Destructor:
         self.mass = 30 + 15 * self.tier
         self.bullet_speed = 1000 + self.tier * 250
         self.bullets = []
+        self.reload_time = 1 * fps
+        self.reload = 0
 
     def __str__(self):
         return 'destructor'
@@ -261,9 +272,11 @@ class Destructor:
         self.groups = args
 
     def shoot(self, start_coord, owner, target_coord):
-        self.bullets.append(Bullet(self.bullet_image, start_coord, owner, target_coord,
-                                   self.bullet_speed, self.distance, self.damage, self.groups[0],
-                                   self.groups[1]))
+        if self.reload == 0:
+            self.bullets.append(Bullet(self.bullet_image, start_coord, owner, target_coord,
+                                       self.bullet_speed, self.distance, self.damage, self.groups[0],
+                                       self.groups[1]))
+            self.reload += self.reload_time
 
     def get_price(self):
         return self.price
@@ -273,6 +286,10 @@ class Destructor:
 
     def get_size(self):
         return self.bullet_size
+
+    def reloading(self):
+        if self.reload > 0:
+            self.reload -= 1
 
 
 class Absorber:
@@ -291,6 +308,8 @@ class Absorber:
         self.price = 10000 + 10000 * self.tier
         self.mass = 50 + 50 * self.tier
         self.bullets = []
+        self.reload_time = 1 * fps
+        self.reload = 0
 
     def __str__(self):
         return 'absorber'
@@ -323,6 +342,12 @@ class Absorber:
         return self.bullet_size
 
     def shoot(self, start_coord, owner, target_coord):
-        self.bullets.append(AbsorberBullet(self.bullet_image, start_coord, owner, target_coord,
-                                           None, self.distance, self.damage, self.groups[0],
-                                           self.groups[1]))
+        if self.reload == 0:
+            self.bullets.append(AbsorberBullet(self.bullet_image, start_coord, owner, target_coord,
+                                               None, self.distance, self.damage, self.groups[0],
+                                               self.groups[1]))
+            self.reload += self.reload_time
+
+    def reloading(self):
+        if self.reload > 0:
+            self.reload -= 1
