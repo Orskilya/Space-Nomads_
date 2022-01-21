@@ -1,4 +1,4 @@
-from Bullet import Bullet
+from Bullet import Bullet, AbsorberBullet
 
 
 class Engine:
@@ -41,7 +41,8 @@ class Engine:
 class FuelTank:
     def __init__(self, tier):
         self.fuel_tank_img = ['fueltank0.png', 'fueltank1.png', 'fueltank2.png', 'fueltank3.png']
-        self.names = ['Hyper Liquid Fuel', 'Proto Bubbly Fuel', 'Endocluster Fuel', 'Gyroscopic Fuel']
+        self.names = ['Hyper Liquid Fuel', 'Proto Bubbly Fuel', 'Endocluster Fuel',
+                      'Gyroscopic Fuel']
         self.tier = tier
         self.type = (0, 1)
 
@@ -275,19 +276,21 @@ class Destructor:
 
 
 class Absorber:
-    def __init__(self, tier, groups=None):
+    def __init__(self, tier, groups=None, bullet_image=None):
         self.img = 'absorber.png'
         self.tier = tier
         self.bullet_image = 'absorber_bullet.png'
         self.bullet_size = (10, 10)
         self.groups = groups
         self.type = (1, 0)
-
+        if bullet_image:
+            self.bullet_image = bullet_image
         self.name = 'Absorber'
         self.damage = (50 + round(self.tier * 13.3), 60 + round(self.tier * 13.3))
-        self.distance = 400 - round(self.tier * 16.6)
+        self.distance = 500 - round(self.tier * 16.6)
         self.price = 10000 + 10000 * self.tier
         self.mass = 50 + 50 * self.tier
+        self.bullets = []
 
     def __str__(self):
         return 'absorber'
@@ -318,3 +321,8 @@ class Absorber:
 
     def get_size(self):
         return self.bullet_size
+
+    def shoot(self, start_coord, owner, target_coord):
+        self.bullets.append(AbsorberBullet(self.bullet_image, start_coord, owner, target_coord,
+                                           None, self.distance, self.damage, self.groups[0],
+                                           self.groups[1]))

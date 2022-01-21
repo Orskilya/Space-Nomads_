@@ -9,7 +9,7 @@ import Equipments
 from random import randrange
 from math import radians
 import Hero
-from googletrans import Translator
+# from googletrans import Translator
 import sqlite3
 
 
@@ -718,7 +718,7 @@ SIZE = WIDTH, HEIGHT = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 song = pygame.mixer.Sound('soundtracks/space_theme.mp3')
-TRANSLATOR = Translator()
+TRANSLATOR = None
 
 # lobby
 lobby = Lobby()
@@ -775,8 +775,8 @@ hero_images = (image[0], pygame.transform.rotate(image[0], 45),
                pygame.transform.rotate(image[1], 315))
 hero = Hero.Hero(
     Ships.NomadShip(hero_images, [WIDTH // 2, HEIGHT // 2],
-                    100, 0, [Equipments.PhotonGun(3, (enemy, all_sprites),
-                                                  load_image('photon_bullet.png', (50, 50))),
+                    100, 0, [Equipments.Absorber(3, (enemy, all_sprites),
+                                                  load_image('absorber_bullet.png', (50, 50), -1)),
                              Equipments.Engine(3), ],
                     camera,
                     SIZE, all_sprites, ships, hero_group), 1000000, 'Test')
