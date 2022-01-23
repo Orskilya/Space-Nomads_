@@ -131,7 +131,7 @@ class Landing:
                             self.new_game = False
                             self.current_bg = self.bg_names[1]
                         elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[
-                                0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
+                            0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
                             self.current_window = 'main'
                             self.new_game = False
                             self.current_bg = self.bg_names[1]
@@ -148,7 +148,7 @@ class Landing:
                         elif WIDTH * 0.5 <= pos[0] <= WIDTH * 0.5 + WIDTH * 0.055:
                             self.button_type = (WIDTH * 0.5, HEIGHT * 0.85, 2)
                         elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[
-                                0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
+                            0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
                             self.button_type = (WIDTH * 0.5 + WIDTH * 0.055, HEIGHT * 0.85, 3)
                         else:
                             self.button_type = None
@@ -180,7 +180,7 @@ class Landing:
                                 self.market_buttons['y'][0] + 6 * self.market_buttons['y_step'] <= \
                                 pos[
                                     1] <= self.market_buttons['y'][1] + 6 * self.market_buttons[
-                                'y_step']:
+                            'y_step']:
                             print(1)
                     elif self.market_buttons['x'][1][0] <= pos[0] <= self.market_buttons['x'][1][1]:
                         if self.market_buttons['y'][0] <= pos[1] <= self.market_buttons['y'][1] or \
@@ -205,13 +205,13 @@ class Landing:
                                 self.market_buttons['y'][0] + 6 * self.market_buttons['y_step'] <= \
                                 pos[
                                     1] <= self.market_buttons['y'][1] + 6 * self.market_buttons[
-                                'y_step']:
+                            'y_step']:
                             print(2)
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.shop_buttons:
                     pos = event.pos
                     for row in self.shop_buttons.keys():
                         if self.shop_buttons[row]['y'][0] <= pos[1] <= self.shop_buttons[row]['y'][
-                                1]:
+                            1]:
                             for i in range(self.shop_buttons[row]['amount']):
                                 if self.shop_buttons[row]['x'][0] + i * self.shop_buttons[row][
                                     'step'] <= pos[0] <= self.shop_buttons[row]['x'][1] + i * \
@@ -228,7 +228,9 @@ class Landing:
                                         self.object.shop_change(i + 8 * int(row[-1]))
 
                                     if str(item) in 'photon absorber destructor':
-                                        item.set_bullet_img(load_image(str(item) + '_bullet.png', item.get_size(), -1))
+                                        item.set_bullet_img(
+                                            load_image(str(item) + '_bullet.png', item.get_size(),
+                                                       -1))
                                         item.set_groups(enemy, all_sprites)
 
                                     hero.get_ship().new_equipment(item)
@@ -239,7 +241,7 @@ class Landing:
                         if flag:
                             break
                         if self.shop_buttons[row]['y'][0] <= pos[1] <= self.shop_buttons[row]['y'][
-                                1]:
+                            1]:
                             flag = True
                             for i in range(self.shop_buttons[row]['amount']):
                                 if self.shop_buttons[row]['x'][0] + i * self.shop_buttons[row][
@@ -345,7 +347,6 @@ class Landing:
             with open(f'data/Dialog planets {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
                 government_text = f.readline().rstrip()
                 hero_text = map(lambda x: x.rstrip, f.readlines())
-
 
     def shop(self):
         self.shop_buttons = {
@@ -690,10 +691,11 @@ def right_record(win_='No'):
 
 
 def mini_map():
-    minimap = pygame.Surface((9700, 9700))
-    all_sprites.draw(minimap)
-    minimap = pygame.transform.scale(minimap, (500, 500))
-    screen.blit(minimap, (100, 100))
+    minimap.fill((0, 0, 0))
+    minimap_ship_coord = hero.ship.coord[0] // res + 200, hero.ship.coord[1] // res + 200
+    minimap_objects.update(coord=minimap_ship_coord)
+    minimap_objects.draw(minimap)
+    screen.blit(minimap, (0, 0))
     # pygame.draw.rect(screen, pygame.Color('#04859D'),
     # (WIDTH * 0.9, 0, WIDTH * 0.1, WIDTH * 0.1), 3)
 
@@ -731,6 +733,7 @@ ships = pygame.sprite.Group()
 stations = pygame.sprite.Group()
 enemy = pygame.sprite.Group()
 hero_group = pygame.sprite.Group()
+minimap_objects = pygame.sprite.Group()
 camera = Camera()
 
 # Объекты
@@ -774,17 +777,39 @@ hero_images = (image[0], pygame.transform.rotate(image[0], 45),
                pygame.transform.rotate(image[1], 225), pygame.transform.rotate(image[1], 270),
                pygame.transform.rotate(image[1], 315))
 hero = Hero.Hero(
-    Ships.NomadShip(hero_images, [WIDTH // 2, HEIGHT // 2],
+    Ships.NomadShip(hero_images, [-camera.dx, 0],
                     100, 0, [Equipments.Absorber(3, (enemy, all_sprites),
-                                                  load_image('absorber_bullet.png', (50, 50), -1)),
+                                                 load_image('absorber_bullet.png', (50, 50), -1)),
                              Equipments.Engine(3), ],
                     camera,
                     SIZE, all_sprites, ships, hero_group), 1000000, 'Test')
 kristalids = list()
-for sprite in all_sprites:
-    if sprite != hero.ship:
-        camera.apply(sprite)
-camera.stop_move()
+# Объекты мини карты
+res = 50
+minimap = pygame.Surface((10000 / (res / 2), 10000 / (res / 2)))
+sun_minimap = Objects.MiniMapStar(load_image('Sun.png'), 25, 10, [1500 / res, 1500 / res], [200, 200],
+                                  minimap_objects)
+mercury_minimap = Objects.MiniMapPlanet(load_image('Mercury.png'), 50, 5, [80 / (res / 2), 80 / (res / 2)], [200, 200],
+                                        (AU * 0.387 + 750) / res, 100 / res, mercury.grad,
+                                        minimap_objects)
+venus_minimap = Objects.MiniMapPlanet(load_image('Venus.png'), 50, 5, [260 / (res / 2), 260 / (res / 2)], [200, 200],
+                       (AU * 0.9 + 750) / res, 100 / res, venus.grad, minimap_objects)
+earth_minimap = Objects.MiniMapPlanet(load_image('Earth.png'), 50, 5, [280 / (res / 2), 280 / (res / 2)], [200, 200],
+                       (AU * 1.7 + 750) / res, 100 / res, 0, minimap_objects)
+mars_minimap = Objects.MiniMapPlanet(load_image('Mars.png'), 50, 5, [170 / (res / 2), 170 / (res / 2)], [200, 200],
+                      (AU * 2.5 + 750) / res, 100 / res, mars.grad, minimap_objects)
+jupiter_minimap = Objects.MiniMapPlanet(load_image('Jupiter.png'), 50, 5, [400 / (res / 2), 400 / (res / 2)], [200, 200],
+                         (AU * 5.2 + 750) / res, 100 / res, jupiter.grad, minimap_objects)
+saturn_minimap = Objects.MiniMapPlanet(load_image('Saturn.png'), 25, 10, [800 / (res / 2), 800 / (res / 2)], [200, 200],
+                        AU * 8.2 / res, 100 / res, saturn.grad, minimap_objects)
+uranus_minimap = Objects.MiniMapPlanet(load_image('Uranus.png'), 50, 5, [220 / (res / 2), 220 / (res / 2)], [200, 200],
+                        (AU * 9 + 750) / res, 100 / res, uranus.grad, minimap_objects)
+neptune_minimap = Objects.MiniMapPlanet(load_image('Neptune.png'), 50, 5, [200 / (res / 2), 200 / (res / 2)], [200, 200],
+                         (AU * 11 + 750) / res, 100 / res, neptune.grad, minimap_objects)
+station_minimap = Objects.MiniMapStation(load_image('Station.png', color_key=-1), 1, 1, [760 / res, 525 / res],
+                          [(AU * 5.2 + 750) / res + 200, 200], minimap_objects)
+minimap_ship_coord = hero.ship.coord[0] // 25 + 200, hero.ship.coord[1] // 25 + 200
+ship_minimap = Objects.MiniMapShip(image[0], (10, 10), minimap_ship_coord, minimap_objects)
 
 # main cycle
 running = True
@@ -798,9 +823,9 @@ while running:
                                               spawn_coord,
                                               500, 0, [
                                                   Equipments.Destructor(1, (hero_group, all_sprites),
-                                                                       load_image(
-                                                                           'destructor_bullet.png',
-                                                                           (40, 40), -1))],
+                                                                        load_image(
+                                                                            'destructor_bullet.png',
+                                                                            (40, 40), -1))],
                                               hero, all_sprites, ships, enemy))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -837,6 +862,7 @@ while running:
         text = font.render(str('Вы можете совершить прыжок!(Нажмите "Shift")'),
                            True, pygame.Color('blue'))
         screen.blit(text, (WIDTH // 2 - text.get_width() // 2, 10 + text.get_height()))
+    mini_map()
     pygame.display.flip()
     clock.tick(FPS)
 pygame.quit()
