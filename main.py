@@ -695,9 +695,8 @@ def mini_map():
     minimap_ship_coord = hero.ship.coord[0] // res + 200, hero.ship.coord[1] // res + 200
     minimap_objects.update(coord=minimap_ship_coord)
     minimap_objects.draw(minimap)
-    screen.blit(minimap, (0, 0))
-    # pygame.draw.rect(screen, pygame.Color('#04859D'),
-    # (WIDTH * 0.9, 0, WIDTH * 0.1, WIDTH * 0.1), 3)
+    screen.blit(minimap, (WIDTH - 400 - 10, 10))
+    pygame.draw.rect(screen, pygame.Color('#04859D'), (WIDTH - 400 - 20, 0, 420, 420), 4)
 
 
 def render_hp():
@@ -735,14 +734,15 @@ enemy = pygame.sprite.Group()
 hero_group = pygame.sprite.Group()
 minimap_objects = pygame.sprite.Group()
 camera = Camera()
+star_damage_time = 0
 
 # Объекты
 bg = pygame.sprite.Sprite()
-bg.image = pygame.transform.scale(load_image('Space Background.png'), (9000, 9000))
+bg.image = pygame.transform.scale(load_image('Space Background.png'), (10000, 10000))
 bg.rect = bg.image.get_rect()
 all_sprites.add(bg)
-bg.rect.x = bg.rect.x = -4500 + (AU * 1.7 + 750) // 2
-bg.rect.y = -4500
+bg.rect.x = bg.rect.x = -5000 + WIDTH // 2
+bg.rect.y = -5000 + HEIGHT // 2
 font = pygame.font.SysFont('Arialms', 60)
 
 sun = Objects.Star(load_image('Sun.png'), 25, 10, [1500, 1500], [WIDTH // 2, HEIGHT // 2],
@@ -778,7 +778,7 @@ hero_images = (image[0], pygame.transform.rotate(image[0], 45),
                pygame.transform.rotate(image[1], 315))
 hero = Hero.Hero(
     Ships.NomadShip(hero_images, [-camera.dx, 0],
-                    100, 0, [Equipments.Absorber(3, (enemy, all_sprites),
+                    500, 0, [Equipments.Absorber(3, (enemy, all_sprites),
                                                  load_image('absorber_bullet.png', (50, 50), -1)),
                              Equipments.Engine(3), ],
                     camera,
@@ -787,27 +787,39 @@ kristalids = list()
 # Объекты мини карты
 res = 50
 minimap = pygame.Surface((10000 / (res / 2), 10000 / (res / 2)))
-sun_minimap = Objects.MiniMapStar(load_image('Sun.png'), 25, 10, [1500 / res, 1500 / res], [200, 200],
+sun_minimap = Objects.MiniMapStar(load_image('Sun.png'), 25, 10, [1500 / res, 1500 / res],
+                                  [200, 200],
                                   minimap_objects)
-mercury_minimap = Objects.MiniMapPlanet(load_image('Mercury.png'), 50, 5, [80 / (res / 2), 80 / (res / 2)], [200, 200],
+mercury_minimap = Objects.MiniMapPlanet(load_image('Mercury.png'), 50, 5,
+                                        [80 / (res / 2), 80 / (res / 2)], [200, 200],
                                         (AU * 0.387 + 750) / res, 100 / res, mercury.grad,
                                         minimap_objects)
-venus_minimap = Objects.MiniMapPlanet(load_image('Venus.png'), 50, 5, [260 / (res / 2), 260 / (res / 2)], [200, 200],
-                       (AU * 0.9 + 750) / res, 100 / res, venus.grad, minimap_objects)
-earth_minimap = Objects.MiniMapPlanet(load_image('Earth.png'), 50, 5, [280 / (res / 2), 280 / (res / 2)], [200, 200],
-                       (AU * 1.7 + 750) / res, 100 / res, 0, minimap_objects)
-mars_minimap = Objects.MiniMapPlanet(load_image('Mars.png'), 50, 5, [170 / (res / 2), 170 / (res / 2)], [200, 200],
-                      (AU * 2.5 + 750) / res, 100 / res, mars.grad, minimap_objects)
-jupiter_minimap = Objects.MiniMapPlanet(load_image('Jupiter.png'), 50, 5, [400 / (res / 2), 400 / (res / 2)], [200, 200],
-                         (AU * 5.2 + 750) / res, 100 / res, jupiter.grad, minimap_objects)
-saturn_minimap = Objects.MiniMapPlanet(load_image('Saturn.png'), 25, 10, [800 / (res / 2), 800 / (res / 2)], [200, 200],
-                        AU * 8.2 / res, 100 / res, saturn.grad, minimap_objects)
-uranus_minimap = Objects.MiniMapPlanet(load_image('Uranus.png'), 50, 5, [220 / (res / 2), 220 / (res / 2)], [200, 200],
-                        (AU * 9 + 750) / res, 100 / res, uranus.grad, minimap_objects)
-neptune_minimap = Objects.MiniMapPlanet(load_image('Neptune.png'), 50, 5, [200 / (res / 2), 200 / (res / 2)], [200, 200],
-                         (AU * 11 + 750) / res, 100 / res, neptune.grad, minimap_objects)
-station_minimap = Objects.MiniMapStation(load_image('Station.png', color_key=-1), 1, 1, [760 / res, 525 / res],
-                          [(AU * 5.2 + 750) / res + 200, 200], minimap_objects)
+venus_minimap = Objects.MiniMapPlanet(load_image('Venus.png'), 50, 5,
+                                      [260 / (res / 2), 260 / (res / 2)], [200, 200],
+                                      (AU * 0.9 + 750) / res, 100 / res, venus.grad, minimap_objects)
+earth_minimap = Objects.MiniMapPlanet(load_image('Earth.png'), 50, 5,
+                                      [280 / (res / 2), 280 / (res / 2)], [200, 200],
+                                      (AU * 1.7 + 750) / res, 100 / res, 0, minimap_objects)
+mars_minimap = Objects.MiniMapPlanet(load_image('Mars.png'), 50, 5,
+                                     [170 / (res / 2), 170 / (res / 2)], [200, 200],
+                                     (AU * 2.5 + 750) / res, 100 / res, mars.grad, minimap_objects)
+jupiter_minimap = Objects.MiniMapPlanet(load_image('Jupiter.png'), 50, 5,
+                                        [400 / (res / 2), 400 / (res / 2)], [200, 200],
+                                        (AU * 5.2 + 750) / res, 100 / res, jupiter.grad,
+                                        minimap_objects)
+saturn_minimap = Objects.MiniMapPlanet(load_image('Saturn.png'), 25, 10,
+                                       [800 / (res / 2), 800 / (res / 2)], [200, 200],
+                                       AU * 8.2 / res, 100 / res, saturn.grad, minimap_objects)
+uranus_minimap = Objects.MiniMapPlanet(load_image('Uranus.png'), 50, 5,
+                                       [220 / (res / 2), 220 / (res / 2)], [200, 200],
+                                       (AU * 9 + 750) / res, 100 / res, uranus.grad, minimap_objects)
+neptune_minimap = Objects.MiniMapPlanet(load_image('Neptune.png'), 50, 5,
+                                        [200 / (res / 2), 200 / (res / 2)], [200, 200],
+                                        (AU * 11 + 750) / res, 100 / res, neptune.grad,
+                                        minimap_objects)
+station_minimap = Objects.MiniMapStation(load_image('Station.png', color_key=-1), 1, 1,
+                                         [760 / res, 525 / res],
+                                         [(AU * 5.2 + 750) / res + 175, 200], minimap_objects)
 minimap_ship_coord = hero.ship.coord[0] // 25 + 200, hero.ship.coord[1] // 25 + 200
 ship_minimap = Objects.MiniMapShip(image[0], (10, 10), minimap_ship_coord, minimap_objects)
 
@@ -846,6 +858,9 @@ while running:
     screen.fill((0, 0, 0))
     if hero.ship.death_flag:
         game_over()
+    if star_damage_time == 0 and pygame.sprite.collide_mask(sun, hero.ship):
+        hero.ship.get_damage(sun.get_damage())
+    star_damage_time = (star_damage_time + 1) % FPS
     all_sprites.update(hero_coord=[hero.ship.rect.x + hero.ship.size[0] // 2, hero.ship.rect.y +
                                    hero.ship.size[1] // 2])
     for sprite in all_sprites:
