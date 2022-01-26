@@ -881,7 +881,7 @@ def win():
     bg = pygame.transform.scale(load_image('jump.png'), SIZE)
     font = pygame.font.SysFont('Arialms', 40)
 
-    
+
     def print_text(y):
         with open(f'data/win {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
             buttons = map(lambda x: x.rstrip(), f.readlines())
@@ -922,10 +922,11 @@ def writing_record(win_='No'):
 
 
 def mini_map():
-    minimap = pygame.Surface((9700, 9700))
-    all_sprites.draw(minimap)
-    minimap = pygame.transform.scale(minimap, (500, 500))
-    screen.blit(minimap, (100, 100))
+    minimap.fill((0, 0, 0))
+    minimap_ship_coord = hero.ship.coord[0] // res + 200, hero.ship.coord[1] // res + 200
+    minimap_objects.update(coord=minimap_ship_coord)
+    minimap_objects.draw(minimap)
+    screen.blit(minimap, (0, 0))
     # pygame.draw.rect(screen, pygame.Color('#04859D'),
     # (WIDTH * 0.9, 0, WIDTH * 0.1, WIDTH * 0.1), 3)
 
@@ -963,6 +964,7 @@ ships = pygame.sprite.Group()
 stations = pygame.sprite.Group()
 enemy = pygame.sprite.Group()
 hero_group = pygame.sprite.Group()
+minimap_objects = pygame.sprite.Group()
 camera = Camera()
 
 # Объекты
@@ -1014,10 +1016,32 @@ hero = Hero.Hero(
                     camera,
                     SIZE, all_sprites, ships, hero_group), 1000000, name)
 kristalids = list()
-for sprite in all_sprites:
-    if sprite != hero.ship:
-        camera.apply(sprite)
-camera.stop_move()
+# Объекты мини карты
+res = 50
+minimap = pygame.Surface((10000 / (res / 2), 10000 / (res / 2)))
+sun_minimap = Objects.MiniMapStar(load_image('Sun.png'), 25, 10, [1500 / res, 1500 / res], [200, 200],
+                                  minimap_objects)
+mercury_minimap = Objects.MiniMapPlanet(load_image('Mercury.png'), 50, 5, [80 / (res / 2), 80 / (res / 2)], [200, 200],
+                                        (AU * 0.387 + 750) / res, 100 / res, mercury.grad,
+                                        minimap_objects)
+venus_minimap = Objects.MiniMapPlanet(load_image('Venus.png'), 50, 5, [260 / (res / 2), 260 / (res / 2)], [200, 200],
+                       (AU * 0.9 + 750) / res, 100 / res, venus.grad, minimap_objects)
+earth_minimap = Objects.MiniMapPlanet(load_image('Earth.png'), 50, 5, [280 / (res / 2), 280 / (res / 2)], [200, 200],
+                       (AU * 1.7 + 750) / res, 100 / res, 0, minimap_objects)
+mars_minimap = Objects.MiniMapPlanet(load_image('Mars.png'), 50, 5, [170 / (res / 2), 170 / (res / 2)], [200, 200],
+                      (AU * 2.5 + 750) / res, 100 / res, mars.grad, minimap_objects)
+jupiter_minimap = Objects.MiniMapPlanet(load_image('Jupiter.png'), 50, 5, [400 / (res / 2), 400 / (res / 2)], [200, 200],
+                         (AU * 5.2 + 750) / res, 100 / res, jupiter.grad, minimap_objects)
+saturn_minimap = Objects.MiniMapPlanet(load_image('Saturn.png'), 25, 10, [800 / (res / 2), 800 / (res / 2)], [200, 200],
+                        AU * 8.2 / res, 100 / res, saturn.grad, minimap_objects)
+uranus_minimap = Objects.MiniMapPlanet(load_image('Uranus.png'), 50, 5, [220 / (res / 2), 220 / (res / 2)], [200, 200],
+                        (AU * 9 + 750) / res, 100 / res, uranus.grad, minimap_objects)
+neptune_minimap = Objects.MiniMapPlanet(load_image('Neptune.png'), 50, 5, [200 / (res / 2), 200 / (res / 2)], [200, 200],
+                         (AU * 11 + 750) / res, 100 / res, neptune.grad, minimap_objects)
+station_minimap = Objects.MiniMapStation(load_image('Station.png', color_key=-1), 1, 1, [760 / res, 525 / res],
+                          [(AU * 5.2 + 750) / res + 200, 200], minimap_objects)
+minimap_ship_coord = hero.ship.coord[0] // 25 + 200, hero.ship.coord[1] // 25 + 200
+ship_minimap = Objects.MiniMapShip(image[0], (10, 10), minimap_ship_coord, minimap_objects)
 
 # main cycle
 running = True
@@ -1070,6 +1094,7 @@ while running:
         text = font.render(str('Вы можете совершить прыжок!(Нажмите "Shift")'),
                            True, pygame.Color('blue'))
         screen.blit(text, (WIDTH // 2 - text.get_width() // 2, 10 + text.get_height()))
+    mini_map()
     pygame.display.flip()
     clock.tick(FPS)
 pygame.quit()

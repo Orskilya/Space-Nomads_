@@ -78,7 +78,7 @@ class Planet(Object):
 
     def make_shop(self):
         shop = [[eval(f'{product}({randrange(0, 4)})') for _ in range(randrange(1, 4))] for
-         product in goods_shop]
+                product in goods_shop]
         normal_shop = list()
         for i in shop:
             i.sort(key=lambda x: x.tier)
@@ -144,7 +144,7 @@ class Station(Object):
 
     def make_shop(self):
         shop = [[eval(f'{product}({randrange(0, 3)})') for _ in range(randrange(1, 3))] for
-         product in goods_shop]
+                product in goods_shop]
         # t3 equipment generation
         for i in range(7):
             shop[i].append(eval(goods_shop[i] + '(3)'))
@@ -156,3 +156,56 @@ class Station(Object):
 
     def shopping(self, index):
         return self.shop[index]
+
+
+class MiniMapStar(pygame.sprite.Sprite):
+    def __init__(self, sheet, columns, rows, size, coord, *group):
+        super().__init__(*group)
+        self.coord = coord  # list
+        self.size = size
+        self.frames = []
+        self.image = self.cut_sheet(sheet, columns, rows)
+        self.image = pygame.transform.scale(self.image, (self.size[0], self.size[1]))
+        self.rect = self.rect.move(coord[0] - self.size[0] // 2, coord[1] - self.size[1] // 2)
+
+    def cut_sheet(self, sheet, columns, rows):
+        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
+                                sheet.get_height() // rows)
+        frame_location = (self.rect.w * 0, self.rect.h * 0)
+        return sheet.subsurface(pygame.Rect(frame_location, self.rect.size))
+
+
+class MiniMapPlanet(MiniMapStar):
+    def __init__(self, sheet, columns, rows, size, coord, radius, speed, grad, *group):
+        super().__init__(sheet, columns, rows, size, coord, *group)
+        self.grad = grad
+        self.radius = radius
+        self.center = coord.copy()
+        self.angular_speed = (speed / self.radius) * (pi / 180)
+
+    def update(self, **kwargs):
+        self.coord[0] = self.center[0] + cos(self.grad) * self.radius - self.size[0] // 2
+        self.coord[1] = self.center[1] + sin(self.grad) * self.radius - self.size[1] // 2
+        self.rect.x = self.coord[0]
+        self.rect.y = self.coord[1]
+        self.grad += self.angular_speed
+
+
+class MiniMapStation(MiniMapStar):
+    def __init__(self, sheet, columns, rows, size, coord, *group):
+        super().__init__(sheet, columns, rows, size, coord, *group)
+
+
+class MiniMapShip(pygame.sprite.Sprite):
+    def __init__(self, image, size, coord, *group):
+        super().__init__(*group)
+        self.size = size
+        self.image = image
+        self.image = pygame.transform.scale(self.image, (self.size[0], self.size[1]))
+        self.rect = self.image.get_rect()
+        self.rect = self.rect.move(coord[0] - self.size[0] // 2, coord[1] - self.size[1] // 2)
+
+    def update(self, coord):
+        self.rect.x = coord[0] - self.size[0] // 2
+        self.rect.y = coord[1] - self.size[1] // 2
+
