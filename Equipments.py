@@ -11,7 +11,7 @@ class Engine:
 
         # features
         self.name = self.names[self.tier]
-        self.speed = 300 + 150 * self.tier
+        self.speed = 400 + 150 * self.tier
         self.jump = 15 + self.tier
         self.price = 800 + 1000 * self.tier
         self.mass = 20 + 5 * self.tier
@@ -189,7 +189,7 @@ class PhotonGun:
         self.mass = 11 + 3 * self.tier
         self.bullet_speed = 500 + self.tier * 250
         self.bullets = []
-        self.reload_time = 1 * fps
+        self.reload_time = 0.25 * fps
         self.reload = 0
 
     def __str__(self):
@@ -251,7 +251,7 @@ class Destructor:
         self.mass = 30 + 15 * self.tier
         self.bullet_speed = 1000 + self.tier * 250
         self.bullets = []
-        self.reload_time = 1 * fps
+        self.reload_time = 0.25 * fps
         self.reload = 0
 
     def __str__(self):
@@ -301,14 +301,14 @@ class Absorber:
         self.img = 'absorber.png'
         self.tier = tier
         self.bullet_image = 'absorber_bullet.png'
-        self.bullet_size = (10, 10)
+        self.bullet_size = (100, 100)
         self.groups = groups
         self.type = (1, 0)
         if bullet_image:
             self.bullet_image = bullet_image
         self.name = 'Absorber'
-        self.damage = (50 + round(self.tier * 13.3), 60 + round(self.tier * 13.3))
-        self.distance = 500 - round(self.tier * 16.6)
+        self.damage = (60 + round(self.tier * 13.3), 80 + round(self.tier * 13.3))
+        self.distance = 400 - round(self.tier * 16.6)
         self.price = 10000 + 10000 * self.tier
         self.mass = 50 + 50 * self.tier
         self.bullets = []

@@ -22,7 +22,7 @@ class Ship(pygame.sprite.Sprite):
         self.armor = armor
         self.mass = hull
         self.equipment = equipment  # list of classes
-        self.hold = list()
+        self.hold = {'product': 100, 'medicine': 100, 'alchogol': 100, 'luxury': 100, 'tech': 100, 'weapon': 100}
         self.space = hull
         self.keys = []
         self.mask = pygame.mask.from_surface(self.image)
@@ -47,6 +47,15 @@ class Ship(pygame.sprite.Sprite):
 
     def reload(self):
         pass
+
+    def get_hold(self):
+        return self.hold
+
+    def hold_upgraide(self, item, number=0, add=True):
+        if add:
+            self.hold[item] += number
+        else:
+            self.hold[item] = number
 
 
 class WarriorShip(Ship):
@@ -196,7 +205,7 @@ class NomadShip(Ship):
         self.slot_equipment[i1][i2] = item
 
     def get_damage(self, dmg):
-        self.hull -= dmg * self.slot_equipment[2][1].get_defend() // 100 - self.armor
+        self.hull -= dmg - dmg * self.slot_equipment[2][1].get_defend() // 100 - self.armor
         if self.hull <= 0:
             self.death_flag = True
 

@@ -108,7 +108,7 @@ class Landing:
             self.song_play = True
         else:
             self.bg_names = ('government', 'planet_bg')
-            self.current_song = pygame.mixer.Sound('soundtracks/planet.mp3')
+            self.current_song = pygame.mixer.Sound('soundtracks/Coolio.mp3')
             self.song_play = True
         if self.new_game:
             self.current_bg = self.bg_names[0]
@@ -128,6 +128,9 @@ class Landing:
                             self.market_buttons = None
                             self.shop_buttons = None
                             self.shop_info = None
+                            self.repairing = None
+                            self.wait = None
+                            self.government_design = None
                         elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[0] <= WIDTH * 0.5:
                             self.current_window = 'shop'
                             self.new_game = False
@@ -135,6 +138,9 @@ class Landing:
                             self.government_buttons = None
                             self.market_buttons = None
                             self.shop_info = None
+                            self.repairing = None
+                            self.wait = None
+                            self.government_design = None
                         elif WIDTH * 0.5 <= pos[0] <= WIDTH * 0.5 + WIDTH * 0.055:
                             self.current_window = 'market'
                             self.new_game = False
@@ -142,6 +148,9 @@ class Landing:
                             self.government_buttons = None
                             self.shop_buttons = None
                             self.shop_info = None
+                            self.repairing = None
+                            self.wait = None
+                            self.government_design = None
                         elif WIDTH * 0.5 - WIDTH * 0.055 <= pos[
                             0] <= WIDTH * 0.5 + 2 * WIDTH * 0.055:
                             self.current_window = 'main'
@@ -170,55 +179,31 @@ class Landing:
                         event.button == 1 and self.market_buttons:
                     pos = event.pos
                     if self.market_buttons['x'][0][0] <= pos[0] <= self.market_buttons['x'][0][1]:
-                        if self.market_buttons['y'][0] <= pos[1] <= self.market_buttons['y'][1] or \
-                                self.market_buttons['y'][0] + self.market_buttons['y_step'] <= pos[
-                            1] <= self.market_buttons['y'][1] + self.market_buttons['y_step'] or \
-                                self.market_buttons['y'][0] + 2 * self.market_buttons['y_step'] <= \
-                                pos[
-                                    1] <= self.market_buttons['y'][1] + 2 * self.market_buttons[
-                            'y_step'] or \
-                                self.market_buttons['y'][0] + 3 * self.market_buttons['y_step'] <= \
-                                pos[
-                                    1] <= self.market_buttons['y'][1] + 3 * self.market_buttons[
-                            'y_step'] or \
-                                self.market_buttons['y'][0] + 4 * self.market_buttons['y_step'] <= \
-                                pos[
-                                    1] <= self.market_buttons['y'][1] + 4 * self.market_buttons[
-                            'y_step'] or \
-                                self.market_buttons['y'][0] + 5 * self.market_buttons['y_step'] <= \
-                                pos[
-                                    1] <= self.market_buttons['y'][1] + 5 * self.market_buttons[
-                            'y_step'] or \
-                                self.market_buttons['y'][0] + 6 * self.market_buttons['y_step'] <= \
-                                pos[
-                                    1] <= self.market_buttons['y'][1] + 6 * self.market_buttons[
-                            'y_step']:
-                            print(1)
+                        if self.market_buttons['y'][0] <= pos[1] <= self.market_buttons['y'][1]:
+                            self.market_operations('product')
+                        elif self.market_buttons['y'][0] + self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + self.market_buttons['y_step']:
+                            self.market_operations('medicine')
+                        elif self.market_buttons['y'][0] + 2 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 2 * self.market_buttons['y_step']:
+                            self.market_operations('alchogol')
+                        elif self.market_buttons['y'][0] + 3 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 3 * self.market_buttons['y_step']:
+                            self.market_operations('luxury')
+                        elif self.market_buttons['y'][0] + 4 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 4 * self.market_buttons['y_step']:
+                            self.market_operations('tech')
+                        elif self.market_buttons['y'][0] + 5 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 5 * self.market_buttons['y_step']:
+                            self.market_operations('weapon')
                     elif self.market_buttons['x'][1][0] <= pos[0] <= self.market_buttons['x'][1][1]:
-                        if self.market_buttons['y'][0] <= pos[1] <= self.market_buttons['y'][1] or \
-                                self.market_buttons['y'][0] + self.market_buttons['y_step'] <= pos[
-                            1] <= self.market_buttons['y'][1] + self.market_buttons['y_step'] or \
-                                self.market_buttons['y'][0] + 2 * self.market_buttons['y_step'] <= \
-                                pos[
-                                    1] <= self.market_buttons['y'][1] + 2 * self.market_buttons[
-                            'y_step'] or \
-                                self.market_buttons['y'][0] + 3 * self.market_buttons['y_step'] <= \
-                                pos[
-                                    1] <= self.market_buttons['y'][1] + 3 * self.market_buttons[
-                            'y_step'] or \
-                                self.market_buttons['y'][0] + 4 * self.market_buttons['y_step'] <= \
-                                pos[
-                                    1] <= self.market_buttons['y'][1] + 4 * self.market_buttons[
-                            'y_step'] or \
-                                self.market_buttons['y'][0] + 5 * self.market_buttons['y_step'] <= \
-                                pos[
-                                    1] <= self.market_buttons['y'][1] + 5 * self.market_buttons[
-                            'y_step'] or \
-                                self.market_buttons['y'][0] + 6 * self.market_buttons['y_step'] <= \
-                                pos[
-                                    1] <= self.market_buttons['y'][1] + 6 * self.market_buttons[
-                            'y_step']:
-                            print(2)
+                        if self.market_buttons['y'][0] <= pos[1] <= self.market_buttons['y'][1]:
+                            self.market_operations('product', True)
+                        elif self.market_buttons['y'][0] + self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + self.market_buttons['y_step']:
+                            self.market_operations('medicine', True)
+                        elif self.market_buttons['y'][0] + 2 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 2 * self.market_buttons['y_step']:
+                            self.market_operations('alchogol', True)
+                        elif self.market_buttons['y'][0] + 3 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 3 * self.market_buttons['y_step']:
+                            self.market_operations('luxury', True)
+                        elif self.market_buttons['y'][0] + 4 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 4 * self.market_buttons['y_step']:
+                            self.market_operations('tech', True)
+                        elif self.market_buttons['y'][0] + 5 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 5 * self.market_buttons['y_step']:
+                            self.market_operations('weapon', True)
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.shop_buttons:
                     pos = event.pos
                     for row in self.shop_buttons.keys():
@@ -571,6 +556,67 @@ class Landing:
 
             a += 1
 
+    def market_operations(self, item, selling=False):
+        if selling:
+            hero.money_change(hero.get_ship().get_hold()[item] * self.object.get_market()[item][2])
+            hero.get_ship().change_space(0, hero.get_ship().get_hold()[item])
+            self.object.market_change(item, hero.get_ship().get_hold()[item], True)
+            hero.get_ship().hold_upgraide(item, add=False)
+        else:
+            self.bying()
+
+    def bying(self):
+        rect_width = 0
+        rect_x = WIDTH * 0.37
+        rect_y = HEIGHT * 0.437
+        square_wx, square_wy = 15, 30
+        rect_color = pygame.Color('green')
+        rect_rect = ((rect_x, rect_y), (square_wx, square_wy))
+        x1 = x2 = y1 = y2 = 0
+
+        while True:
+            pygame.draw.rect(screen, pygame.Color('#04859D'),
+                             (WIDTH * 0.3, HEIGHT * 0.4, WIDTH * 0.4, HEIGHT * 0.1),
+                             border_radius=30)
+            pygame.draw.rect(screen, pygame.Color('#C8DFE3'),
+                             (WIDTH * 0.305, HEIGHT * 0.41, WIDTH * 0.39, HEIGHT * 0.081),
+                             border_radius=30)
+            pygame.draw.rect(screen, pygame.Color('#333333'),
+                             (WIDTH * 0.305, HEIGHT * 0.41, WIDTH * 0.39, HEIGHT * 0.081), 3,
+                             border_radius=30)
+            pygame.draw.rect(screen, pygame.Color('gray'),
+                             (WIDTH * 0.37, HEIGHT * 0.44, WIDTH * 0.2, HEIGHT * 0.02),
+                             border_radius=5)
+            space = load_image('cube.png', (20, 20))
+            money = load_image('money.png', (20, 20))
+            plus = load_image('plus.png', (20, 20))
+            minus = load_image('minus.png', (20, 20))
+            screen.blit(space, (WIDTH * 0.31, HEIGHT * 0.44))
+            screen.blit(money, (WIDTH * 0.585, HEIGHT * 0.44))
+            screen.blit(minus, (WIDTH * 0.355, HEIGHT * 0.44))
+            screen.blit(plus, (WIDTH * 0.573, HEIGHT * 0.44))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    quit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    x1, y1 = event.pos
+                    if 0 <= y1 <= 300:
+                        if (x1 < rect_x) or (x1 > rect_x + square_wx) or (y1 < rect_y) or \
+                                (y1 > rect_y + square_wy):
+                            x1 = y1 = 0
+                if event.type == pygame.MOUSEBUTTONUP:
+                    rect_x += x2
+                    x1 = x2 = y1 = y2 = 0
+                if event.type == pygame.MOUSEMOTION and x1 > 0:
+                    pos = event.pos
+                    if WIDTH * 0.37 <= pos[0] <= WIDTH * 0.57:
+                        x2 = event.pos[0] - x1
+
+            rect_rect = ((rect_x + x2, rect_y + y2), (square_wx, square_wy))
+            pygame.draw.rect(screen, rect_color, rect_rect, rect_width)
+            pygame.display.flip()
+            clock.tick(60)
+
 
 class Lobby:
     def __init__(self):
@@ -692,45 +738,118 @@ class Lobby:
 
     def ent(self):
         global LANGUAGE, FPS, WIDTH, HEIGHT
+
+        self.input_name()
+
         self.bg = pygame.transform.scale(load_image('ent_bg.png'), SIZE)
-        screen.fill((0, 0, 0))
-        screen.blit(self.bg, (0, 0))
         font = pygame.font.SysFont('Arialms', 40)
 
-        with open(f'data/ENT {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
-            start_game = f.readline().rstrip()
-            self.buttons = map(lambda x: x.rstrip(), f.readlines())
+        def print_text(y):
+            with open(f'data/ENT {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
+                self.buttons = map(lambda x: x.rstrip(), f.readlines())
 
-        self.text_coord = HEIGHT * 0.1
-        button = 1
-        for line in self.buttons:
-            string_rendered = font.render(line, True, pygame.Color('white'))
-            self.buttons = string_rendered.get_rect()
-            self.text_coord += 10
-            self.buttons.top = self.text_coord
-            self.buttons.x = 30
-            self.text_coord += self.buttons.height
-            screen.blit(string_rendered, self.buttons)
-            button += 1
+            self.text_coord = y
+            button = 1
+            for line in self.buttons:
+                string_rendered = font.render(line, True, pygame.Color('white'))
+                self.buttons = string_rendered.get_rect()
+                self.text_coord += 10
+                self.buttons.top = self.text_coord
+                self.buttons.x = 30
+                self.text_coord += self.buttons.height
+                screen.blit(string_rendered, self.buttons)
+                button += 1
 
-        if LANGUAGE == 'ko':
-            screen.blit(font.render(start_game, True, pygame.Color('white')),
-                        (WIDTH * 0.5, HEIGHT * 0.9))
-        elif LANGUAGE == 'en':
-            screen.blit(font.render(start_game, True, pygame.Color('white')),
-                        (WIDTH * 0.3, HEIGHT * 0.9))
-        else:
-            screen.blit(font.render(start_game, True, pygame.Color('white')),
-                        (WIDTH * 0.25, HEIGHT * 0.9))
-
+        y = HEIGHT
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     quit()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     return
-            pygame.display.flip()
             clock.tick(FPS)
+            screen.blit(self.bg, (0, 0))
+            print_text(y)
+            if y >= HEIGHT * 0.1:
+                y -= 1
+            else:
+                if LANGUAGE == 'ko':
+                    screen.blit(font.render('지침', True, pygame.Color('white')),
+                                (WIDTH * 0.5, HEIGHT * 0.9))
+                elif LANGUAGE == 'en':
+                    screen.blit(font.render('Please, press "Space" to start the game!', True,
+                                            pygame.Color('white')), (WIDTH * 0.3, HEIGHT * 0.9))
+                else:
+                    screen.blit(font.render('Пожалуйста, нажмите "Пробел", чтобы начать игру!', True,
+                                            pygame.Color('white')), (WIDTH * 0.25, HEIGHT * 0.9))
+            pygame.display.flip()
+
+    def input_name(self):
+        global LANGUAGE, FPS, WIDTH, HEIGHT, name
+        self.bg = pygame.transform.scale(load_image('ent_bg.png'), SIZE)
+        timer = 0
+        font = pygame.font.SysFont('Arialms', 40)
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    quit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        name = name[:-1]
+                    elif event.key == pygame.K_KP_ENTER:
+                        if name:
+                            return
+                    elif len(name) < 10:
+                        name += event.unicode
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and name:
+                    pos = event.pos
+                    if HEIGHT * 0.43 <= pos[1] <= HEIGHT * 0.47 and \
+                            WIDTH * 0.54 <= pos[0] <= WIDTH * 0.64:
+                        return
+
+            clock.tick(FPS)
+            timer = (timer + 1) % FPS
+            screen.blit(self.bg, (0, 0))
+            pygame.draw.rect(screen, pygame.Color('#04859D'),
+                             (WIDTH * 0.3, HEIGHT * 0.4, WIDTH * 0.4, HEIGHT * 0.1),
+                             border_radius=30)
+            pygame.draw.rect(screen, pygame.Color('#C8DFE3'),
+                             (WIDTH * 0.305, HEIGHT * 0.41, WIDTH * 0.39, HEIGHT * 0.081),
+                             border_radius=30)
+            pygame.draw.rect(screen, pygame.Color('#333333'),
+                             (WIDTH * 0.305, HEIGHT * 0.41, WIDTH * 0.39, HEIGHT * 0.081), 3,
+                             border_radius=30)
+            pygame.draw.rect(screen, pygame.Color('white'),
+                             (WIDTH * 0.34, HEIGHT * 0.43, WIDTH * 0.2, HEIGHT * 0.04),
+                             border_top_left_radius=5, border_bottom_left_radius=5)
+            pygame.draw.rect(screen, pygame.Color('#04859D'),
+                             (WIDTH * 0.54, HEIGHT * 0.43, WIDTH * 0.1, HEIGHT * 0.04),
+                             border_top_right_radius=5, border_bottom_right_radius=5)
+            pygame.draw.rect(screen, pygame.Color('#333333'),
+                             (WIDTH * 0.34, HEIGHT * 0.43, WIDTH * 0.2, HEIGHT * 0.04), 2,
+                             border_top_left_radius=5, border_bottom_left_radius=5)
+
+            input_label = font.render(name, True, pygame.Color('#333333'))
+            screen.blit(input_label, (WIDTH * 0.344, HEIGHT * 0.42))
+            cursor_pos = input_label.get_width()
+
+            if 0 <= timer <= 29:
+                pygame.draw.line(screen, pygame.Color('#333333'),
+                                 (WIDTH * 0.344 + cursor_pos, HEIGHT * 0.436),
+                                 (WIDTH * 0.344 + cursor_pos, HEIGHT * 0.462), 2)
+
+            if LANGUAGE == 'ko':
+                screen.blit(font.render('확인', True, pygame.Color('white')),
+                            (WIDTH * 0.567, HEIGHT * 0.424))
+            elif LANGUAGE == 'en':
+                screen.blit(font.render('Ok', True,
+                                        pygame.Color('white')), (WIDTH * 0.575, HEIGHT * 0.424))
+            else:
+                screen.blit(font.render('Готово', True,
+                                        pygame.Color('white')), (WIDTH * 0.555, HEIGHT * 0.424))
+
+            pygame.display.flip()
 
 
 def game_over():
@@ -755,22 +874,46 @@ def game_over():
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                right_record()
                 quit()
 
 
 def win():
-    death_screen = pygame.transform.scale(load_image('jump.png'), SIZE)
-    screen.blit(death_screen, (0, 0))
-    pygame.display.flip()
+    bg = pygame.transform.scale(load_image('jump.png'), SIZE)
+    font = pygame.font.SysFont('Arialms', 40)
+
+    
+    def print_text(y):
+        with open(f'data/win {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
+            buttons = map(lambda x: x.rstrip(), f.readlines())
+
+        text_coord = y
+        button = 1
+        for line in buttons:
+            string_rendered = font.render(line, True, pygame.Color('white'))
+            buttons = string_rendered.get_rect()
+            text_coord += 10
+            buttons.top = text_coord
+            buttons.x = 30
+            text_coord += buttons.height
+            screen.blit(string_rendered, buttons)
+            button += 1
+
+    y = HEIGHT
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                right_record('Yes')
                 quit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                a = Lobby()
+        clock.tick(FPS)
+        screen.blit(bg, (0, 0))
+        print_text(y)
+        if y >= HEIGHT * 0.2:
+            y -= 1
+        pygame.display.flip()
 
 
-def right_record(win_='No'):
+def writing_record(win_='No'):
     con = sqlite3.connect('data/scores.db')
     cursor = con.cursor()
     cursor.execute(
@@ -809,6 +952,7 @@ clock = pygame.time.Clock()
 song = pygame.mixer.Sound('soundtracks/space_theme.mp3')
 
 # lobby
+name = ''
 lobby = Lobby()
 landing = Landing()
 
@@ -868,7 +1012,7 @@ hero = Hero.Hero(
                              Equipments.Engine(0), Equipments.FuelTank(0), Equipments.Grab(0),
                              Equipments.Shield()],
                     camera,
-                    SIZE, all_sprites, ships, hero_group), 1000000, 'Test')
+                    SIZE, all_sprites, ships, hero_group), 1000000, name)
 kristalids = list()
 for sprite in all_sprites:
     if sprite != hero.ship:

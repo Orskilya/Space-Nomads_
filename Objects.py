@@ -76,7 +76,6 @@ class Planet(Object):
     def shopping(self, index):
         return self.shop[index]
 
-
     def make_shop(self):
         shop = [[eval(f'{product}({randrange(0, 4)})') for _ in range(randrange(1, 4))] for
          product in goods_shop]
@@ -86,9 +85,17 @@ class Planet(Object):
             normal_shop.extend(i)
         return normal_shop
 
-
     def __str__(self):
         return 'Планета'
+
+    def get_market(self):
+        return self.market
+
+    def market_change(self, item, number, selling=False):
+        if selling:
+            self.market[item][0] += number
+        else:
+            self.market[item][0] -= number
 
 
 class Star(Object):
