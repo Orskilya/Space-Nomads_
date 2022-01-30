@@ -22,7 +22,7 @@ class Ship(pygame.sprite.Sprite):
         self.armor = armor
         self.mass = hull
         self.equipment = equipment  # list of classes
-        self.hold = list()
+        self.hold = {'product': 100, 'medicine': 100, 'alchogol': 100, 'luxury': 100, 'tech': 100, 'weapon': 100}
         self.space = hull
         self.keys = []
         self.mask = pygame.mask.from_surface(self.image)
@@ -36,10 +36,9 @@ class Ship(pygame.sprite.Sprite):
     def get_space(self):
         return self.space
 
-    def change_space(self, amount):
-        if self.space + amount < 0:
-            return True
-        self.space += amount
+    def change_space(self, new_mass, old_mass):
+        self.space -= new_mass
+        self.space += old_mass
 
     def get_damage(self, dmg):
         self.hull -= dmg - self.armor
@@ -48,6 +47,15 @@ class Ship(pygame.sprite.Sprite):
 
     def reload(self):
         pass
+
+    def get_hold(self):
+        return self.hold
+
+    def hold_upgraide(self, item, number=0, add=True):
+        if add:
+            self.hold[item] += number
+        else:
+            self.hold[item] = number
 
 
 class WarriorShip(Ship):
@@ -105,7 +113,7 @@ class NomadShip(Ship):
         super().__init__(images[8], coord, hull, armor, equipment, *group)
         self.slot_equipment = [[1, 1],  # engine and fuel tank
                                [1, 1, randint(0, 1), 0, 0],  # guns
-                               [1, randint(0, 1)],  # grab and shield
+                               [1, 1],  # grab and shield
                                [1, randint(0, 1)]]  # locator and scanner
         self.camera = camera
         self.rect.x = scree_size[0] // 2 - self.size[0] // 2
@@ -197,9 +205,15 @@ class NomadShip(Ship):
         self.slot_equipment[i1][i2] = item
 
     def get_damage(self, dmg):
-        self.hull -= dmg - self.armor
+        self.hull -= dmg - dmg * self.slot_equipment[2][1].get_defend() // 100 - self.armor
         if self.hull <= 0:
             self.death_flag = True
+
+    def get_equipment(self, type):
+        return self.slot_equipment[type[0]][type[1]]
+
+    def repair(self):
+        self.hull = 500
 
     def reload(self):
         if self.slot_equipment[1][0] != 1 and self.slot_equipment != 0:
@@ -215,6 +229,7 @@ class Kristalid(Ship):
                                [1, 1]]  # locator and scanner
         self.hull *= difficult
         self.armor += round(difficult / 100)
+        self.shoot_time = 0
         self.first = True
         self.equipment_setting()
         self.hero = hero  # Для добавления денег и уничтожений

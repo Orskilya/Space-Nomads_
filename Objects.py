@@ -88,6 +88,15 @@ class Planet(Object):
     def __str__(self):
         return 'Планета'
 
+    def get_market(self):
+        return self.market
+
+    def market_change(self, item, number, selling=False):
+        if selling:
+            self.market[item][0] += number
+        else:
+            self.market[item][0] -= number
+
 
 class Star(Object):
     def __init__(self, sheet, columns, rows, size, coord, *group):
