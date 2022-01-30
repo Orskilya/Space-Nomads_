@@ -563,57 +563,36 @@ class Landing:
             self.object.market_change(item, hero.get_ship().get_hold()[item], True)
             hero.get_ship().hold_upgraide(item, add=False)
         else:
-            self.bying()
+            self.bying(item)
 
-    def bying(self):
-        rect_width = 0
-        rect_x = WIDTH * 0.37
-        rect_y = HEIGHT * 0.437
-        square_wx, square_wy = 15, 30
-        rect_color = pygame.Color('green')
-        rect_rect = ((rect_x, rect_y), (square_wx, square_wy))
-        x1 = x2 = y1 = y2 = 0
-
+    def bying(self, type):
         while True:
             pygame.draw.rect(screen, pygame.Color('#04859D'),
-                             (WIDTH * 0.3, HEIGHT * 0.4, WIDTH * 0.4, HEIGHT * 0.1),
+                             (WIDTH * 0.4, HEIGHT * 0.4, WIDTH * 0.4, HEIGHT * 0.1),
                              border_radius=30)
             pygame.draw.rect(screen, pygame.Color('#C8DFE3'),
-                             (WIDTH * 0.305, HEIGHT * 0.41, WIDTH * 0.39, HEIGHT * 0.081),
+                             (WIDTH * 0.405, HEIGHT * 0.41, WIDTH * 0.39, HEIGHT * 0.081),
                              border_radius=30)
             pygame.draw.rect(screen, pygame.Color('#333333'),
-                             (WIDTH * 0.305, HEIGHT * 0.41, WIDTH * 0.39, HEIGHT * 0.081), 3,
+                             (WIDTH * 0.405, HEIGHT * 0.41, WIDTH * 0.39, HEIGHT * 0.081), 3,
                              border_radius=30)
-            pygame.draw.rect(screen, pygame.Color('gray'),
-                             (WIDTH * 0.37, HEIGHT * 0.44, WIDTH * 0.2, HEIGHT * 0.02),
-                             border_radius=5)
-            space = load_image('cube.png', (20, 20))
-            money = load_image('money.png', (20, 20))
-            plus = load_image('plus.png', (20, 20))
-            minus = load_image('minus.png', (20, 20))
-            screen.blit(space, (WIDTH * 0.31, HEIGHT * 0.44))
-            screen.blit(money, (WIDTH * 0.585, HEIGHT * 0.44))
-            screen.blit(minus, (WIDTH * 0.355, HEIGHT * 0.44))
-            screen.blit(plus, (WIDTH * 0.573, HEIGHT * 0.44))
+            space = load_image('cube.png', (30, 30))
+            money = load_image('money.png', (30, 30))
+            plus = load_image('plus.png', (31, 31))
+            minus = load_image('minus.png', (30, 30))
+            yes = load_image('yes.png', (30, 30))
+            no = load_image('no.png', (30, 30))
+            screen.blit(space, (WIDTH * 0.42, HEIGHT * 0.44))
+            screen.blit(money, (WIDTH * 0.53, HEIGHT * 0.44))
+            screen.blit(minus, (WIDTH * 0.47, HEIGHT * 0.44))
+            screen.blit(plus, (WIDTH * 0.51, HEIGHT * 0.44))
+            screen.blit(yes, (WIDTH * 0.65, HEIGHT * 0.44))
+            screen.blit(no, (WIDTH * 0.67, HEIGHT * 0.44))
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     quit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    x1, y1 = event.pos
-                    if 0 <= y1 <= 300:
-                        if (x1 < rect_x) or (x1 > rect_x + square_wx) or (y1 < rect_y) or \
-                                (y1 > rect_y + square_wy):
-                            x1 = y1 = 0
-                if event.type == pygame.MOUSEBUTTONUP:
-                    rect_x += x2
-                    x1 = x2 = y1 = y2 = 0
-                if event.type == pygame.MOUSEMOTION and x1 > 0:
-                    pos = event.pos
-                    if WIDTH * 0.37 <= pos[0] <= WIDTH * 0.57:
-                        x2 = event.pos[0] - x1
 
-            rect_rect = ((rect_x + x2, rect_y + y2), (square_wx, square_wy))
-            pygame.draw.rect(screen, rect_color, rect_rect, rect_width)
             pygame.display.flip()
             clock.tick(60)
 
@@ -749,7 +728,6 @@ class Lobby:
                 self.buttons = map(lambda x: x.rstrip(), f.readlines())
 
             self.text_coord = y
-            button = 1
             for line in self.buttons:
                 string_rendered = font.render(line, True, pygame.Color('white'))
                 self.buttons = string_rendered.get_rect()
@@ -758,7 +736,6 @@ class Lobby:
                 self.buttons.x = 30
                 self.text_coord += self.buttons.height
                 screen.blit(string_rendered, self.buttons)
-                button += 1
 
         y = HEIGHT
         while True:
@@ -880,14 +857,13 @@ def game_over():
 def win():
     bg = pygame.transform.scale(load_image('jump.png'), SIZE)
     font = pygame.font.SysFont('Arialms', 40)
-
+    writing_record()
 
     def print_text(y):
         with open(f'data/win {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
             buttons = map(lambda x: x.rstrip(), f.readlines())
 
         text_coord = y
-        button = 1
         for line in buttons:
             string_rendered = font.render(line, True, pygame.Color('white'))
             buttons = string_rendered.get_rect()
@@ -896,7 +872,6 @@ def win():
             buttons.x = 30
             text_coord += buttons.height
             screen.blit(string_rendered, buttons)
-            button += 1
 
     y = HEIGHT
     while True:
@@ -913,11 +888,11 @@ def win():
         pygame.display.flip()
 
 
-def writing_record(win_='No'):
+def writing_record():
     con = sqlite3.connect('data/scores.db')
     cursor = con.cursor()
     cursor.execute(
-        f'INSERT INTO Score(name, score, win) VALUES("{hero.name}", {hero.score}, "{win_}")')
+        f'INSERT INTO Score(name, score, win) VALUES("{hero.name}", {hero.score})')
     con.commit()
 
 
