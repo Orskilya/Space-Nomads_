@@ -101,7 +101,7 @@ class Planet(Object):
 class Star(Object):
     def __init__(self, sheet, columns, rows, size, coord, *group):
         super().__init__(sheet, columns, rows, size, coord, *group)
-        self.damage = 30
+        self.damage = 10
         self.count = 0
         self.images_speed = 5
 

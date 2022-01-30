@@ -218,9 +218,10 @@ class Kristalid(Ship):
         return 'Кристалид'
 
     def fly(self, hero_coord, distance):
+        speed = self.slot_equipment[0][0].get_speed()
         x = abs(hero_coord[0] - self.rect.x)
         y = abs(hero_coord[1] - self.rect.y)
-        t = distance / (200 // fps)
+        t = distance / (speed // fps)
         s_x = x / t
         s_y = y / t
         if self.rect.x > hero_coord[0]:
@@ -239,8 +240,9 @@ class Kristalid(Ship):
         distance = ((hero_coord[0] - self.rect.x) ** 2 + (hero_coord[1] - self.rect.y) ** 2) ** 0.5
         if 0 < distance <= 1000:
             self.fly(hero_coord, distance)
-            if self.slot_equipment[1][0].distance >= distance:
-                self.shoot(hero_coord)
+            if self.slot_equipment[1][0] != 1:
+                if self.slot_equipment[1][0].distance >= distance:
+                    self.shoot(hero_coord)
         else:
             if self.rect.x != self.start_point[0] and self.rect.y != self.start_point[1]:
                 distance = ((self.start_point[0] - self.rect.x) ** 2 + (

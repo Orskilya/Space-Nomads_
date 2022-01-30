@@ -21,7 +21,7 @@ class Camera:
         if str(obj) == 'Планета':
             obj.center[0] = sun.rect.x + sun.size[0] // 2
             obj.center[1] = sun.rect.y + sun.size[1] // 2
-        elif sprite == bg:
+        elif obj == bg:
             if self.dx < 0:
                 obj.rect.x += -((-self.dx) // 3)
             else:
@@ -30,7 +30,7 @@ class Camera:
                 obj.rect.y += -((-self.dy) // 3)
             else:
                 obj.rect.y += self.dy // 3
-        elif str(sprite) == 'Пуля':
+        elif str(obj) == 'Пуля':
             obj.start_point[0] += self.dx
             obj.start_point[1] += self.dy
         elif str(obj) == 'Кристалид':
@@ -181,28 +181,38 @@ class Landing:
                     if self.market_buttons['x'][0][0] <= pos[0] <= self.market_buttons['x'][0][1]:
                         if self.market_buttons['y'][0] <= pos[1] <= self.market_buttons['y'][1]:
                             self.market_operations('product')
-                        elif self.market_buttons['y'][0] + self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + self.market_buttons['y_step']:
+                        elif self.market_buttons['y'][0] + self.market_buttons['y_step'] <= pos[1] <= \
+                                self.market_buttons['y'][1] + self.market_buttons['y_step']:
                             self.market_operations('medicine')
-                        elif self.market_buttons['y'][0] + 2 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 2 * self.market_buttons['y_step']:
+                        elif self.market_buttons['y'][0] + 2 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 2 * self.market_buttons['y_step']:
                             self.market_operations('alchogol')
-                        elif self.market_buttons['y'][0] + 3 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 3 * self.market_buttons['y_step']:
+                        elif self.market_buttons['y'][0] + 3 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 3 * self.market_buttons['y_step']:
                             self.market_operations('luxury')
-                        elif self.market_buttons['y'][0] + 4 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 4 * self.market_buttons['y_step']:
+                        elif self.market_buttons['y'][0] + 4 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 4 * self.market_buttons['y_step']:
                             self.market_operations('tech')
-                        elif self.market_buttons['y'][0] + 5 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 5 * self.market_buttons['y_step']:
+                        elif self.market_buttons['y'][0] + 5 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 5 * self.market_buttons['y_step']:
                             self.market_operations('weapon')
                     elif self.market_buttons['x'][1][0] <= pos[0] <= self.market_buttons['x'][1][1]:
                         if self.market_buttons['y'][0] <= pos[1] <= self.market_buttons['y'][1]:
                             self.market_operations('product', True)
-                        elif self.market_buttons['y'][0] + self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + self.market_buttons['y_step']:
+                        elif self.market_buttons['y'][0] + self.market_buttons['y_step'] <= pos[1] <= \
+                                self.market_buttons['y'][1] + self.market_buttons['y_step']:
                             self.market_operations('medicine', True)
-                        elif self.market_buttons['y'][0] + 2 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 2 * self.market_buttons['y_step']:
+                        elif self.market_buttons['y'][0] + 2 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 2 * self.market_buttons['y_step']:
                             self.market_operations('alchogol', True)
-                        elif self.market_buttons['y'][0] + 3 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 3 * self.market_buttons['y_step']:
+                        elif self.market_buttons['y'][0] + 3 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 3 * self.market_buttons['y_step']:
                             self.market_operations('luxury', True)
-                        elif self.market_buttons['y'][0] + 4 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 4 * self.market_buttons['y_step']:
+                        elif self.market_buttons['y'][0] + 4 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 4 * self.market_buttons['y_step']:
                             self.market_operations('tech', True)
-                        elif self.market_buttons['y'][0] + 5 * self.market_buttons['y_step'] <= pos[1] <= self.market_buttons['y'][1] + 5 * self.market_buttons['y_step']:
+                        elif self.market_buttons['y'][0] + 5 * self.market_buttons['y_step'] <= pos[
+                            1] <= self.market_buttons['y'][1] + 5 * self.market_buttons['y_step']:
                             self.market_operations('weapon', True)
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.shop_buttons:
                     pos = event.pos
@@ -662,10 +672,11 @@ class Lobby:
                         if self.buttons_type == 'Main Menu':
                             if HEIGHT * 0.3 <= pos[1] <= HEIGHT * 0.3 + self.buttons.height:
                                 self.ent()  # start new game
+                                start_game()
                                 return
                             elif HEIGHT * 0.3 + self.buttons.height + 15 <= pos[1] \
                                     <= HEIGHT * 0.3 + 2 * self.buttons.height + 15:
-                                return  # continue last save
+                                tuition()
                             elif HEIGHT * 0.3 + 2 * self.buttons.height + 30 <= pos[1] \
                                     <= HEIGHT * 0.3 + 3 * self.buttons.height + 30:
                                 self.buttons_type = 'Options'
@@ -945,9 +956,9 @@ def mini_map():
     minimap_ship_coord = hero.ship.coord[0] // res + 200, hero.ship.coord[1] // res + 200
     minimap_objects.update(coord=minimap_ship_coord)
     minimap_objects.draw(minimap)
-    screen.blit(minimap, (0, 0))
-    # pygame.draw.rect(screen, pygame.Color('#04859D'),
-    # (WIDTH * 0.9, 0, WIDTH * 0.1, WIDTH * 0.1), 3)
+    screen.blit(minimap, (WIDTH - res * 2 - 10, 10))
+    pygame.draw.rect(screen, pygame.Color('#04859D'), (WIDTH - res * 2 - 20, 0, res * 2 + 20,
+                                                       res * 2 + 20), 4)
 
 
 def render_hp():
@@ -960,6 +971,34 @@ def render_hp():
             screen.blit(hp, (ship.rect.x + ship.size[0] // 2 - 35, ship.rect.y + ship.size[1] - 20))
 
 
+def tuition():
+    start_game(True)
+    tuition_kristalid = Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
+                                        [-camera.dx, 0], 1, 0, [Equipments.Engine(0)], hero,
+                                        all_sprites, ships, enemy)
+    tuition_running = True
+    while tuition_running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quit()
+            elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+                if event.key == pygame.K_w or event.key == pygame.K_a or event.key == pygame.K_s or \
+                        event.key == pygame.K_d:
+                    hero.ship.update(event, 'fly')
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                hero.ship.update(event, 'shoot')
+        screen.fill((0, 0, 0))
+        all_sprites.update(hero_coord=[hero.ship.rect.x + hero.ship.size[0] // 2, hero.ship.rect.y +
+                                       hero.ship.size[1] // 2])
+        for sprite in all_sprites:
+            if sprite != hero.ship:
+                camera.apply(sprite)
+        camera.stop_move()
+        all_sprites.draw(screen)
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
 # PG
 FPS = 60
 LANGUAGE = 'en'
@@ -970,97 +1009,150 @@ SIZE = WIDTH, HEIGHT = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 song = pygame.mixer.Sound('soundtracks/space_theme.mp3')
+star_damage_time = 0
+kristalids = list()
+font = pygame.font.SysFont('Arialms', 60)
+res = 50
+
+
+def start_game(tui=False):
+    global all_sprites, planets, ships, station, enemy, hero_group, minimap_objects, camera, bg, sun,\
+        mercury, earth, mars, jupiter, saturn, uranus, neptune, station, hero, minimap, \
+        sun_minimap, mercury_minimap, venus_minimap, earth_minimap, mars_minimap, jupiter_minimap, \
+        saturn_minimap, uranus_minimap, neptune_minimap, ship_minimap, star_damage_time, kristalids, \
+        station_minimap, h
+    star_damage_time = 0
+    kristalids = list()
+    # Группы спрайтов
+    all_sprites = pygame.sprite.Group()
+    planets = pygame.sprite.Group()
+    ships = pygame.sprite.Group()
+    stations = pygame.sprite.Group()
+    enemy = pygame.sprite.Group()
+    hero_group = pygame.sprite.Group()
+    minimap_objects = pygame.sprite.Group()
+    camera = Camera()
+    # Объекты
+    bg = pygame.sprite.Sprite()
+    bg.image = pygame.transform.scale(load_image('Space Background.png'), (10000, 10000))
+    bg.rect = bg.image.get_rect()
+    all_sprites.add(bg)
+    bg.rect.x = bg.rect.x = -5000 + WIDTH // 2
+    bg.rect.y = -5000 + HEIGHT // 2
+
+    sun = Objects.Star(load_image('Sun.png'), 25, 10, [1500, 1500], [WIDTH // 2, HEIGHT // 2],
+                       all_sprites)
+    mercury = Objects.Planet(load_image('Mercury.png'), 50, 5, [80, 80], [WIDTH // 2, HEIGHT // 2],
+                             AU * 0.387 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
+    venus = Objects.Planet(load_image('Venus.png'), 50, 5, [260, 260], [WIDTH // 2, HEIGHT // 2],
+                           AU * 0.9 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
+    earth = Objects.Planet(load_image('Earth.png'), 50, 5, [280, 280], [WIDTH // 2, HEIGHT // 2],
+                           AU * 1.7 + 750, 100, 0, all_sprites, planets)
+    mars = Objects.Planet(load_image('Mars.png'), 50, 5, [170, 170], [WIDTH // 2, HEIGHT // 2],
+                          AU * 2.5 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
+    if not tui:
+        jupiter = Objects.Planet(load_image('Jupiter.png'), 50, 5, [400, 400],
+                                 [WIDTH // 2, HEIGHT // 2],
+                                 AU * 5.2 + 750, 100, radians(randrange(0, 360)), all_sprites,
+                                 planets)
+        saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [800, 800],
+                                [WIDTH // 2, HEIGHT // 2],
+                                AU * 8.2, 100, radians(randrange(0, 360)), all_sprites, planets)
+        uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [220, 220],
+                                [WIDTH // 2, HEIGHT // 2],
+                                AU * 9 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
+        neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200],
+                                 [WIDTH // 2, HEIGHT // 2],
+                                 AU * 11 + 750, 100, radians(randrange(0, 360)), all_sprites,
+                                 planets)
+        station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 525],
+                                  [AU * 5.2 + 750, HEIGHT // 2], all_sprites, stations)
+    image = (
+        load_image('Nomad_ship_fly.png', (64, 64)), load_image('Nomad_ship_stop.png', (64, 64)))
+    hero_images = (image[0], pygame.transform.rotate(image[0], 45),
+                   pygame.transform.rotate(image[0], 90),
+                   pygame.transform.rotate(image[0], 135),
+                   pygame.transform.rotate(image[0], 180),
+                   pygame.transform.rotate(image[0], 225),
+                   pygame.transform.rotate(image[0], 270),
+                   pygame.transform.rotate(image[0], 315),
+                   image[1], pygame.transform.rotate(image[1], 45),
+                   pygame.transform.rotate(image[1], 90),
+                   pygame.transform.rotate(image[1], 135),
+                   pygame.transform.rotate(image[1], 180),
+                   pygame.transform.rotate(image[1], 225),
+                   pygame.transform.rotate(image[1], 270),
+                   pygame.transform.rotate(image[1], 315))
+    if tui:
+        hero = Hero.Hero(
+            Ships.NomadShip(hero_images, [-camera.dx, 0],
+                            500, 0, [Equipments.Destructor(3, (enemy, all_sprites),
+                                                          load_image('destructor_bullet.png',
+                                                                     (50, 40))),
+                                     Equipments.Engine(2), Equipments.FuelTank(0),
+                                     Equipments.Grab(0),
+                                     Equipments.Shield()],
+                            camera,
+                            SIZE, all_sprites, ships, hero_group), 1000000, name)
+    if not tui:
+        # Объекты мини карты
+        hero = Hero.Hero(
+            Ships.NomadShip(hero_images, [-camera.dx, 0],
+                            500, 0, [Equipments.PhotonGun(0, (enemy, all_sprites),
+                                                          load_image('photon_bullet.png', (50, 50))),
+                                     Equipments.Engine(0), Equipments.FuelTank(0),
+                                     Equipments.Grab(0),
+                                     Equipments.Shield()],
+                            camera,
+                            SIZE, all_sprites, ships, hero_group), 1000000, name)
+        minimap = pygame.Surface((10000 / (res / 2), 10000 / (res / 2)))
+        h = (10000 / (res / 2)) / 2
+        sun_minimap = Objects.MiniMapStar(load_image('Sun.png'), 25, 10, [1500 / res, 1500 / res],
+                                          [h, h],
+                                          minimap_objects)
+        mercury_minimap = Objects.MiniMapPlanet(load_image('Mercury.png'), 50, 5,
+                                                [80 / (res / 2) + 2, 80 / (res / 2) + 2], [h, h],
+                                                (AU * 0.387 + 750) / res, 100 / res, mercury.grad,
+                                                minimap_objects)
+        venus_minimap = Objects.MiniMapPlanet(load_image('Venus.png'), 50, 5,
+                                              [260 / (res / 2), 260 / (res / 2)], [h, h],
+                                              (AU * 0.9 + 750) / res, 100 / res, venus.grad,
+                                              minimap_objects)
+        earth_minimap = Objects.MiniMapPlanet(load_image('Earth.png'), 50, 5,
+                                              [280 / (res / 2), 280 / (res / 2)], [h, h],
+                                              (AU * 1.7 + 750) / res, 100 / res, 0, minimap_objects)
+        mars_minimap = Objects.MiniMapPlanet(load_image('Mars.png'), 50, 5,
+                                             [170 / (res / 2), 170 / (res / 2)], [h, h],
+                                             (AU * 2.5 + 750) / res, 100 / res, mars.grad,
+                                             minimap_objects)
+        jupiter_minimap = Objects.MiniMapPlanet(load_image('Jupiter.png'), 50, 5,
+                                                [400 / (res / 2), 400 / (res / 2)], [h, h],
+                                                (AU * 5.2 + 750) / res, 100 / res, jupiter.grad,
+                                                minimap_objects)
+        saturn_minimap = Objects.MiniMapPlanet(load_image('Saturn.png'), 25, 10,
+                                               [800 / (res / 2), 800 / (res / 2)], [h, h],
+                                               AU * 8.2 / res, 100 / res, saturn.grad,
+                                               minimap_objects)
+        uranus_minimap = Objects.MiniMapPlanet(load_image('Uranus.png'), 50, 5,
+                                               [220 / (res / 2), 220 / (res / 2)], [h, h],
+                                               (AU * 9 + 750) / res, 100 / res, uranus.grad,
+                                               minimap_objects)
+        neptune_minimap = Objects.MiniMapPlanet(load_image('Neptune.png'), 50, 5,
+                                                [200 / (res / 2), 200 / (res / 2)], [h, h],
+                                                (AU * 11 + 750) / res, 100 / res, neptune.grad,
+                                                minimap_objects)
+        station_minimap = Objects.MiniMapStation(load_image('Station.png', color_key=-1), 1, 1,
+                                                 [760 / res, 525 / res],
+                                                 [(AU * 5.2 + 750) / res + 175, h],
+                                                 minimap_objects)
+        minimap_ship_coord = hero.ship.coord[0] // 25 + h, hero.ship.coord[1] // 25 + h
+        ship_minimap = Objects.MiniMapShip(image[0], (10, 10), minimap_ship_coord, minimap_objects)
+
 
 # lobby
 name = ''
 lobby = Lobby()
 landing = Landing()
-
-# Группы спрайтов
-all_sprites = pygame.sprite.Group()
-planets = pygame.sprite.Group()
-ships = pygame.sprite.Group()
-stations = pygame.sprite.Group()
-enemy = pygame.sprite.Group()
-hero_group = pygame.sprite.Group()
-minimap_objects = pygame.sprite.Group()
-camera = Camera()
-
-# Объекты
-bg = pygame.sprite.Sprite()
-bg.image = pygame.transform.scale(load_image('Space Background.png'), (9000, 9000))
-bg.rect = bg.image.get_rect()
-all_sprites.add(bg)
-bg.rect.x = bg.rect.x = -4500 + (AU * 1.7 + 750) // 2
-bg.rect.y = -4500
-font = pygame.font.SysFont('Arialms', 60)
-
-sun = Objects.Star(load_image('Sun.png'), 25, 10, [1500, 1500], [WIDTH // 2, HEIGHT // 2],
-                   all_sprites)
-mercury = Objects.Planet(load_image('Mercury.png'), 50, 5, [80, 80], [WIDTH // 2, HEIGHT // 2],
-                         AU * 0.387 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
-venus = Objects.Planet(load_image('Venus.png'), 50, 5, [260, 260], [WIDTH // 2, HEIGHT // 2],
-                       AU * 0.9 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
-earth = Objects.Planet(load_image('Earth.png'), 50, 5, [280, 280], [WIDTH // 2, HEIGHT // 2],
-                       AU * 1.7 + 750, 100, 0, all_sprites, planets)
-mars = Objects.Planet(load_image('Mars.png'), 50, 5, [170, 170], [WIDTH // 2, HEIGHT // 2],
-                      AU * 2.5 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
-jupiter = Objects.Planet(load_image('Jupiter.png'), 50, 5, [400, 400], [WIDTH // 2, HEIGHT // 2],
-                         AU * 5.2 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
-saturn = Objects.Planet(load_image('Saturn.png'), 25, 10, [800, 800], [WIDTH // 2, HEIGHT // 2],
-                        AU * 8.2, 100, radians(randrange(0, 360)), all_sprites, planets)
-uranus = Objects.Planet(load_image('Uranus.png'), 50, 5, [220, 220], [WIDTH // 2, HEIGHT // 2],
-                        AU * 9 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
-neptune = Objects.Planet(load_image('Neptune.png'), 50, 5, [200, 200], [WIDTH // 2, HEIGHT // 2],
-                         AU * 11 + 750, 100, radians(randrange(0, 360)), all_sprites, planets)
-station = Objects.Station(load_image('Station.png', color_key=-1), 1, 1, [760, 525],
-                          [AU * 5.2 + 750, HEIGHT // 2], all_sprites, stations)
-image = (load_image('Nomad_ship_fly.png', (64, 64)), load_image('Nomad_ship_stop.png', (64, 64)))
-hero_images = (image[0], pygame.transform.rotate(image[0], 45),
-               pygame.transform.rotate(image[0], 90),
-               pygame.transform.rotate(image[0], 135), pygame.transform.rotate(image[0], 180),
-               pygame.transform.rotate(image[0], 225), pygame.transform.rotate(image[0], 270),
-               pygame.transform.rotate(image[0], 315),
-               image[1], pygame.transform.rotate(image[1], 45),
-               pygame.transform.rotate(image[1], 90),
-               pygame.transform.rotate(image[1], 135), pygame.transform.rotate(image[1], 180),
-               pygame.transform.rotate(image[1], 225), pygame.transform.rotate(image[1], 270),
-               pygame.transform.rotate(image[1], 315))
-hero = Hero.Hero(
-    Ships.NomadShip(hero_images, [WIDTH // 2, HEIGHT // 2],
-                    500, 0, [Equipments.PhotonGun(0, (enemy, all_sprites),
-                                                  load_image('photon_bullet.png', (50, 50))),
-                             Equipments.Engine(0), Equipments.FuelTank(0), Equipments.Grab(0),
-                             Equipments.Shield()],
-                    camera,
-                    SIZE, all_sprites, ships, hero_group), 1000000, name)
-kristalids = list()
-# Объекты мини карты
-res = 50
-minimap = pygame.Surface((10000 / (res / 2), 10000 / (res / 2)))
-sun_minimap = Objects.MiniMapStar(load_image('Sun.png'), 25, 10, [1500 / res, 1500 / res], [200, 200],
-                                  minimap_objects)
-mercury_minimap = Objects.MiniMapPlanet(load_image('Mercury.png'), 50, 5, [80 / (res / 2), 80 / (res / 2)], [200, 200],
-                                        (AU * 0.387 + 750) / res, 100 / res, mercury.grad,
-                                        minimap_objects)
-venus_minimap = Objects.MiniMapPlanet(load_image('Venus.png'), 50, 5, [260 / (res / 2), 260 / (res / 2)], [200, 200],
-                       (AU * 0.9 + 750) / res, 100 / res, venus.grad, minimap_objects)
-earth_minimap = Objects.MiniMapPlanet(load_image('Earth.png'), 50, 5, [280 / (res / 2), 280 / (res / 2)], [200, 200],
-                       (AU * 1.7 + 750) / res, 100 / res, 0, minimap_objects)
-mars_minimap = Objects.MiniMapPlanet(load_image('Mars.png'), 50, 5, [170 / (res / 2), 170 / (res / 2)], [200, 200],
-                      (AU * 2.5 + 750) / res, 100 / res, mars.grad, minimap_objects)
-jupiter_minimap = Objects.MiniMapPlanet(load_image('Jupiter.png'), 50, 5, [400 / (res / 2), 400 / (res / 2)], [200, 200],
-                         (AU * 5.2 + 750) / res, 100 / res, jupiter.grad, minimap_objects)
-saturn_minimap = Objects.MiniMapPlanet(load_image('Saturn.png'), 25, 10, [800 / (res / 2), 800 / (res / 2)], [200, 200],
-                        AU * 8.2 / res, 100 / res, saturn.grad, minimap_objects)
-uranus_minimap = Objects.MiniMapPlanet(load_image('Uranus.png'), 50, 5, [220 / (res / 2), 220 / (res / 2)], [200, 200],
-                        (AU * 9 + 750) / res, 100 / res, uranus.grad, minimap_objects)
-neptune_minimap = Objects.MiniMapPlanet(load_image('Neptune.png'), 50, 5, [200 / (res / 2), 200 / (res / 2)], [200, 200],
-                         (AU * 11 + 750) / res, 100 / res, neptune.grad, minimap_objects)
-station_minimap = Objects.MiniMapStation(load_image('Station.png', color_key=-1), 1, 1, [760 / res, 525 / res],
-                          [(AU * 5.2 + 750) / res + 200, 200], minimap_objects)
-minimap_ship_coord = hero.ship.coord[0] // 25 + 200, hero.ship.coord[1] // 25 + 200
-ship_minimap = Objects.MiniMapShip(image[0], (10, 10), minimap_ship_coord, minimap_objects)
 
 # main cycle
 running = True
@@ -1076,7 +1168,8 @@ while running:
                                                   Equipments.Destructor(1, (hero_group, all_sprites),
                                                                         load_image(
                                                                             'destructor_bullet.png',
-                                                                            (50, 40), -1))],
+                                                                            (50, 40), -1)),
+                                              Equipments.Engine(0)],
                                               hero, all_sprites, ships, enemy))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -1102,6 +1195,9 @@ while running:
     for sprite in all_sprites:
         if sprite != hero.ship:
             camera.apply(sprite)
+    if star_damage_time == 0 and pygame.sprite.collide_mask(sun, hero.ship):
+        hero.ship.get_damage(sun.get_damage())
+    star_damage_time = (star_damage_time + 1) % FPS
     if song_p:
         song.play()
         song_p = False
