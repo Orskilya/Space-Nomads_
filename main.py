@@ -597,8 +597,9 @@ class Landing:
                     and max_amount < self.object.get_market()[type][0]:
                 max_amount += 1
                 max_cost += self.object.get_market()[type][1]
-            screen.blit(font.render(f'+{max_amount - mass}', True, pygame.Color('white')),
-                        (WIDTH * 0.48, HEIGHT * 0.435))
+            max_bying = font.render(f'+{max_amount - mass}', True, pygame.Color('white'))
+            current_mass = font.render(str(mass), True, pygame.Color('white'))
+            screen.blit(max_bying, (WIDTH * 0.5 - max_bying.get_width() / 2, HEIGHT * 0.435))
             screen.blit(space, (WIDTH * 0.37, HEIGHT * 0.44))
             screen.blit(money, (WIDTH * 0.52, HEIGHT * 0.44))
             screen.blit(minus, (WIDTH * 0.42, HEIGHT * 0.44))
@@ -607,8 +608,8 @@ class Landing:
             screen.blit(no, (WIDTH * 0.62, HEIGHT * 0.44))
             screen.blit(font.render(str(mass), True, pygame.Color('black')),
                         (WIDTH * 0.39, HEIGHT * 0.435))
-            screen.blit(font.render(str(mass), True, pygame.Color('white')),
-                        (WIDTH * 0.445, HEIGHT * 0.435))
+            screen.blit(current_mass,
+                        (WIDTH * 0.448 - current_mass.get_width() / 2, HEIGHT * 0.435))
             screen.blit(font.render(str(cost), True, pygame.Color('black')),
                         (WIDTH * 0.54, HEIGHT * 0.435))
 
@@ -817,7 +818,7 @@ class Lobby:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_BACKSPACE:
                         name = name[:-1]
-                    elif event.key == pygame.K_KP_ENTER:
+                    elif event.key == pygame.K_KP_ENTER or event.key == 13:
                         if name:
                             return
                     elif len(name) < 10:
