@@ -933,12 +933,12 @@ def writing_record(win_='No'):
 
 def mini_map():
     minimap.fill((0, 0, 0))
-    minimap_ship_coord = hero.ship.coord[0] // res + 200, hero.ship.coord[1] // res + 200
+    minimap_ship_coord = hero.ship.coord[0] // res + h, hero.ship.coord[1] // res + h
     minimap_objects.update(coord=minimap_ship_coord)
     minimap_objects.draw(minimap)
-    screen.blit(minimap, (WIDTH - res * 2 - 10, 10))
-    pygame.draw.rect(screen, pygame.Color('#04859D'), (WIDTH - res * 2 - 20, 0, res * 2 + 20,
-                                                       res * 2 + 20), 4)
+    screen.blit(minimap, (WIDTH - h * 2 - 10, 10))
+    pygame.draw.rect(screen, pygame.Color('#04859D'), (WIDTH - h * 2 - 20, 0, h * 2 + 20,
+                                                       h * 2 + 20), 4)
 
 
 def render_hp():
@@ -1123,7 +1123,7 @@ def start_game(tui=False):
                                                 minimap_objects)
         station_minimap = Objects.MiniMapStation(load_image('Station.png', color_key=-1), 1, 1,
                                                  [760 / res, 525 / res],
-                                                 [(AU * 5.2 + 750) / res + 175, h],
+                                                 [(AU * 5.2 + 750) / res + h - 25, h],
                                                  minimap_objects)
         minimap_ship_coord = hero.ship.coord[0] // 25 + h, hero.ship.coord[1] // 25 + h
         ship_minimap = Objects.MiniMapShip(image[0], (10, 10), minimap_ship_coord, minimap_objects)
