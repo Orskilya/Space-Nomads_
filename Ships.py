@@ -22,7 +22,7 @@ class Ship(pygame.sprite.Sprite):
         self.armor = armor
         self.mass = hull
         self.equipment = equipment  # list of classes
-        self.hold = {'product': 100, 'medicine': 100, 'alchogol': 100, 'luxury': 100, 'tech': 100, 'weapon': 100}
+        self.hold = {'product': 0, 'medicine': 0, 'alchogol': 0, 'luxury': 0, 'tech': 0, 'weapon': 0}
         self.space = hull
         self.keys = []
         self.mask = pygame.mask.from_surface(self.image)
@@ -67,26 +67,6 @@ class WarriorShip(Ship):
                                (1, randint(0, 1)),  # locator and scanner
                                randint(0, 1)]  # afterburner
         self.armor += 2
-
-        # equipment setting up
-        for i in self.equipment:
-            if not self.slot_equipment[i.get_type()[0]][i.get_type()[1]]:
-                self.equipment.remove(i)
-                self.hold.append(i)
-                self.mass += i.get_mass()
-                self.space -= i.get_mass()
-
-
-class PirateShip(Ship):
-    def __init__(self, sprite, coord, hull, armor, equipment, *group):
-        super().__init__(sprite, coord, hull, armor, equipment, *group)
-        self.slot_equipment = [(1, 1),  # engine and fuel tank
-                               (1, 1, 1, randint(0, 1), 0),  # guns
-                               (1, randint(0, 1)),  # grab and shield
-                               (1, 1),  # locator and scanner
-                               1]  # afterburner
-        self.mass *= 0.75
-        self.hull *= 0.8
 
         # equipment setting up
         for i in self.equipment:

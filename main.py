@@ -566,32 +566,75 @@ class Landing:
             self.bying(item)
 
     def bying(self, type):
+        font = pygame.font.SysFont('Arialms', 30)
+        cost = 0
+        mass = 0
+        max_amount = 0
+        max_cost = 0
         while True:
             pygame.draw.rect(screen, pygame.Color('#04859D'),
-                             (WIDTH * 0.4, HEIGHT * 0.4, WIDTH * 0.4, HEIGHT * 0.1),
+                             (WIDTH * 0.35, HEIGHT * 0.4, WIDTH * 0.3, HEIGHT * 0.1),
                              border_radius=30)
             pygame.draw.rect(screen, pygame.Color('#C8DFE3'),
-                             (WIDTH * 0.405, HEIGHT * 0.41, WIDTH * 0.39, HEIGHT * 0.081),
+                             (WIDTH * 0.355, HEIGHT * 0.41, WIDTH * 0.29, HEIGHT * 0.081),
                              border_radius=30)
             pygame.draw.rect(screen, pygame.Color('#333333'),
-                             (WIDTH * 0.405, HEIGHT * 0.41, WIDTH * 0.39, HEIGHT * 0.081), 3,
+                             (WIDTH * 0.355, HEIGHT * 0.41, WIDTH * 0.29, HEIGHT * 0.081), 3,
                              border_radius=30)
+            pygame.draw.rect(screen, pygame.Color('#333333'),
+                             (WIDTH * 0.42, HEIGHT * 0.44, WIDTH * 0.056, HEIGHT * 0.03),
+                             border_radius=100)
+            pygame.draw.rect(screen, pygame.Color('#04859D'),
+                             (WIDTH * 0.48, HEIGHT * 0.44, WIDTH * 0.04, HEIGHT * 0.03),
+                             border_radius=3)
             space = load_image('cube.png', (30, 30))
             money = load_image('money.png', (30, 30))
             plus = load_image('plus.png', (31, 31))
             minus = load_image('minus.png', (30, 30))
             yes = load_image('yes.png', (30, 30))
             no = load_image('no.png', (30, 30))
-            screen.blit(space, (WIDTH * 0.42, HEIGHT * 0.44))
-            screen.blit(money, (WIDTH * 0.53, HEIGHT * 0.44))
-            screen.blit(minus, (WIDTH * 0.47, HEIGHT * 0.44))
-            screen.blit(plus, (WIDTH * 0.51, HEIGHT * 0.44))
-            screen.blit(yes, (WIDTH * 0.65, HEIGHT * 0.44))
-            screen.blit(no, (WIDTH * 0.67, HEIGHT * 0.44))
+            while max_amount < hero.get_ship().get_space() and max_cost < hero.get_money() \
+                    and max_amount < self.object.get_market()[type][0]:
+                max_amount += 1
+                max_cost += self.object.get_market()[type][1]
+            screen.blit(font.render(f'+{max_amount - mass}', True, pygame.Color('white')),
+                        (WIDTH * 0.48, HEIGHT * 0.435))
+            screen.blit(space, (WIDTH * 0.37, HEIGHT * 0.44))
+            screen.blit(money, (WIDTH * 0.52, HEIGHT * 0.44))
+            screen.blit(minus, (WIDTH * 0.42, HEIGHT * 0.44))
+            screen.blit(plus, (WIDTH * 0.46, HEIGHT * 0.44))
+            screen.blit(yes, (WIDTH * 0.6, HEIGHT * 0.44))
+            screen.blit(no, (WIDTH * 0.62, HEIGHT * 0.44))
+            screen.blit(font.render(str(mass), True, pygame.Color('black')),
+                        (WIDTH * 0.39, HEIGHT * 0.435))
+            screen.blit(font.render(str(mass), True, pygame.Color('white')),
+                        (WIDTH * 0.445, HEIGHT * 0.435))
+            screen.blit(font.render(str(cost), True, pygame.Color('black')),
+                        (WIDTH * 0.54, HEIGHT * 0.435))
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     quit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    pos = event.pos
+                    if HEIGHT * 0.44 <= pos[1] <= HEIGHT * 0.44 + 30:
+                        if WIDTH * 0.62 <= pos[0] <= WIDTH * 0.62 + 30:
+                            return
+                        elif WIDTH * 0.6 <= pos[0] <= WIDTH * 0.6 + 30:
+                            hero.money_change(-cost)
+                            hero.get_ship().change_space(mass, 0)
+                            hero.get_ship().hold_upgraide(type, mass)
+                            self.object.market_change(type, mass)
+                            return
+                        elif WIDTH * 0.46 <= pos[0] <= WIDTH * 0.46 + 30:
+                            mass += 1
+                            cost += self.object.get_market()[type][1]
+                        elif WIDTH * 0.42 <= pos[0] <= WIDTH * 0.42 + 30:
+                            mass -= 1
+                            cost -= self.object.get_market()[type][1]
+                        elif WIDTH * 0.48 <= pos[0] <= WIDTH * 0.52:
+                            mass = max_amount
+                            cost = max_cost
 
             pygame.display.flip()
             clock.tick(60)
