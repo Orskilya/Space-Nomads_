@@ -206,6 +206,5 @@ class MiniMapShip(pygame.sprite.Sprite):
         self.rect = self.rect.move(coord[0] - self.size[0] // 2, coord[1] - self.size[1] // 2)
 
     def update(self, coord):
-        self.rect.x = coord[0] - self.size[0] // 2
-        self.rect.y = coord[1] - self.size[1] // 2
-
+        self.rect.x = coord[0]
+        self.rect.y = coord[1]

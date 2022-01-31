@@ -58,25 +58,6 @@ class Ship(pygame.sprite.Sprite):
             self.hold[item] = number
 
 
-class WarriorShip(Ship):
-    def __init__(self, sprite, coord, hull, armor, equipment, *group):
-        super().__init__(sprite, coord, hull, armor, equipment, *group)
-        self.slot_equipment = [(1, 1),  # engine and fuel tank
-                               (1, 1, 1, 1, randint(0, 1)),  # guns
-                               (randint(0, 1), 1),  # grab and shield
-                               (1, randint(0, 1)),  # locator and scanner
-                               randint(0, 1)]  # afterburner
-        self.armor += 2
-
-        # equipment setting up
-        for i in self.equipment:
-            if not self.slot_equipment[i.get_type()[0]][i.get_type()[1]]:
-                self.equipment.remove(i)
-                self.hold.append(i)
-                self.mass += i.get_mass()
-                self.space -= i.get_mass()
-
-
 class CargoShip(Ship):
     def __init__(self, sprite, coord, hull, armor, equipment, *group):
         super().__init__(sprite, coord, hull, armor, equipment, *group)

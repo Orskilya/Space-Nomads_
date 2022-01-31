@@ -144,34 +144,6 @@ class Shield:
         return self.name
 
 
-class Locator:
-    def __init__(self, dist, price, mass, setup=False):
-        self.dist = dist
-        self.price = price
-        self.mass = mass
-        self.setup = setup
-
-    def setup(self, setup):
-        self.setup = setup
-
-    def get_dist(self):
-        return self.dist
-
-
-class Scanner:
-    def __init__(self, scan, price, mass, setup=False):
-        self.scan = scan
-        self.price = price
-        self.mass = mass
-        self.setup = setup
-
-    def setup(self, setup):
-        self.setup = setup
-
-    def get_scan(self):
-        return self.scan
-
-
 class PhotonGun:
     def __init__(self, tier, groups=None, bullet_image=None):
         self.img = 'photongun.png'

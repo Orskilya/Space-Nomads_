@@ -1,13 +1,14 @@
 import ctypes
 import sys
+import numpy as numpy
 import Ships
 import Objects
 import os
 import pygame
 import pygame.gfxdraw
 import Equipments
-from random import randrange
-from math import radians
+from random import randrange, choice
+from math import radians, sqrt
 import Hero
 import sqlite3
 
@@ -677,13 +678,14 @@ class Lobby:
                             elif HEIGHT * 0.3 + self.buttons.height + 15 <= pos[1] \
                                     <= HEIGHT * 0.3 + 2 * self.buttons.height + 15:
                                 tuition()
+                                print(1)
                             elif HEIGHT * 0.3 + 2 * self.buttons.height + 30 <= pos[1] \
                                     <= HEIGHT * 0.3 + 3 * self.buttons.height + 30:
                                 self.buttons_type = 'Options'
                                 self.update_window()
                             elif HEIGHT * 0.3 + 3 * self.buttons.height + 45 <= pos[1] \
                                     <= HEIGHT * 0.3 + 4 * self.buttons.height + 45:
-                                pass
+                                self.records()
                             elif HEIGHT * 0.3 + 4 * self.buttons.height + 60 <= pos[1] \
                                     <= HEIGHT * 0.3 + 5 * self.buttons.height + 60:
                                 quit()
@@ -883,6 +885,69 @@ class Lobby:
 
             pygame.display.flip()
 
+    def records(self):
+        global LANGUAGE, CON
+        font = pygame.font.SysFont('Arialms', 30)
+        while True:
+            pygame.draw.rect(screen, pygame.Color('#04859D'),
+                             (WIDTH * 0.4, HEIGHT * 0.05, WIDTH * 0.5, HEIGHT * 0.9),
+                             border_radius=30)
+            pygame.draw.rect(screen, pygame.Color('#C8DFE3'),
+                             (WIDTH * 0.41, HEIGHT * 0.07, WIDTH * 0.48, HEIGHT * 0.86),
+                             border_radius=30)
+            pygame.draw.rect(screen, pygame.Color('#333333'),
+                             (WIDTH * 0.41, HEIGHT * 0.07, WIDTH * 0.48, HEIGHT * 0.86), 3,
+                             border_radius=30)
+
+            for i in range(14, 84, 10):
+                pygame.draw.rect(screen, pygame.Color('gray'),
+                                 (WIDTH * 0.412, HEIGHT * (i / 100), WIDTH * 0.476, HEIGHT * 0.1), 3,
+                                 border_radius=10)
+
+                draw_dashed_line(screen, pygame.Color('gray'),
+                                 (int(WIDTH * 0.45), int(HEIGHT * (i / 100))),
+                                 (int(WIDTH * 0.45), int(HEIGHT * (i / 100)) + int(HEIGHT * 0.1)),
+                                  3, 5)
+                draw_dashed_line(screen, pygame.Color('gray'),
+                                 (int(WIDTH * 0.52), int(HEIGHT * (i / 100))),
+                                 (int(WIDTH * 0.52), int(HEIGHT * (i / 100)) + int(HEIGHT * 0.1)),
+                                 3, 5)
+                draw_dashed_line(screen, pygame.Color('gray'),
+                                 (int(WIDTH * 0.75), int(HEIGHT * (i / 100))),
+                                 (int(WIDTH * 0.75), int(HEIGHT * (i / 100)) + int(HEIGHT * 0.1)),
+                                 3, 5)
+
+            text = {'ko': '№ 이름 점수', 'en': '№ Name Score', 'ru': '№ Имя Очки'}
+            current_text = text[LANGUAGE].split()
+            screen.blit(font.render(current_text[0], True, pygame.Color('#333333')),
+                        (WIDTH * 0.425, HEIGHT * 0.1))
+            screen.blit(font.render(current_text[1], True, pygame.Color('#333333')),
+                        (WIDTH * 0.61, HEIGHT * 0.1))
+            screen.blit(font.render(current_text[2], True, pygame.Color('#333333')),
+                        (WIDTH * 0.8, HEIGHT * 0.1))
+
+            cursor = CON.cursor()
+            result = cursor.execute('SELECT id, name, score, image FROM Score ORDER BY score DESC')
+            h1, h2 = HEIGHT * 0.17, HEIGHT * 0.144
+            position = 1
+            for i in result:
+                pos = font.render(str(position), True, pygame.Color('#333333'))
+                name = font.render(i[1], True, pygame.Color('#333333'))
+                score = font.render(str(i[2]), True, pygame.Color('#333333'))
+                screen.blit(pos,
+                            (WIDTH * 0.432 - pos.get_width() / 2, h1))
+                screen.blit(load_image(i[3], (100, 100)),
+                            (WIDTH * 0.46, h2))
+                screen.blit(name,
+                            (WIDTH * 0.63 - name.get_width() / 2, h1))
+                screen.blit(score,
+                            (WIDTH * 0.82 - score.get_width() / 2, h1))
+                h1, h2 = h1 + HEIGHT * 0.1, h2 + HEIGHT * 0.1
+                position += 1
+
+            pygame.display.flip()
+            clock.tick(60)
+
 
 def game_over():
     global LANGUAGE, SIZE
@@ -944,21 +1009,22 @@ def win():
 
 
 def writing_record():
-    con = sqlite3.connect('data/scores.db')
-    cursor = con.cursor()
+    global PILOT_IMAGES, CON
+    cursor = CON.cursor()
     cursor.execute(
-        f'INSERT INTO Score(name, score, win) VALUES("{hero.name}", {hero.score})')
-    con.commit()
+        f'''INSERT INTO Score(name, score, image) VALUES("{hero.name}", {hero.score}, 
+        "{choice(PILOT_IMAGES)}")''')
+    CON.commit()
 
 
 def mini_map():
     minimap.fill((0, 0, 0))
-    minimap_ship_coord = hero.ship.coord[0] // res + 200, hero.ship.coord[1] // res + 200
+    minimap_ship_coord = hero.ship.coord[0] // res + h, hero.ship.coord[1] // res + h
     minimap_objects.update(coord=minimap_ship_coord)
     minimap_objects.draw(minimap)
-    screen.blit(minimap, (WIDTH - res * 2 - 10, 10))
-    pygame.draw.rect(screen, pygame.Color('#04859D'), (WIDTH - res * 2 - 20, 0, res * 2 + 20,
-                                                       res * 2 + 20), 4)
+    screen.blit(minimap, (WIDTH - h * 2 - 10, 10))
+    pygame.draw.rect(screen, pygame.Color('#04859D'), (WIDTH - h * 2 - 20, 0, h * 2 + 20,
+                                                       h * 2 + 20), 4)
 
 
 def render_hp():
@@ -972,11 +1038,16 @@ def render_hp():
 
 
 def tuition():
+    global WIDTH, HEIGHT, LANGUAGE, FPS
     start_game(True)
+    exit = {'ko': '', 'en': 'press "Space" to leave the tuition.',
+            'ru': 'Нажмите "Пробел" чтобы выйти из обучения'}
+    font = pygame.font.SysFont('Arialms', 30)
     tuition_kristalid = Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
-                                        [-camera.dx, 0], 1, 0, [Equipments.Engine(0)], hero,
+                                        [-camera.dx + 200, 500], 1, 0, [Equipments.Engine(0)], hero,
                                         all_sprites, ships, enemy)
     tuition_running = True
+    flag = False
     while tuition_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -987,16 +1058,64 @@ def tuition():
                     hero.ship.update(event, 'fly')
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 hero.ship.update(event, 'shoot')
-        screen.fill((0, 0, 0))
+            if flag and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                return
         all_sprites.update(hero_coord=[hero.ship.rect.x + hero.ship.size[0] // 2, hero.ship.rect.y +
                                        hero.ship.size[1] // 2])
+        if tuition_kristalid and tuition_kristalid.get_hull() <= 0:
+            tuition_kristalid = None
+            flag = True
+
         for sprite in all_sprites:
             if sprite != hero.ship:
                 camera.apply(sprite)
         camera.stop_move()
         all_sprites.draw(screen)
+
+        with open(f'data/tuition {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
+            text = map(lambda x: x.rstrip(), f.readlines())
+
+        h = HEIGHT * 0.1
+        for i in text:
+            line = font.render(i, True, pygame.Color('Blue'))
+            screen.blit(line, (WIDTH * 0.05, h))
+            h += HEIGHT * 0.05
+
+        if not tuition_kristalid:
+            screen.blit(font.render(exit[LANGUAGE], True, pygame.Color('yellow')),
+                        (WIDTH * 0.05, h))
+
         pygame.display.flip()
         clock.tick(FPS)
+
+
+def draw_dashed_line(surf, color, start_pos, end_pos, width=1, dash_length=10):
+    x1, y1 = start_pos
+    x2, y2 = end_pos
+    dl = dash_length
+
+    if x1 == x2:
+        y_coords = [y for y in range(y1, y2, dl if y1 < y2 else -dl)]
+        x_coords = [x1] * len(y_coords)
+    elif y1 == y2:
+        x_coords = [x for x in range(x1, x2, dl if x1 < x2 else -dl)]
+        y_coords = [y1] * len(x_coords)
+    else:
+        a = abs(x2 - x1)
+        b = abs(y2 - y1)
+        c = round(sqrt(a**2 + b**2))
+        dx = dl * a / c
+        dy = dl * b / c
+
+        x_coords = [x for x in numpy.arange(x1, x2, dx if x1 < x2 else -dx)]
+        y_coords = [y for y in numpy.arange(y1, y2, dy if y1 < y2 else -dy)]
+
+    next_coords = list(zip(x_coords[1::2], y_coords[1::2]))
+    last_coords = list(zip(x_coords[0::2], y_coords[0::2]))
+    for (x1, y1), (x2, y2) in zip(next_coords, last_coords):
+        start = (round(x1), round(y1))
+        end = (round(x2), round(y2))
+        pygame.draw.line(surf, color, start, end, width)
 
 
 # PG
@@ -1012,7 +1131,10 @@ song = pygame.mixer.Sound('soundtracks/space_theme.mp3')
 star_damage_time = 0
 kristalids = list()
 font = pygame.font.SysFont('Arialms', 60)
-res = 50
+res = 75
+PILOT_IMAGES = ['pilot1.png', 'pilot2.png', 'pilot3.png', 'pilot4.png', 'pilot5.png', 'pilot6.png',
+                'pilot7.png']
+CON = sqlite3.connect('data/scores.db')
 
 
 def start_game(tui=False):
@@ -1088,7 +1210,7 @@ def start_game(tui=False):
             Ships.NomadShip(hero_images, [-camera.dx, 0],
                             500, 0, [Equipments.Destructor(3, (enemy, all_sprites),
                                                           load_image('destructor_bullet.png',
-                                                                     (50, 40))),
+                                                                     (50, 40), -1)),
                                      Equipments.Engine(2), Equipments.FuelTank(0),
                                      Equipments.Grab(0),
                                      Equipments.Shield()],
@@ -1143,7 +1265,7 @@ def start_game(tui=False):
                                                 minimap_objects)
         station_minimap = Objects.MiniMapStation(load_image('Station.png', color_key=-1), 1, 1,
                                                  [760 / res, 525 / res],
-                                                 [(AU * 5.2 + 750) / res + 175, h],
+                                                 [(AU * 5.2 + 750) / res + h - 10, h],
                                                  minimap_objects)
         minimap_ship_coord = hero.ship.coord[0] // 25 + h, hero.ship.coord[1] // 25 + h
         ship_minimap = Objects.MiniMapShip(image[0], (10, 10), minimap_ship_coord, minimap_objects)
