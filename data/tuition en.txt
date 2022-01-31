@@ -1,0 +1,3 @@
+Buttons w, a, s, d are necessary to control the ship.
+Press left mouse button to shoot.
+Kill the target of a kristalid and your tuition will end.

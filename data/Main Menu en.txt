@@ -1,0 +1,5 @@
+New Game
+Tuition
+Settings
+Records
+Quit
