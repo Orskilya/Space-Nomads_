@@ -1,4 +1,3 @@
-import ctypes
 import sys
 import numpy as numpy
 import Ships
@@ -95,21 +94,40 @@ class Landing:
     def planet_collide(self):
         for sprite in planets:
             if pygame.sprite.collide_mask(hero.ship, sprite):
-                screen.blit(self.text, (WIDTH * 0.42, HEIGHT * 0.507))
+                if LANGUAGE == 'en':
+                    screen.blit(self.text, (WIDTH * 0.43, HEIGHT * 0.507))
+                elif LANGUAGE == 'ko':
+                    self.text = self.font.render('착륙하려면 "스페이스바"를 누르세요.',
+                                                 True, pygame.Color('Yellow'))
+                    screen.blit(self.text, (WIDTH * 0.41, HEIGHT * 0.507))
+                else:
+                    self.text = self.font.render('Нажмите «Пробел», чтобы приземлиться',
+                                                 True, pygame.Color('Yellow'))
+                    screen.blit(self.text, (WIDTH * 0.4, HEIGHT * 0.507))
                 return sprite
         if pygame.sprite.collide_mask(hero.ship, station):
-            screen.blit(self.text, (WIDTH * 0.43, HEIGHT * 0.507))
+            if LANGUAGE == 'en':
+                screen.blit(self.text, (WIDTH * 0.43, HEIGHT * 0.507))
+            elif LANGUAGE == 'ko':
+                self.text = self.font.render('착륙하려면 "스페이스바"를 누르세요.',
+                                             True, pygame.Color('Yellow'))
+                screen.blit(self.text, (WIDTH * 0.41, HEIGHT * 0.507))
+            else:
+                self.text = self.font.render('Нажмите «Пробел», чтобы приземлиться',
+                                             True, pygame.Color('Yellow'))
+                screen.blit(self.text, (WIDTH * 0.4, HEIGHT * 0.507))
             return station
 
     def cycle(self, object):
         self.object = object
+        self.gangsta = False
         if str(self.object) == 'station':
             self.bg_names = ('government_st', 'station_bg')
             self.current_song = pygame.mixer.Sound('soundtracks/station.mp3')
             self.song_play = True
         else:
             self.bg_names = ('government', 'planet_bg')
-            self.current_song = pygame.mixer.Sound('soundtracks/Coolio.mp3')
+            self.current_song = pygame.mixer.Sound('soundtracks/planet.mp3')
             self.song_play = True
         if self.new_game:
             self.current_bg = self.bg_names[0]
@@ -160,6 +178,11 @@ class Landing:
                             self.button_type = None
                             self.current_song.stop()
                             return True  # undocking
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_g: # ПАСХАЛКА
+                    self.current_song.stop()
+                    self.current_song = pygame.mixer.Sound('soundtracks/Coolio.mp3')
+                    self.gangsta = True
+                    self.bg_names = ('gamgster', 'gangstas')
                 if event.type == pygame.MOUSEMOTION:
                     pos = event.pos
                     if HEIGHT - 100 <= pos[1] <= HEIGHT:
@@ -313,6 +336,9 @@ class Landing:
             if self.song_play:
                 self.current_song.play()
                 self.song_play = False
+            if self.gangsta:
+                self.current_song.play()
+                self.gangsta = False
             self.update_window(self.button_type)
             pygame.display.flip()
             clock.tick(FPS)
@@ -678,7 +704,6 @@ class Lobby:
                             elif HEIGHT * 0.3 + self.buttons.height + 15 <= pos[1] \
                                     <= HEIGHT * 0.3 + 2 * self.buttons.height + 15:
                                 tuition()
-                                print(1)
                             elif HEIGHT * 0.3 + 2 * self.buttons.height + 30 <= pos[1] \
                                     <= HEIGHT * 0.3 + 3 * self.buttons.height + 30:
                                 self.buttons_type = 'Options'
@@ -751,6 +776,7 @@ class Lobby:
         global LANGUAGE, HEIGHT
         screen.fill((0, 0, 0))
         screen.blit(self.bg, (0, 0))
+        screen.blit(load_image('Logo.png', (583, 195), -1), (30, HEIGHT * 0.1))
         font = pygame.font.SysFont('Arialms', 50)
 
         with open(f'data/{self.buttons_type} {LANGUAGE}.txt', 'r', encoding='utf-8') as f:
@@ -889,6 +915,14 @@ class Lobby:
         global LANGUAGE, CON
         font = pygame.font.SysFont('Arialms', 30)
         while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    quit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    pos = event.pos
+                    if HEIGHT * 0.87 <= pos[1] <= HEIGHT * 0.87 + 50 \
+                            and WIDTH * 0.85 <= pos[0] <= WIDTH * 0.85 + 50:
+                        return
             pygame.draw.rect(screen, pygame.Color('#04859D'),
                              (WIDTH * 0.4, HEIGHT * 0.05, WIDTH * 0.5, HEIGHT * 0.9),
                              border_radius=30)
@@ -898,6 +932,8 @@ class Lobby:
             pygame.draw.rect(screen, pygame.Color('#333333'),
                              (WIDTH * 0.41, HEIGHT * 0.07, WIDTH * 0.48, HEIGHT * 0.86), 3,
                              border_radius=30)
+            no = load_image('no.png', (50, 50))
+            screen.blit(no, (WIDTH * 0.85, HEIGHT * 0.87))
 
             for i in range(14, 84, 10):
                 pygame.draw.rect(screen, pygame.Color('gray'),
@@ -931,6 +967,8 @@ class Lobby:
             h1, h2 = HEIGHT * 0.17, HEIGHT * 0.144
             position = 1
             for i in result:
+                if position == 8:
+                    break
                 pos = font.render(str(position), True, pygame.Color('#333333'))
                 name = font.render(i[1], True, pygame.Color('#333333'))
                 score = font.render(str(i[2]), True, pygame.Color('#333333'))
@@ -1040,7 +1078,7 @@ def render_hp():
 def tuition():
     global WIDTH, HEIGHT, LANGUAGE, FPS
     start_game(True)
-    exit = {'ko': '', 'en': 'press "Space" to leave the tuition.',
+    exit = {'ko': '수업료를 떠나려면 "스페이스바"를 누르십시오.', 'en': 'press "Space" to leave the tuition.',
             'ru': 'Нажмите "Пробел" чтобы выйти из обучения'}
     font = pygame.font.SysFont('Arialms', 30)
     tuition_kristalid = Ships.Kristalid(load_image('Kristalid_ship.png', (150, 150), -1),
@@ -1052,14 +1090,14 @@ def tuition():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit()
+            if flag and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                return
             elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
                 if event.key == pygame.K_w or event.key == pygame.K_a or event.key == pygame.K_s or \
                         event.key == pygame.K_d:
                     hero.ship.update(event, 'fly')
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 hero.ship.update(event, 'shoot')
-            if flag and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                return
         all_sprites.update(hero_coord=[hero.ship.rect.x + hero.ship.size[0] // 2, hero.ship.rect.y +
                                        hero.ship.size[1] // 2])
         if tuition_kristalid and tuition_kristalid.get_hull() <= 0:
@@ -1123,9 +1161,8 @@ FPS = 60
 LANGUAGE = 'en'
 AU = 815
 pygame.init()
-user32 = ctypes.windll.user32
-SIZE = WIDTH, HEIGHT = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
-screen = pygame.display.set_mode(SIZE)
+SIZE = WIDTH, HEIGHT = 1920, 1080
+screen = pygame.display.set_mode(SIZE, pygame.FULLSCREEN)
 clock = pygame.time.Clock()
 song = pygame.mixer.Sound('soundtracks/space_theme.mp3')
 star_damage_time = 0
@@ -1215,7 +1252,7 @@ def start_game(tui=False):
                                      Equipments.Grab(0),
                                      Equipments.Shield()],
                             camera,
-                            SIZE, all_sprites, ships, hero_group), 1000000, name)
+                            SIZE, all_sprites, ships, hero_group), 1000, name)
     if not tui:
         # Объекты мини карты
         hero = Hero.Hero(
@@ -1226,7 +1263,7 @@ def start_game(tui=False):
                                      Equipments.Grab(0),
                                      Equipments.Shield()],
                             camera,
-                            SIZE, all_sprites, ships, hero_group), 1000000, name)
+                            SIZE, all_sprites, ships, hero_group), 1000, name)
         minimap = pygame.Surface((10000 / (res / 2), 10000 / (res / 2)))
         h = (10000 / (res / 2)) / 2
         sun_minimap = Objects.MiniMapStar(load_image('Sun.png'), 25, 10, [1500 / res, 1500 / res],
@@ -1328,9 +1365,19 @@ while running:
     landing.planet_collide()
     render_hp()
     if hero.ship.end_jump:
-        text = font.render(str('Вы можете совершить прыжок!(Нажмите "Shift")'),
-                           True, pygame.Color('blue'))
-        screen.blit(text, (WIDTH // 2 - text.get_width() // 2, 10 + text.get_height()))
+        if LANGUAGE == 'ru':
+            text = font.render('Вы можете совершить прыжок!(Нажмите "Shift")',
+                               True, pygame.Color('blue'))
+            screen.blit(text, (WIDTH // 2 - text.get_width() // 2, 10 + text.get_height()))
+        elif LANGUAGE == 'ko':
+            text = font.render('점프할 수 있습니다!("Shift"를 누르세요)',
+                               True, pygame.Color('blue'))
+            screen.blit(text, (WIDTH // 2 - text.get_width() // 2, 10 + text.get_height()))
+        else:
+            text = font.render('You can jump! (Press "Shift")',
+                               True, pygame.Color('blue'))
+            screen.blit(text, (WIDTH // 2 - text.get_width() // 2, 10 + text.get_height()))
+
     mini_map()
     pygame.display.flip()
     clock.tick(FPS)

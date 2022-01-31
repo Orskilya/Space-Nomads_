@@ -136,6 +136,15 @@ class Station(Object):
     def get_shop(self):
         return self.shop
 
+    def get_market(self):
+        return self.market
+
+    def market_change(self, item, number, selling=False):
+        if selling:
+            self.market[item][0] += number
+        else:
+            self.market[item][0] -= number
+
     def shop_change(self, index):
         self.shop.pop(index)
 
