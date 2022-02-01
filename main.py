@@ -178,7 +178,7 @@ class Landing:
                             self.button_type = None
                             self.current_song.stop()
                             return True  # undocking
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_g: # ПАСХАЛКА
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_g:  # ПАСХАЛКА
                     self.current_song.stop()
                     self.current_song = pygame.mixer.Sound('soundtracks/Coolio.mp3')
                     self.gangsta = True
@@ -943,7 +943,7 @@ class Lobby:
                 draw_dashed_line(screen, pygame.Color('gray'),
                                  (int(WIDTH * 0.45), int(HEIGHT * (i / 100))),
                                  (int(WIDTH * 0.45), int(HEIGHT * (i / 100)) + int(HEIGHT * 0.1)),
-                                  3, 5)
+                                 3, 5)
                 draw_dashed_line(screen, pygame.Color('gray'),
                                  (int(WIDTH * 0.52), int(HEIGHT * (i / 100))),
                                  (int(WIDTH * 0.52), int(HEIGHT * (i / 100)) + int(HEIGHT * 0.1)),
@@ -1141,7 +1141,7 @@ def draw_dashed_line(surf, color, start_pos, end_pos, width=1, dash_length=10):
     else:
         a = abs(x2 - x1)
         b = abs(y2 - y1)
-        c = round(sqrt(a**2 + b**2))
+        c = round(sqrt(a ** 2 + b ** 2))
         dx = dl * a / c
         dy = dl * b / c
 
@@ -1175,7 +1175,7 @@ CON = sqlite3.connect('data/scores.db')
 
 
 def start_game(tui=False):
-    global all_sprites, planets, ships, station, enemy, hero_group, minimap_objects, camera, bg, sun,\
+    global all_sprites, planets, ships, station, enemy, hero_group, minimap_objects, camera, bg, sun, \
         mercury, earth, mars, jupiter, saturn, uranus, neptune, station, hero, minimap, \
         sun_minimap, mercury_minimap, venus_minimap, earth_minimap, mars_minimap, jupiter_minimap, \
         saturn_minimap, uranus_minimap, neptune_minimap, ship_minimap, star_damage_time, kristalids, \
@@ -1246,8 +1246,8 @@ def start_game(tui=False):
         hero = Hero.Hero(
             Ships.NomadShip(hero_images, [-camera.dx, 0],
                             500, 0, [Equipments.Destructor(3, (enemy, all_sprites),
-                                                          load_image('destructor_bullet.png',
-                                                                     (50, 40), -1)),
+                                                           load_image('destructor_bullet.png',
+                                                                      (50, 40), -1)),
                                      Equipments.Engine(2), Equipments.FuelTank(0),
                                      Equipments.Grab(0),
                                      Equipments.Shield()],
@@ -1328,7 +1328,7 @@ while running:
                                                                         load_image(
                                                                             'destructor_bullet.png',
                                                                             (50, 40), -1)),
-                                              Equipments.Engine(0)],
+                                                  Equipments.Engine(0)],
                                               hero, all_sprites, ships, enemy))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

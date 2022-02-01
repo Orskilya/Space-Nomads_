@@ -1,4 +1,5 @@
 from Bullet import Bullet, AbsorberBullet
+
 fps = 60
 
 
